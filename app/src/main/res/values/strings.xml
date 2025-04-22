@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Hora Solis</string>
+
+    <string name="main_greeting_message">Welcome to Hora Solis</string>
 </resources>
