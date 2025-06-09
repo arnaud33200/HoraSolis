@@ -47,12 +47,7 @@ dependencies {
     implementation(libs.koin.android)
 
     // Ktor
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0") // Kotlin Serialization
-    implementation("io.ktor:ktor-client-core:2.3.4")
-    implementation("io.ktor:ktor-client-cio:2.3.4") // CIO engine
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.4") // Content Negotiation
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4") // Kotlinx JSON
-    implementation("io.ktor:ktor-client-resources:2.3.4")
+    implementation(libs.bundles.ktor)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
