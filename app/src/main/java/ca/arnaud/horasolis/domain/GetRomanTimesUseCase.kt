@@ -32,8 +32,10 @@ class GetRomanTimesUseCase(
 ) {
 
     companion object {
+
         private const val DAY_HOUR_COUNT = 12
         private const val NIGHT_HOUR_COUNT = 12
+        private val fullDayDuration = Duration.ofHours(24)
     }
 
     suspend operator fun invoke(
@@ -53,34 +55,34 @@ class GetRomanTimesUseCase(
         )
     }
 
-
     private fun calculateRomanTimes(sunTime: SunTime): RomanTimes {
-
-        val dayDuration = Duration.between(sunTime.sunrise, sunTime.sunset).toMillis()
-        val fullDayMillis = 24 * 60 * 60 * 1000L
-        val nightDuration = fullDayMillis - dayDuration
-
-        val dayUnitDuration = dayDuration / DAY_HOUR_COUNT
-        val nightUnitDuration = nightDuration / NIGHT_HOUR_COUNT
-
-        // Day units
-        val dayTimes = mutableListOf<LocalTime>()
-        for (i in 0 until DAY_HOUR_COUNT) {
-            val unitStart = sunTime.sunrise.plusNanos((i * dayUnitDuration) * 1_000_000)
-            dayTimes.add(unitStart)
-        }
-
-        // Night units
-        val nightTimes = mutableListOf<LocalTime>()
-        for (i in 0 until NIGHT_HOUR_COUNT) {
-            val unitStart = sunTime.sunset.plusNanos((i * nightUnitDuration) * 1_000_000)
-            nightTimes.add(unitStart)
-        }
-
+        val dayDuration = Duration.between(sunTime.sunrise, sunTime.sunset)
+        val dayTimes = sunTime.sunrise.toRomanDayTimes(sunTime.sunset)
+        val nightTimes = sunTime.sunset.toRomanNightTimes(dayDuration)
         return RomanTimes(
             date = sunTime.date,
             dayTimes = dayTimes,
             nightTimes = nightTimes,
         )
+    }
+
+    private fun LocalTime.toRomanDayTimes(
+        sunsetTime: LocalTime
+    ): List<LocalTime> {
+        val duration = Duration.between(this, sunsetTime)
+        val unitDuration = duration.dividedBy(DAY_HOUR_COUNT.toLong())
+        return List(DAY_HOUR_COUNT) { index ->
+            this.plus(unitDuration.multipliedBy(index.toLong()))
+        }
+    }
+
+    private fun LocalTime.toRomanNightTimes(
+        dayDuration: Duration
+    ): List<LocalTime> {
+        val nightDuration = fullDayDuration.minus(dayDuration)
+        val unitDuration = nightDuration.dividedBy(NIGHT_HOUR_COUNT.toLong())
+        return List(NIGHT_HOUR_COUNT) { index ->
+            this.plus(unitDuration.multipliedBy(index.toLong()))
+        }
     }
 }
