@@ -12,9 +12,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 
+data class MainScreenModel(
+    val message: String = "",
+)
+
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    model: MainScreenModel,
 ) {
     Scaffold(modifier = modifier) { innerPadding ->
         Box(
@@ -24,7 +29,7 @@ fun MainScreen(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = stringResource(R.string.main_greeting_message)
+                text = model.message
             )
         }
     }
@@ -34,6 +39,10 @@ fun MainScreen(
 @Composable
 private fun MainScreenPreview() {
     HoraSolisTheme {
-        MainScreen()
+        MainScreen(
+            model = MainScreenModel(
+                message = stringResource(id = R.string.app_name)
+            )
+        )
     }
 }
