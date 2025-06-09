@@ -2,4 +2,23 @@
     <string name="app_name">Hora Solis</string>
 
     <string name="main_greeting_message">Welcome to Hora Solis</string>
+
+    <string name="city_toronto">Toronto</string>
+    <string name="city_thiviers">Thiviers</string>
+    <string name="city_bordeaux">Bordeaux</string>
+    <string name="city_courtalain">Courtalain</string>
+    <string name="city_sydney">Sydney</string>
+    <string name="city_tokyo">Tokyo</string>
+    <string name="city_cape_town">Cape Town</string>
+    <string name="city_los_angeles">Los Angeles</string>
+    <string name="city_sao_paulo">São Paulo</string>
+    <string name="city_mumbai">Mumbai</string>
+    <string name="city_cairo">Cairo</string>
+    <string name="city_moscow">Moscow</string>
+    <string name="city_dubai">Dubai</string>
+    <string name="city_beijing">Beijing</string>
+    <string name="city_rio_de_janeiro">Rio de Janeiro</string>
+
+    <string name="city_dropdown_label">Select City</string>
+    <string name="update_button">Update</string>
 </resources>

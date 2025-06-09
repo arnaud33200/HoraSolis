@@ -32,15 +32,22 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
+        freeCompilerArgs = listOf(
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+        )
     }
+
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
+
+    implementation(libs.kotlin.immutableCollections)
 
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)

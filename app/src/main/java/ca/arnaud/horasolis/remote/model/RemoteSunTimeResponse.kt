@@ -21,8 +21,9 @@ data class RemoteSunTimeResponse(
 
     fun toSunTime(atDate: LocalDate): SunTime {
         return SunTime(
-            sunrise = results.sunrise.atDate(atDate),
-            sunset = results.sunset.atDate(atDate)
+            date = atDate,
+            sunrise = results.sunrise,
+            sunset = results.sunset,
         )
     }
 }

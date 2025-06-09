@@ -1,24 +1,30 @@
 package ca.arnaud.horasolis.domain
 
-import ca.arnaud.horasolis.remote.model.GetSunTime
 import ca.arnaud.horasolis.remote.KtorClient
+import ca.arnaud.horasolis.remote.model.GetSunTime
 import ca.arnaud.horasolis.remote.model.RemoteSunTimeResponse
 import ca.arnaud.horasolis.remote.toIsoString
 import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.LocalTime
 
 data class GetRomanTimesParams(
     val lat: Double,
     val lng: Double,
-    val timZoneId: String = ZoneId.systemDefault().id,
+    val timZoneId: String,
     val date: LocalDate,
 )
 
 data class SunTime(
-    val sunrise: LocalDateTime,
-    val sunset: LocalDateTime,
+    val date: LocalDate,
+    val sunrise: LocalTime,
+    val sunset: LocalTime,
+)
+
+data class RomanTimes(
+    val date: LocalDate,
+    val dayTimes: List<LocalTime>,
+    val nightTimes: List<LocalTime>,
 )
 
 class GetRomanTimesUseCase(
@@ -32,7 +38,7 @@ class GetRomanTimesUseCase(
 
     suspend operator fun invoke(
         params: GetRomanTimesParams,
-    ): Response<List<LocalDateTime>, Throwable> {
+    ): Response<RomanTimes, Throwable> {
         val resource = GetSunTime(
             lat = params.lat,
             lng = params.lng,
@@ -48,8 +54,7 @@ class GetRomanTimesUseCase(
     }
 
 
-    private fun calculateRomanTimes(sunTime: SunTime): List<LocalDateTime> {
-        val times = mutableListOf<LocalDateTime>()
+    private fun calculateRomanTimes(sunTime: SunTime): RomanTimes {
 
         val dayDuration = Duration.between(sunTime.sunrise, sunTime.sunset).toMillis()
         val fullDayMillis = 24 * 60 * 60 * 1000L
@@ -59,17 +64,23 @@ class GetRomanTimesUseCase(
         val nightUnitDuration = nightDuration / NIGHT_HOUR_COUNT
 
         // Day units
+        val dayTimes = mutableListOf<LocalTime>()
         for (i in 0 until DAY_HOUR_COUNT) {
             val unitStart = sunTime.sunrise.plusNanos((i * dayUnitDuration) * 1_000_000)
-            times.add(unitStart)
+            dayTimes.add(unitStart)
         }
 
         // Night units
+        val nightTimes = mutableListOf<LocalTime>()
         for (i in 0 until NIGHT_HOUR_COUNT) {
             val unitStart = sunTime.sunset.plusNanos((i * nightUnitDuration) * 1_000_000)
-            times.add(unitStart)
+            nightTimes.add(unitStart)
         }
 
-        return times
+        return RomanTimes(
+            date = sunTime.date,
+            dayTimes = dayTimes,
+            nightTimes = nightTimes,
+        )
     }
 }

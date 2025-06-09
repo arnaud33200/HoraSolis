@@ -23,6 +23,8 @@ class MainActivity : ComponentActivity() {
 
                 MainScreen(
                     model = state,
+                    onCitySelected = detailViewModel::onCitySelected,
+                    onUpdateClicked = detailViewModel::onUpdateClicked,
                 )
             }
         }

@@ -4,8 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.RomanTimes
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -18,15 +22,49 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            val params = GetRomanTimesParams(
-                lat = 48.8566,
-                lng = 2.3522,
-                date = LocalDate.now()
-            )
-            val result = getRomanTimes(params)
-            _state.value = MainScreenModel(
-                message = result.toString(),
+            refreshTimes()
+        }
+    }
+
+    private suspend fun refreshTimes() {
+        val selectedCity = state.value.selectedCity
+        val params = GetRomanTimesParams(
+            lat = selectedCity.latitude,
+            lng = selectedCity.longitude,
+            timZoneId = selectedCity.timeZone,
+            date = LocalDate.now()
+        )
+        val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
+        _state.update { model ->
+            model.copy(
+                times = romanTimes.toTimeItems(),
             )
         }
+    }
+
+    fun onCitySelected(city: City) {
+        _state.value = _state.value.copy(selectedCity = city)
+    }
+
+    fun onUpdateClicked() {
+        viewModelScope.launch {
+            refreshTimes()
+        }
+    }
+
+    private fun RomanTimes.toTimeItems(): ImmutableList<TimeItem> {
+        return (dayTimes.mapIndexed { index, dateTime ->
+            TimeItem(
+                label = "Day Time ${index + 1}",
+                hour = dateTime.toString(),
+                night = false,
+            )
+        } + nightTimes.mapIndexed { index, dateTime ->
+            TimeItem(
+                label = "Night Time ${index + 1}",
+                hour = dateTime.toString(),
+                night = true,
+            )
+        }).toImmutableList()
     }
 }
