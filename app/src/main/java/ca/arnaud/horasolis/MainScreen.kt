@@ -1,15 +1,14 @@
 package ca.arnaud.horasolis
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -48,64 +47,58 @@ data class MainScreenModel(
 fun MainScreen(
     modifier: Modifier = Modifier,
     onCitySelected: (City) -> Unit,
-    onUpdateClicked: () -> Unit,
     model: MainScreenModel,
 ) {
     val selectedCity = model.selectedCity
 
     Scaffold(modifier = modifier) { innerPadding ->
-        Box(
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
+                .padding(40.dp)
                 .fillMaxSize(),
-            contentAlignment = Alignment.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 CityDropdown(
                     selectedCity = selectedCity,
                     onCitySelected = onCitySelected,
                 )
-
-                Button(
-                    onClick = onUpdateClicked,
-                    modifier = Modifier.padding(top = 16.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.update_button)
-                    )
-                }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp)
-                ) {
-                    items(model.times) { timeItem ->
-                        val color = if (timeItem.night) {
-                            Color(0xff3774bd)
-                        } else {
-                            Color.Unspecified
-                        }
-                        Row {
-                            Text(
-                                text = timeItem.label,
-                                color = color,
-                            )
-                            Spacer(modifier.weight(1f))
-                            Text(
-                                text = timeItem.hour,
-                                color = color,
-                            )
-                        }
-
-                    }
-                }
-
-                Text(
-                    text = model.message
-                )
             }
+
+            LazyColumn(
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                items(model.times) { timeItem ->
+                    val color = if (timeItem.night) {
+                        Color(0xff3774bd)
+                    } else {
+                        Color.Unspecified
+                    }
+                    Row(
+                        modifier = Modifier.height(30.dp),
+                    ) {
+                        Text(
+                            text = timeItem.label,
+                            color = color,
+                        )
+                        Spacer(modifier.weight(1f))
+                        Text(
+                            text = timeItem.hour,
+                            color = color,
+                        )
+                    }
+
+                }
+            }
+
+            Text(
+                text = model.message
+            )
         }
+
     }
 }
 
@@ -162,7 +155,6 @@ private fun MainScreenPreview() {
                 message = stringResource(id = R.string.app_name)
             ),
             onCitySelected = {},
-            onUpdateClicked = {},
         )
     }
 }

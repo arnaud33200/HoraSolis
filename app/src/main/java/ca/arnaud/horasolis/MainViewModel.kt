@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
 
 class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
@@ -22,12 +23,12 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            refreshTimes()
+            val selectedCity = state.value.selectedCity
+            refreshTimes(selectedCity)
         }
     }
 
-    private suspend fun refreshTimes() {
-        val selectedCity = state.value.selectedCity
+    private suspend fun refreshTimes(selectedCity: City) {
         val params = GetRomanTimesParams(
             lat = selectedCity.latitude,
             lng = selectedCity.longitude,
@@ -37,34 +38,35 @@ class MainViewModel(
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
         _state.update { model ->
             model.copy(
+                selectedCity = selectedCity,
                 times = romanTimes.toTimeItems(),
             )
         }
     }
 
     fun onCitySelected(city: City) {
-        _state.value = _state.value.copy(selectedCity = city)
-    }
-
-    fun onUpdateClicked() {
         viewModelScope.launch {
-            refreshTimes()
+            refreshTimes(city)
         }
     }
 
     private fun RomanTimes.toTimeItems(): ImmutableList<TimeItem> {
-        return (dayTimes.mapIndexed { index, dateTime ->
+        return (dayTimes.mapIndexed { index, time ->
             TimeItem(
                 label = "Day Time ${index + 1}",
-                hour = dateTime.toString(),
+                hour = time.formatTime(),
                 night = false,
             )
-        } + nightTimes.mapIndexed { index, dateTime ->
+        } + nightTimes.mapIndexed { index, time ->
             TimeItem(
                 label = "Night Time ${index + 1}",
-                hour = dateTime.toString(),
+                hour = time.formatTime(),
                 night = true,
             )
         }).toImmutableList()
+    }
+
+    private fun LocalTime.formatTime(): String {
+        return this.toString().split(".").first()
     }
 }
