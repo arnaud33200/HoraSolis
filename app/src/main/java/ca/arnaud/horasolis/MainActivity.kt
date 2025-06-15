@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 
 class MainActivity : ComponentActivity() {
 
-    val detailViewModel: MainViewModel by viewModel()
+    val viewModel: MainViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +19,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HoraSolisTheme {
-                val state by detailViewModel.state.collectAsState()
+                val state by viewModel.state.collectAsState()
 
                 MainScreen(
                     model = state,
-                    onCitySelected = detailViewModel::onCitySelected,
+                    onCitySelected = viewModel::onCitySelected,
+                    onTimeChecked = viewModel::onTimeChecked,
                 )
             }
         }

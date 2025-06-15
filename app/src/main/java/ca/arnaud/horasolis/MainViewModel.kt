@@ -50,6 +50,17 @@ class MainViewModel(
         }
     }
 
+    fun onTimeChecked(timeItem: TimeItem, checked: Boolean) {
+        _state.update { model ->
+            val updatedSelectedTimes = if (checked) {
+                model.selectedTimes + timeItem
+            } else {
+                model.selectedTimes - timeItem
+            }
+            model.copy(selectedTimes = updatedSelectedTimes.toImmutableList())
+        }
+    }
+
     private fun RomanTimes.toTimeItems(): ImmutableList<TimeItem> {
         return (dayTimes.mapIndexed { index, time ->
             TimeItem(

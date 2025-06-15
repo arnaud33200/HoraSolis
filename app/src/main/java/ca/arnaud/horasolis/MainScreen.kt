@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -41,6 +42,7 @@ data class MainScreenModel(
     val message: String = "",
     val selectedCity: City = City.Thiviers,
     val times: ImmutableList<TimeItem> = persistentListOf(),
+    val selectedTimes: ImmutableList<TimeItem> = persistentListOf(),
 )
 
 @Composable
@@ -48,6 +50,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     onCitySelected: (City) -> Unit,
     model: MainScreenModel,
+    onTimeChecked: (TimeItem, Boolean) -> Unit,
 ) {
     val selectedCity = model.selectedCity
 
@@ -77,9 +80,17 @@ fun MainScreen(
                     } else {
                         Color.Unspecified
                     }
+                    val checked = model.selectedTimes.contains(timeItem)
                     Row(
                         modifier = Modifier.height(30.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Checkbox(
+                            checked = checked,
+                            onCheckedChange = { isChecked ->
+                                onTimeChecked(timeItem, isChecked)
+                            }
+                        )
                         Text(
                             text = timeItem.label,
                             color = color,
@@ -155,6 +166,7 @@ private fun MainScreenPreview() {
                 message = stringResource(id = R.string.app_name)
             ),
             onCitySelected = {},
+            onTimeChecked = { _, _ -> },
         )
     }
 }
