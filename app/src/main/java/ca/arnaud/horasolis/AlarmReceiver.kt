@@ -13,11 +13,11 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        // TODO: Start the alarm ringing UI/service here
-
         val param = intent.getParcelableExtra<RomanTimeAlarmScheduleParam>(
             ROMAN_TIME_ALARM_SERVICE_PARAM_EXTRA_KEY
         ) ?: return
+
+        AlarmRingingService.startService(context)
 
         ScheduleNextAlarmWorker.enqueue(
             context = context,
@@ -27,4 +27,3 @@ class AlarmReceiver : BroadcastReceiver() {
         )
     }
 }
-
