@@ -23,6 +23,9 @@ data class SunTime(
 
 data class RomanTimes(
     val date: LocalDate,
+    val lat: Double,
+    val lng: Double,
+    val timZoneId: String,
     val times: List<RomanTime>,
 )
 
@@ -70,12 +73,15 @@ class GetRomanTimesUseCase(
         return ktorClient.getResponse<GetSunTime, RemoteSunTimeResponse>(resource).map(
             transform = { remoteSunTimeResponse ->
                 val sunTime = remoteSunTimeResponse.toSunTime(params.date)
-                calculateRomanTimes(sunTime)
+                calculateRomanTimes(sunTime, params)
             }
         )
     }
 
-    private fun calculateRomanTimes(sunTime: SunTime): RomanTimes {
+    private fun calculateRomanTimes(
+        sunTime: SunTime,
+        params: GetRomanTimesParams,
+    ): RomanTimes {
         val dayDuration = Duration.between(sunTime.sunrise, sunTime.sunset)
         val dayTimes = sunTime.sunrise
             .toRomanDayTimes(sunTime.sunset)
@@ -89,6 +95,9 @@ class GetRomanTimesUseCase(
         return RomanTimes(
             date = sunTime.date,
             times = dayTimes + nightTimes,
+            lat = params.lat,
+            lng = params.lng,
+            timZoneId = params.timZoneId,
         )
     }
 

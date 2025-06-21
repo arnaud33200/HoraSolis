@@ -25,6 +25,7 @@ class MainActivity : ComponentActivity() {
                     model = state,
                     onCitySelected = viewModel::onCitySelected,
                     onTimeChecked = viewModel::onTimeChecked,
+                    onSaveClicked = viewModel::onSaveClicked,
                 )
             }
         }

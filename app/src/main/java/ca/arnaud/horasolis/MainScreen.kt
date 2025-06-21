@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,6 +35,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class TimeItem(
+    val number: Int,
     val label: String,
     val hour: String,
     val night: Boolean,
@@ -51,10 +54,23 @@ fun MainScreen(
     onCitySelected: (City) -> Unit,
     model: MainScreenModel,
     onTimeChecked: (TimeItem, Boolean) -> Unit,
+    onSaveClicked: () -> Unit,
 ) {
     val selectedCity = model.selectedCity
 
-    Scaffold(modifier = modifier) { innerPadding ->
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            Button(
+                onClick = onSaveClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(stringResource(R.string.save_schedule_button))
+            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -101,7 +117,6 @@ fun MainScreen(
                             color = color,
                         )
                     }
-
                 }
             }
 
@@ -109,7 +124,6 @@ fun MainScreen(
                 text = model.message
             )
         }
-
     }
 }
 
@@ -167,6 +181,7 @@ private fun MainScreenPreview() {
             ),
             onCitySelected = {},
             onTimeChecked = { _, _ -> },
+            onSaveClicked = {},
         )
     }
 }

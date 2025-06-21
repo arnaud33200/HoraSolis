@@ -1,6 +1,8 @@
 package ca.arnaud.horasolis.domain
 
+import ca.arnaud.horasolis.RomanTimeAlarmScheduleParam
 import ca.arnaud.horasolis.RomanTimeAlarmService
+import ca.arnaud.horasolis.data.HoraSolisDatabase
 
 data class ScheduleNextDayAlarmParam(
     val number: Int,
@@ -9,13 +11,29 @@ data class ScheduleNextDayAlarmParam(
 class ScheduleNextDayAlarmUseCase(
     private val getRomanTimesUseCase: GetRomanTimesUseCase,
     private val alarmService: RomanTimeAlarmService,
+    private val database: HoraSolisDatabase,
+    private val timeProvider: TimeProvider,
 ) {
 
     suspend operator fun invoke(param: ScheduleNextDayAlarmParam) {
-        /**
-         * 1 - fetch current save settings to get lat, lng, timezone, ...
-         * 2 - get sun times for next day (tomorrow)
-         * 3 - call alarm service for the [ScheduleNextDayAlarmParam.number]
-         */
+        val settingsDao = database.scheduleSettingsDao()
+        val settings = settingsDao.getSettings() ?: return
+
+        val params = GetRomanTimesParams(
+            lat = settings.lat,
+            lng = settings.lng,
+            timZoneId = settings.timZoneId,
+            date = timeProvider.getNowDate().plusDays(1),
+        )
+        val times = getRomanTimesUseCase(params)
+        val timeToSchedule = times.getDataOrNull()?.times?.find {
+            it.number == param.number
+        } ?: return
+
+        val alarmParams = RomanTimeAlarmScheduleParam(
+            number = timeToSchedule.number,
+            dateTime = timeProvider.getNowDate().plusDays(1).atTime(timeToSchedule.startTime)
+        )
+        alarmService.scheduleAlarm(alarmParams)
     }
 }

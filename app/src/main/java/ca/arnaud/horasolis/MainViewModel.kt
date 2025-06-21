@@ -6,6 +6,8 @@ import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.RomanTime
 import ca.arnaud.horasolis.domain.RomanTimes
+import ca.arnaud.horasolis.domain.ScheduleTimesParams
+import ca.arnaud.horasolis.domain.ScheduleTimesUseCase
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +19,13 @@ import java.time.LocalTime
 
 class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
+    private val scheduleTimes: ScheduleTimesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MainScreenModel>(MainScreenModel())
     val state: StateFlow<MainScreenModel> = _state
+
+    private var currentRomanTimes: RomanTimes? = null
 
     init {
         viewModelScope.launch {
@@ -37,6 +42,7 @@ class MainViewModel(
             date = LocalDate.now(),
         )
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
+        currentRomanTimes = romanTimes
         _state.update { model ->
             model.copy(
                 selectedCity = selectedCity,
@@ -62,9 +68,27 @@ class MainViewModel(
         }
     }
 
+    fun onSaveClicked() {
+        val romanTimes = currentRomanTimes ?: return
+        val selectedTimes = state.value.selectedTimes.mapNotNull { timeItem ->
+            romanTimes.times.find { it.number == timeItem.number }
+        }
+        if (selectedTimes.isEmpty()) return
+        viewModelScope.launch {
+            val params = ScheduleTimesParams(
+                lat = romanTimes.lat,
+                lng = romanTimes.lng,
+                timZoneId = romanTimes.timZoneId,
+                times = selectedTimes,
+            )
+            scheduleTimes(params)
+        }
+    }
+
     private fun RomanTimes.toTimeItems(): ImmutableList<TimeItem> {
         return times.mapIndexed { index, time ->
             TimeItem(
+                number = time.number,
                 label = "Time ${time.number}",
                 hour = time.startTime.formatTime(),
                 night = time.type == RomanTime.Type.Night,
