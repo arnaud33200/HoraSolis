@@ -10,11 +10,12 @@ data class ScheduleNextDayAlarmParam(
 
 class ScheduleNextDayAlarmUseCase(
     private val getRomanTimesUseCase: GetRomanTimesUseCase,
-    private val alarmService: RomanTimeAlarmService,
+    private val scheduleRomanTime: ScheduleRomanTimeUseCase,
     private val database: HoraSolisDatabase,
     private val timeProvider: TimeProvider,
 ) {
 
+    // TODO - return a Response
     suspend operator fun invoke(param: ScheduleNextDayAlarmParam) {
         val settingsDao = database.scheduleSettingsDao()
         val settings = settingsDao.getSettings() ?: return
@@ -30,10 +31,7 @@ class ScheduleNextDayAlarmUseCase(
             it.number == param.number
         } ?: return
 
-        val alarmParams = RomanTimeAlarmScheduleParam(
-            number = timeToSchedule.number,
-            dateTime = timeProvider.getNowDate().plusDays(1).atTime(timeToSchedule.startTime)
-        )
-        alarmService.scheduleAlarm(alarmParams)
+        scheduleRomanTime(timeToSchedule)
+
     }
 }

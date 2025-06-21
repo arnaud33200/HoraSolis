@@ -6,8 +6,8 @@ import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.RomanTime
 import ca.arnaud.horasolis.domain.RomanTimes
-import ca.arnaud.horasolis.domain.ScheduleTimesParams
-import ca.arnaud.horasolis.domain.ScheduleTimesUseCase
+import ca.arnaud.horasolis.domain.SavedTimeScheduleParams
+import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +19,7 @@ import java.time.LocalTime
 
 class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
-    private val scheduleTimes: ScheduleTimesUseCase,
+    private val savedTimeSchedule: SavedTimeScheduleUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MainScreenModel>(MainScreenModel())
@@ -75,13 +75,13 @@ class MainViewModel(
         }
         if (selectedTimes.isEmpty()) return
         viewModelScope.launch {
-            val params = ScheduleTimesParams(
+            val params = SavedTimeScheduleParams(
                 lat = romanTimes.lat,
                 lng = romanTimes.lng,
                 timZoneId = romanTimes.timZoneId,
                 times = selectedTimes,
             )
-            scheduleTimes(params)
+            savedTimeSchedule(params)
         }
     }
 

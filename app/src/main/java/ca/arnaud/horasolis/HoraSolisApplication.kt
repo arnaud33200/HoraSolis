@@ -5,8 +5,9 @@ import android.content.Context
 import androidx.room.Room
 import ca.arnaud.horasolis.data.HoraSolisDatabase
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmUseCase
-import ca.arnaud.horasolis.domain.ScheduleTimesUseCase
+import ca.arnaud.horasolis.domain.ScheduleRomanTimeUseCase
 import ca.arnaud.horasolis.domain.TimeProvider
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
@@ -25,11 +26,15 @@ class HoraSolisApplication : Application() {
     val appModule = module {
         single<Context> { applicationContext }
         viewModelOf(::MainViewModel)
-        singleOf(::GetRomanTimesUseCase)
-        singleOf(::ScheduleTimesUseCase)
         singleOf(::RomanTimeAlarmService)
         workerOf(::ScheduleNextAlarmWorker)
+    }
+
+    val domainModule = module {
+        singleOf(::GetRomanTimesUseCase)
+        singleOf(::SavedTimeScheduleUseCase)
         singleOf(::ScheduleNextDayAlarmUseCase)
+        singleOf(::ScheduleRomanTimeUseCase)
         singleOf(::TimeProvider)
     }
 
@@ -49,7 +54,7 @@ class HoraSolisApplication : Application() {
         super.onCreate()
 
         startKoin {
-            modules(networkModule, appModule, databaseModule)
+            modules(networkModule, appModule, databaseModule, domainModule)
         }
     }
 }

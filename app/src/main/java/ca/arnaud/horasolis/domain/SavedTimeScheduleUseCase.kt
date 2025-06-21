@@ -1,42 +1,30 @@
 package ca.arnaud.horasolis.domain
 
-import ca.arnaud.horasolis.RomanTimeAlarmScheduleParam
-import ca.arnaud.horasolis.RomanTimeAlarmService
 import ca.arnaud.horasolis.data.HoraSolisDatabase
 import ca.arnaud.horasolis.data.ScheduleSettingsEntity
 import ca.arnaud.horasolis.data.SelectedTimeEntity
 
-data class ScheduleTimesParams(
+data class SavedTimeScheduleParams(
     val lat: Double,
     val lng: Double,
     val timZoneId: String,
     val times: List<RomanTime>,
 )
 
-class ScheduleTimesUseCase(
-    private val alarmService: RomanTimeAlarmService,
+class SavedTimeScheduleUseCase(
     private val database: HoraSolisDatabase,
-    private val timeProvider: TimeProvider,
+    private val scheduleRomanTime: ScheduleRomanTimeUseCase,
 ) {
 
-    suspend operator fun invoke(params: ScheduleTimesParams) {
+    suspend operator fun invoke(params: SavedTimeScheduleParams) {
         saveParams(params)
-        val nowDateTime = timeProvider.getNowDateTime()
-        params.times.forEach { time ->
-            val atDate = if (time.startTime.isBefore(nowDateTime.toLocalTime())) {
-                nowDateTime.toLocalDate().plusDays(1)
-            } else {
-                nowDateTime.toLocalDate()
-            }
-            val alarmParams = RomanTimeAlarmScheduleParam(
-                number = time.number,
-                dateTime = atDate.atTime(time.startTime)
-            )
-            alarmService.scheduleAlarm(alarmParams)
-        }
+        params.times.forEach(scheduleRomanTime::invoke)
     }
 
-    private suspend fun saveParams(params: ScheduleTimesParams) {
+    /**
+     * Temporary solution, we should either call a repository or local data source.
+     */
+    private suspend fun saveParams(params: SavedTimeScheduleParams) {
         val selectedTimeDao = database.selectedTimeDao()
         selectedTimeDao.deleteAll()
         params.times.forEach { time ->
