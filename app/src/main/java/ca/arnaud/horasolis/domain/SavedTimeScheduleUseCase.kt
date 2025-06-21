@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.domain
 
+import ca.arnaud.horasolis.RomanTimeAlarmService
 import ca.arnaud.horasolis.data.HoraSolisDatabase
 import ca.arnaud.horasolis.data.ScheduleSettingsEntity
 import ca.arnaud.horasolis.data.SelectedTimeEntity
@@ -14,10 +15,12 @@ data class SavedTimeScheduleParams(
 class SavedTimeScheduleUseCase(
     private val database: HoraSolisDatabase,
     private val scheduleRomanTime: ScheduleRomanTimeUseCase,
+    private val alarmService: RomanTimeAlarmService,
 ) {
 
     suspend operator fun invoke(params: SavedTimeScheduleParams) {
         saveParams(params)
+        alarmService.cancelAll()
         params.times.forEach(scheduleRomanTime::invoke)
     }
 

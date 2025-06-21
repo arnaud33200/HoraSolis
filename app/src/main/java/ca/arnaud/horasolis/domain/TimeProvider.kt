@@ -2,6 +2,7 @@ package ca.arnaud.horasolis.domain
 
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 class TimeProvider {
 
@@ -11,5 +12,9 @@ class TimeProvider {
 
     fun getNowDate(): LocalDate {
         return LocalDate.now()
+    }
+
+    fun getZoneId(): ZoneId {
+        return ZoneId.systemDefault()
     }
 }
