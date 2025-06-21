@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import ca.arnaud.horasolis.data.HoraSolisDatabase
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmUseCase
 import ca.arnaud.horasolis.domain.ScheduleTimesUseCase
 import ca.arnaud.horasolis.domain.TimeProvider
 import ca.arnaud.horasolis.remote.KtorClient
@@ -28,6 +29,7 @@ class HoraSolisApplication : Application() {
         singleOf(::ScheduleTimesUseCase)
         singleOf(::RomanTimeAlarmService)
         workerOf(::ScheduleNextAlarmWorker)
+        singleOf(::ScheduleNextDayAlarmUseCase)
         singleOf(::TimeProvider)
     }
 

@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmParam
 import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmUseCase
+import org.koin.java.KoinJavaComponent
 
 data class ScheduleNextAlarmWorkerParam(
     val number: Int,
@@ -39,9 +40,12 @@ data class ScheduleNextAlarmWorkerParam(
 
 class ScheduleNextAlarmWorker(
     context: Context,
-    workerParams: WorkerParameters,
-    private val scheduleNextDayAlarm: ScheduleNextDayAlarmUseCase,
+    workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
+
+    private val scheduleNextDayAlarm: ScheduleNextDayAlarmUseCase by lazy {
+        KoinJavaComponent.get(ScheduleNextDayAlarmUseCase::class.java)
+    }
 
     companion object {
 
