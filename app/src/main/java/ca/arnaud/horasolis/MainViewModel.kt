@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.ObserveSelectedTimeUseCase
 import ca.arnaud.horasolis.domain.RomanTime
 import ca.arnaud.horasolis.domain.RomanTimes
 import ca.arnaud.horasolis.domain.SavedTimeScheduleParams
@@ -12,6 +13,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -20,6 +22,7 @@ import java.time.LocalTime
 class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
+    private val observeSelected: ObserveSelectedTimeUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MainScreenModel>(MainScreenModel())
@@ -31,6 +34,12 @@ class MainViewModel(
         viewModelScope.launch {
             val selectedCity = state.value.selectedCity
             refreshTimes(selectedCity)
+
+            observeSelected().collectLatest { selectedTimes ->
+                _state.update { model ->
+                    model.copy(selectedTimes = selectedTimes.toTimeItems())
+                }
+            }
         }
     }
 
@@ -46,7 +55,7 @@ class MainViewModel(
         _state.update { model ->
             model.copy(
                 selectedCity = selectedCity,
-                times = romanTimes.toTimeItems(),
+                times = romanTimes.times.toTimeItems(),
             )
         }
     }
@@ -85,8 +94,8 @@ class MainViewModel(
         }
     }
 
-    private fun RomanTimes.toTimeItems(): ImmutableList<TimeItem> {
-        return times.mapIndexed { index, time ->
+    private fun List<RomanTime>.toTimeItems(): ImmutableList<TimeItem> {
+        return this.mapIndexed { index, time ->
             TimeItem(
                 number = time.number,
                 label = "Time ${time.number}",

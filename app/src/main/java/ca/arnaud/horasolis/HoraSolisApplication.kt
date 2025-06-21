@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import ca.arnaud.horasolis.data.HoraSolisDatabase
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.ObserveSelectedTimeUseCase
 import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmUseCase
 import ca.arnaud.horasolis.domain.ScheduleRomanTimeUseCase
@@ -35,17 +36,12 @@ class HoraSolisApplication : Application() {
         singleOf(::SavedTimeScheduleUseCase)
         singleOf(::ScheduleNextDayAlarmUseCase)
         singleOf(::ScheduleRomanTimeUseCase)
+        singleOf(::ObserveSelectedTimeUseCase)
         singleOf(::TimeProvider)
     }
 
     val databaseModule = module {
-        single {
-            Room.databaseBuilder(
-                get(),
-                HoraSolisDatabase::class.java,
-                "horasolis.db"
-            ).build()
-        }
+        single { HoraSolisDatabase.createDatabase(context = get()) }
         single { get<HoraSolisDatabase>().selectedTimeDao() }
         single { get<HoraSolisDatabase>().scheduleSettingsDao() }
     }

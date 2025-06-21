@@ -96,7 +96,7 @@ fun MainScreen(
                     } else {
                         Color.Unspecified
                     }
-                    val checked = model.selectedTimes.contains(timeItem)
+                    val checked = model.selectedTimes.firstOrNull { it.number == timeItem.number } != null
                     Row(
                         modifier = Modifier.height(30.dp),
                         verticalAlignment = Alignment.CenterVertically
