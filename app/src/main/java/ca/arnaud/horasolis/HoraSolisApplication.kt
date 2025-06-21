@@ -1,8 +1,11 @@
 package ca.arnaud.horasolis
 
 import android.app.Application
+import android.content.Context
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
 import ca.arnaud.horasolis.remote.KtorClient
+import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
+import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -14,11 +17,12 @@ class HoraSolisApplication : Application() {
         singleOf(::KtorClient)
     }
 
-
-
     val appModule = module {
+        single<Context> { applicationContext }
         viewModelOf(::MainViewModel)
         singleOf(::GetRomanTimesUseCase)
+        singleOf(::RomanTimeAlarmService)
+        workerOf(::ScheduleNextAlarmWorker)
     }
 
     override fun onCreate() {

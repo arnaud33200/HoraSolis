@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.RomanTime
 import ca.arnaud.horasolis.domain.RomanTimes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -33,7 +34,7 @@ class MainViewModel(
             lat = selectedCity.latitude,
             lng = selectedCity.longitude,
             timZoneId = selectedCity.timeZone,
-            date = LocalDate.now()
+            date = LocalDate.now(),
         )
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
         _state.update { model ->
@@ -62,19 +63,13 @@ class MainViewModel(
     }
 
     private fun RomanTimes.toTimeItems(): ImmutableList<TimeItem> {
-        return (dayTimes.mapIndexed { index, time ->
+        return times.mapIndexed { index, time ->
             TimeItem(
-                label = "Day Time ${index + 1}",
-                hour = time.formatTime(),
-                night = false,
+                label = "Time ${time.number}",
+                hour = time.startTime.formatTime(),
+                night = time.type == RomanTime.Type.Night,
             )
-        } + nightTimes.mapIndexed { index, time ->
-            TimeItem(
-                label = "Night Time ${index + 1}",
-                hour = time.formatTime(),
-                night = true,
-            )
-        }).toImmutableList()
+        }.toImmutableList()
     }
 
     private fun LocalTime.formatTime(): String {

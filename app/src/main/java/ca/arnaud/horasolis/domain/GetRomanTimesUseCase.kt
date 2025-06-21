@@ -23,9 +23,29 @@ data class SunTime(
 
 data class RomanTimes(
     val date: LocalDate,
-    val dayTimes: List<LocalTime>,
-    val nightTimes: List<LocalTime>,
+    val times: List<RomanTime>,
 )
+
+/**
+ * Data for one time of the day or night.
+ * For one full day, there are 12 day times and 12 night times.
+ *
+ * @param number The number of the time in the day or night (1 to 24).
+ * @param startTime The start time of the day or night.
+ * @param duration The duration of the time in hours.
+ * @param type The type of the time, either Day or Night.
+ */
+data class RomanTime(
+    val number: Int,
+    val startTime: LocalTime,
+    val duration: Duration,
+    val type: Type,
+) {
+
+    enum class Type {
+        Day, Night
+    }
+}
 
 class GetRomanTimesUseCase(
     private val ktorClient: KtorClient
@@ -57,12 +77,18 @@ class GetRomanTimesUseCase(
 
     private fun calculateRomanTimes(sunTime: SunTime): RomanTimes {
         val dayDuration = Duration.between(sunTime.sunrise, sunTime.sunset)
-        val dayTimes = sunTime.sunrise.toRomanDayTimes(sunTime.sunset)
-        val nightTimes = sunTime.sunset.toRomanNightTimes(dayDuration)
+        val dayTimes = sunTime.sunrise
+            .toRomanDayTimes(sunTime.sunset)
+            .toRomanTimes(dayDuration, RomanTime.Type.Day)
+
+        val nightDuration = fullDayDuration.minus(dayDuration)
+        val nightTimes = sunTime.sunset
+            .toRomanNightTimes(nightDuration)
+            .toRomanTimes(nightDuration, RomanTime.Type.Night)
+
         return RomanTimes(
             date = sunTime.date,
-            dayTimes = dayTimes,
-            nightTimes = nightTimes,
+            times = dayTimes + nightTimes,
         )
     }
 
@@ -77,12 +103,26 @@ class GetRomanTimesUseCase(
     }
 
     private fun LocalTime.toRomanNightTimes(
-        dayDuration: Duration
+        nightDuration: Duration
     ): List<LocalTime> {
-        val nightDuration = fullDayDuration.minus(dayDuration)
         val unitDuration = nightDuration.dividedBy(NIGHT_HOUR_COUNT.toLong())
         return List(NIGHT_HOUR_COUNT) { index ->
             this.plus(unitDuration.multipliedBy(index.toLong()))
+        }
+    }
+
+    private fun List<LocalTime>.toRomanTimes(
+        duration: Duration,
+        type: RomanTime.Type,
+    ): List<RomanTime> {
+        val offsetIndex = if (type == RomanTime.Type.Day) 0 else DAY_HOUR_COUNT
+        return this.mapIndexed { index, time ->
+            RomanTime(
+                number = index + 1 + offsetIndex,
+                startTime = time,
+                duration = duration,
+                type = type,
+            )
         }
     }
 }
