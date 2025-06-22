@@ -2,10 +2,9 @@ package ca.arnaud.horasolis
 
 import android.app.Application
 import android.content.Context
-import androidx.room.Room
 import ca.arnaud.horasolis.data.HoraSolisDatabase
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
-import ca.arnaud.horasolis.domain.ObserveSelectedTimeUseCase
+import ca.arnaud.horasolis.domain.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmUseCase
 import ca.arnaud.horasolis.domain.ScheduleRomanTimeUseCase
@@ -36,7 +35,7 @@ class HoraSolisApplication : Application() {
         singleOf(::SavedTimeScheduleUseCase)
         singleOf(::ScheduleNextDayAlarmUseCase)
         singleOf(::ScheduleRomanTimeUseCase)
-        singleOf(::ObserveSelectedTimeUseCase)
+        singleOf(::ObserveSelectedTimesUseCase)
         singleOf(::TimeProvider)
     }
 

@@ -39,13 +39,13 @@ data class TimeItem(
     val label: String,
     val hour: String,
     val night: Boolean,
+    val checked: Boolean = false,
 )
 
 data class MainScreenModel(
     val message: String = "",
     val selectedCity: City = City.Thiviers,
     val times: ImmutableList<TimeItem> = persistentListOf(),
-    val selectedTimes: ImmutableList<TimeItem> = persistentListOf(),
 )
 
 @Composable
@@ -96,13 +96,12 @@ fun MainScreen(
                     } else {
                         Color.Unspecified
                     }
-                    val checked = model.selectedTimes.firstOrNull { it.number == timeItem.number } != null
                     Row(
                         modifier = Modifier.height(30.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(
-                            checked = checked,
+                            checked = timeItem.checked,
                             onCheckedChange = { isChecked ->
                                 onTimeChecked(timeItem, isChecked)
                             }

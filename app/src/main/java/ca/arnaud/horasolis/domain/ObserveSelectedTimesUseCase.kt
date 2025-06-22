@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.map
 import java.time.Duration
 import java.time.LocalTime
 
-class ObserveSelectedTimeUseCase(
+class ObserveSelectedTimesUseCase(
     private val database: HoraSolisDatabase,
 ) {
     operator fun invoke(): Flow<List<RomanTime>> {
