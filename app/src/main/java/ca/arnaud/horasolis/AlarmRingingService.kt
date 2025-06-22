@@ -33,7 +33,9 @@ class AlarmRingingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, createNotification())
-        playAlarmSound()
+        if (mediaPlayer?.isPlaying != true) {
+            playAlarmSound()
+        }
         return START_STICKY
     }
 
