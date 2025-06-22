@@ -1,16 +1,29 @@
 package ca.arnaud.horasolis.data
 
+import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 
-class AlarmRepository {
+class AlarmRepository(
+    private val dataStore: DataStore<Preferences>,
+) {
 
-    // TODO - replace with a dataflow
-    private val ringingStateFlow = MutableStateFlow(false)
+    companion object {
 
-    fun setAlarmRinging(ringing: Boolean) {
-        ringingStateFlow.value = ringing
+        private val alarmRingingPreferenceKey = booleanPreferencesKey("alarm_ringing")
     }
 
-    fun getRingingFlow(): Flow<Boolean> = ringingStateFlow
+    suspend fun setAlarmRinging(ringing: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[alarmRingingPreferenceKey] = ringing
+        }
+    }
+
+    fun getRingingFlow(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[alarmRingingPreferenceKey] ?: false
+        }
 }

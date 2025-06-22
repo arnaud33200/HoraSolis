@@ -75,4 +75,6 @@ dependencies {
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
     testImplementation(libs.room.testing)
+
+    implementation(libs.androidx.datastore.preferences)
 }

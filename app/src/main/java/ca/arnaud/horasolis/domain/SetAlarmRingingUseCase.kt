@@ -6,7 +6,7 @@ class SetAlarmRingingUseCase(
     private val alarmRepository: AlarmRepository,
 ) {
 
-    operator fun invoke(ringing: Boolean) {
+    suspend operator fun invoke(ringing: Boolean) {
         alarmRepository.setAlarmRinging(ringing)
     }
 }

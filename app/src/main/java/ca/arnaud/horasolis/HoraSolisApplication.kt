@@ -2,6 +2,9 @@ package ca.arnaud.horasolis
 
 import android.app.Application
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.ObserveAlarmRingingUseCase
@@ -48,6 +51,7 @@ class HoraSolisApplication : Application() {
 
     val dataModule = module {
         singleOf(::AlarmRepository)
+        single { get<Context>().userDataStore }
     }
 
     val localModule = module {
@@ -62,3 +66,7 @@ class HoraSolisApplication : Application() {
         }
     }
 }
+
+val Context.userDataStore: DataStore<Preferences> by preferencesDataStore(
+    name = "com.arnaud.horasolis.datastore.preferences"
+)
