@@ -3,6 +3,7 @@ package ca.arnaud.horasolis
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -84,18 +85,30 @@ class AlarmRingingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Alarm Ringing",
+                getString(R.string.alarm_ringing_channel_name),
                 NotificationManager.IMPORTANCE_HIGH
             )
             val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
+
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Alarm Ringing")
-            .setContentText("Tap to open app and stop alarm.")
+            .setContentTitle(getString(R.string.alarm_ringing_notification_title))
+            .setContentText(getString(R.string.alarm_ringing_notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
+            .setContentIntent(getMainActivityIntent())
             .build()
+    }
+
+    private fun getMainActivityIntent(): PendingIntent {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or (
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+                )
+        return PendingIntent.getActivity(this, 0, intent, flags)
     }
 }

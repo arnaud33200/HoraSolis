@@ -77,4 +77,5 @@ dependencies {
     testImplementation(libs.room.testing)
 
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.accompanist.permissions)
 }

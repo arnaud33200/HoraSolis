@@ -26,4 +26,9 @@
     <string name="ringing_alarm_dialog_title">Alarm is ringing</string>
     <string name="ringing_alarm_dialog_button">Stop Alarm</string>
     <string name="ringing_alarm_dialog_message">would you like to stop the ringing?</string>
+
+    <string name="alarm_ringing_channel_name">Alarm Ringing</string>
+    <string name="alarm_ringing_notification_title">Alarm Ringing</string>
+    <string name="alarm_ringing_notification_text">Tap to open app and stop alarm.</string>
+    <string name="notification_permission_required_toast_message">Notification permission is needed for alerts.</string>
 </resources>
