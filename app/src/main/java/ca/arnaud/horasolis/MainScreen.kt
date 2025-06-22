@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ data class TimeItem(
     val hour: String,
     val night: Boolean,
     val checked: Boolean = false,
+    val highlight: Boolean = false,
 )
 
 data class MainScreenModel(
@@ -96,8 +98,18 @@ fun MainScreen(
                     } else {
                         Color.Unspecified
                     }
+                    val background = if (timeItem.highlight) {
+                        Color(0xFFE3F2FD) // TODO - use a theme color
+                    } else {
+                        Color.Transparent
+                    }
                     Row(
-                        modifier = Modifier.height(30.dp),
+                        modifier = Modifier
+                            .height(30.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp)
+                            .then(if (timeItem.highlight) Modifier else Modifier)
+                            .background(background),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Checkbox(

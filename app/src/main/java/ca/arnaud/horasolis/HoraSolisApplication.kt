@@ -34,6 +34,7 @@ class HoraSolisApplication : Application() {
         single<Context> { applicationContext }
         viewModelOf(::MainViewModel)
         singleOf(::RomanTimeAlarmService)
+        singleOf(::StringProvider)
         workerOf(::ScheduleNextAlarmWorker)
         factoryOf(::MainScreenModelFactory)
     }

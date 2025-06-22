@@ -45,6 +45,8 @@ data class RomanTime(
     val type: Type,
 ) {
 
+    val endTime: LocalTime = startTime.plus(duration)
+
     enum class Type {
         Day, Night
     }
@@ -124,12 +126,14 @@ class GetRomanTimesUseCase(
         duration: Duration,
         type: RomanTime.Type,
     ): List<RomanTime> {
+        val count = if (type == RomanTime.Type.Day) DAY_HOUR_COUNT else NIGHT_HOUR_COUNT
+        val timeDuration = duration.dividedBy(count.toLong())
         val offsetIndex = if (type == RomanTime.Type.Day) 0 else DAY_HOUR_COUNT
         return this.mapIndexed { index, time ->
             RomanTime(
                 number = index + 1 + offsetIndex,
                 startTime = time,
-                duration = duration,
+                duration = timeDuration,
                 type = type,
             )
         }

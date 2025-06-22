@@ -31,4 +31,6 @@
     <string name="alarm_ringing_notification_title">Alarm Ringing</string>
     <string name="alarm_ringing_notification_text">Tap to open app and stop alarm.</string>
     <string name="notification_permission_required_toast_message">Notification permission is needed for alerts.</string>
+    <string name="time_item_label">Time %1$s</string>
+    <string name="time_item_now_label">Time %1$s (Now)</string>
 </resources>
