@@ -71,6 +71,7 @@ class ScheduleNextAlarmWorker(
     }
 
     override suspend fun doWork(): Result {
+        println("HORA_SOLIS_ALARM: worker job for number ${inputData.getInt("number", -1)}")
         val param = ScheduleNextAlarmWorkerParam.fromDataOrNull(inputData)
             ?: return Result.failure()
 

@@ -35,9 +35,9 @@ class AlarmRingingService : Service() {
             }
         }
 
-        fun stopService(context: Context) {
+        fun stopService(context: Context): Boolean {
             val serviceIntent = Intent(context, AlarmRingingService::class.java)
-            context.stopService(serviceIntent)
+            return context.stopService(serviceIntent)
         }
     }
 

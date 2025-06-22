@@ -46,7 +46,9 @@ class MainActivity : ComponentActivity() {
                 if (showRingingDialog) {
                     RingtoneDialog(
                         onButtonClick = {
-                            AlarmRingingService.stopService(context = this)
+                            if (!AlarmRingingService.stopService(context = this)) {
+                                viewModel.onStopRingingServiceFailed()
+                            }
                         },
                     )
                 }

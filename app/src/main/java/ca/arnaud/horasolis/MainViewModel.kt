@@ -9,6 +9,7 @@ import ca.arnaud.horasolis.domain.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.RomanTimes
 import ca.arnaud.horasolis.domain.SavedTimeScheduleParams
 import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
+import ca.arnaud.horasolis.domain.SetAlarmRingingUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,6 +22,7 @@ class MainViewModel(
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
     private val observeAlarmRinging: ObserveAlarmRingingUseCase,
+    private val setAlarmRinging: SetAlarmRingingUseCase,
     private val screenModelFactory: MainScreenModelFactory,
 ) : ViewModel() {
 
@@ -99,6 +101,16 @@ class MainViewModel(
                 times = selectedTimes,
             )
             savedTimeSchedule(params)
+        }
+    }
+
+    /**
+     * Fallback when the service is already stopped but ringing state is still true.
+     * This can happen if the service was stopped manually or due to an error.
+     */
+    fun onStopRingingServiceFailed() {
+        viewModelScope.launch {
+            setAlarmRinging(false)
         }
     }
 }
