@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.data
+package ca.arnaud.horasolis.local
 
 import androidx.room.Dao
 import androidx.room.Insert

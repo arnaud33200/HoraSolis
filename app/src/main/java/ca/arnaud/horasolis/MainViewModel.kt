@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.RomanTimes
 import ca.arnaud.horasolis.domain.SavedTimeScheduleParams
@@ -19,11 +20,16 @@ class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
+    private val observeAlarmRinging: ObserveAlarmRingingUseCase,
     private val screenModelFactory: MainScreenModelFactory,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainScreenModel())
     val state: StateFlow<MainScreenModel> = _state
+
+    // TODO - setup a model so we can tell which alarm is ringing
+    private val _ringingDialog = MutableStateFlow(false)
+    val ringingDialog: StateFlow<Boolean> = _ringingDialog
 
     private var currentRomanTimes: RomanTimes? = null
     private var selectedTimeNumbers: Set<Int> = emptySet()
@@ -38,6 +44,12 @@ class MainViewModel(
                 _state.update { model ->
                     screenModelFactory.updateCheckedTimes(model, selectedTimeNumbers)
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            observeAlarmRinging().collectLatest { ringing ->
+                _ringingDialog.value = ringing
             }
         }
     }

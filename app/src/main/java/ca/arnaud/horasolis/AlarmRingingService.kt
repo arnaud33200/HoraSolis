@@ -11,6 +11,8 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import ca.arnaud.horasolis.domain.SetAlarmRingingUseCase
+import org.koin.java.KoinJavaComponent
 
 class AlarmRingingService : Service() {
 
@@ -27,11 +29,21 @@ class AlarmRingingService : Service() {
                 context.startService(serviceIntent)
             }
         }
+
+        fun stopService(context: Context) {
+            val serviceIntent = Intent(context, AlarmRingingService::class.java)
+            context.stopService(serviceIntent)
+        }
+    }
+
+    private val setAlarmRinging: SetAlarmRingingUseCase by lazy {
+        KoinJavaComponent.get(SetAlarmRingingUseCase::class.java)
     }
 
     private var mediaPlayer: MediaPlayer? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        println("HORA_SOLIS_ALARM: ringing service started")
         startForeground(NOTIFICATION_ID, createNotification())
         if (mediaPlayer?.isPlaying != true) {
             playAlarmSound()
@@ -44,6 +56,7 @@ class AlarmRingingService : Service() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
+        setAlarmRinging(false)
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -57,6 +70,7 @@ class AlarmRingingService : Service() {
             setOnPreparedListener { start() }
             prepareAsync()
         }
+        setAlarmRinging(true)
     }
 
     private fun createNotification(): Notification {

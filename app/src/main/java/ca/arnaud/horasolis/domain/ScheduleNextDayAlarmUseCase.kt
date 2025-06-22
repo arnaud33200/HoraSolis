@@ -1,8 +1,6 @@
 package ca.arnaud.horasolis.domain
 
-import ca.arnaud.horasolis.RomanTimeAlarmScheduleParam
-import ca.arnaud.horasolis.RomanTimeAlarmService
-import ca.arnaud.horasolis.data.HoraSolisDatabase
+import ca.arnaud.horasolis.local.HoraSolisDatabase
 
 data class ScheduleNextDayAlarmParam(
     val number: Int,

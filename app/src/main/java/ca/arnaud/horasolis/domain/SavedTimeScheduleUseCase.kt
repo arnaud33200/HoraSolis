@@ -1,9 +1,9 @@
 package ca.arnaud.horasolis.domain
 
 import ca.arnaud.horasolis.RomanTimeAlarmService
-import ca.arnaud.horasolis.data.HoraSolisDatabase
-import ca.arnaud.horasolis.data.ScheduleSettingsEntity
-import ca.arnaud.horasolis.data.SelectedTimeEntity
+import ca.arnaud.horasolis.local.HoraSolisDatabase
+import ca.arnaud.horasolis.local.ScheduleSettingsEntity
+import ca.arnaud.horasolis.local.SelectedTimeEntity
 
 data class SavedTimeScheduleParams(
     val lat: Double,

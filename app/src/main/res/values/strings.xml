@@ -22,4 +22,8 @@
     <string name="city_dropdown_label">Select City</string>
     <string name="update_button">Update</string>
     <string name="save_schedule_button">Save</string>
+
+    <string name="ringing_alarm_dialog_title">Alarm is ringing</string>
+    <string name="ringing_alarm_dialog_button">Stop Alarm</string>
+    <string name="ringing_alarm_dialog_message">would you like to stop the ringing?</string>
 </resources>

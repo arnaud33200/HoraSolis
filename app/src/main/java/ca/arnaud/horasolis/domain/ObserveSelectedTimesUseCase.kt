@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.domain
 
-import ca.arnaud.horasolis.data.HoraSolisDatabase
+import ca.arnaud.horasolis.local.HoraSolisDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Duration
