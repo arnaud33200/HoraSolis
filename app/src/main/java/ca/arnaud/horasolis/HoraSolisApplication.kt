@@ -28,6 +28,7 @@ class HoraSolisApplication : Application() {
         viewModelOf(::MainViewModel)
         singleOf(::RomanTimeAlarmService)
         workerOf(::ScheduleNextAlarmWorker)
+        singleOf(::MainScreenModelFactory)
     }
 
     val domainModule = module {

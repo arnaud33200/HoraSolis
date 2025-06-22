@@ -5,27 +5,24 @@ import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.ObserveSelectedTimesUseCase
-import ca.arnaud.horasolis.domain.RomanTime
 import ca.arnaud.horasolis.domain.RomanTimes
 import ca.arnaud.horasolis.domain.SavedTimeScheduleParams
 import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalTime
 
 class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
+    private val screenModelFactory: MainScreenModelFactory,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<MainScreenModel>(MainScreenModel())
+    private val _state = MutableStateFlow(MainScreenModel())
     val state: StateFlow<MainScreenModel> = _state
 
     private var currentRomanTimes: RomanTimes? = null
@@ -38,7 +35,9 @@ class MainViewModel(
 
             observeSelectedTimes().collectLatest { selectedTimes ->
                 selectedTimeNumbers = selectedTimes.map { it.number }.toSet()
-                updateCheckedTimes(selectedTimeNumbers)
+                _state.update { model ->
+                    screenModelFactory.updateCheckedTimes(model, selectedTimeNumbers)
+                }
             }
         }
     }
@@ -53,10 +52,7 @@ class MainViewModel(
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
         currentRomanTimes = romanTimes
         _state.update { model ->
-            model.copy(
-                selectedCity = selectedCity,
-                times = romanTimes.times.toTimeItems(),
-            )
+            screenModelFactory.updateTimes(romanTimes.times, selectedTimeNumbers, model.copy(selectedCity = selectedCity))
         }
     }
 
@@ -72,7 +68,9 @@ class MainViewModel(
         } else {
             selectedTimeNumbers = selectedTimeNumbers - timeItem.number
         }
-        updateCheckedTimes(selectedTimeNumbers)
+        _state.update { model ->
+            screenModelFactory.updateCheckedTimes(model, selectedTimeNumbers)
+        }
     }
 
     fun onSaveClicked() {
@@ -90,30 +88,5 @@ class MainViewModel(
             )
             savedTimeSchedule(params)
         }
-    }
-
-    private fun updateCheckedTimes(selectedNumbers: Set<Int>) {
-        _state.update { model ->
-            val updatedTimes = model.times.map { timeItem ->
-                timeItem.copy(checked = selectedNumbers.contains(timeItem.number))
-            }.toImmutableList()
-            model.copy(times = updatedTimes)
-        }
-    }
-
-    private fun List<RomanTime>.toTimeItems(): ImmutableList<TimeItem> {
-        return this.map { time ->
-            TimeItem(
-                number = time.number,
-                label = "Time ${time.number}",
-                hour = time.startTime.formatTime(),
-                night = time.type == RomanTime.Type.Night,
-                checked = selectedTimeNumbers.contains(time.number),
-            )
-        }.toImmutableList()
-    }
-
-    private fun LocalTime.formatTime(): String {
-        return this.toString().split(".").first()
     }
 }
