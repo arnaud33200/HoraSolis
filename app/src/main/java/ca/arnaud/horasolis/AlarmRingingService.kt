@@ -7,6 +7,9 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Build
@@ -50,7 +53,6 @@ class AlarmRingingService : Service() {
     private val scope = CoroutineScope(context = Dispatchers.Default + SupervisorJob())
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        println("HORA_SOLIS_ALARM: ringing service started")
         startForeground(NOTIFICATION_ID, createNotification())
         if (mediaPlayer?.isPlaying != true) {
             playAlarmSound()
@@ -69,12 +71,20 @@ class AlarmRingingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun playAlarmSound() {
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setLegacyStreamType(AudioManager.STREAM_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+
+        requestAudioFocus(audioAttributes)
+        playAlarmRingtone(audioAttributes)
+        scope.launch { setAlarmRinging(true) }
+    }
+
+    private fun playAlarmRingtone(audioAttributes: AudioAttributes) {
         val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val audioAttributes = android.media.AudioAttributes.Builder()
-            .setUsage(android.media.AudioAttributes.USAGE_ALARM)
-            .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build()
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(audioAttributes)
             setDataSource(applicationContext, alarmUri)
@@ -82,7 +92,20 @@ class AlarmRingingService : Service() {
             setOnPreparedListener { start() }
             prepareAsync()
         }
-        scope.launch { setAlarmRinging(true) }
+    }
+
+    private fun requestAudioFocus(audioAttributes: AudioAttributes) {
+        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                .setAudioAttributes(audioAttributes)
+                .build()
+            audioManager.requestAudioFocus(request)
+        } else {
+            audioManager.requestAudioFocus(
+                null, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+            )
+        }
     }
 
     private fun createNotification(): Notification {
