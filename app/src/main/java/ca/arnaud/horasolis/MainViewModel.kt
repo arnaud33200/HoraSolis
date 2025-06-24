@@ -66,7 +66,11 @@ class MainViewModel(
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
         currentRomanTimes = romanTimes
         _state.update { model ->
-            screenModelFactory.updateTimes(romanTimes.times, selectedTimeNumbers, model.copy(selectedCity = selectedCity))
+            screenModelFactory.updateTimes(
+                romanTimes.times,
+                selectedTimeNumbers,
+                model.copy(selectedCity = selectedCity)
+            )
         }
     }
 
@@ -89,10 +93,11 @@ class MainViewModel(
 
     fun onSaveClicked() {
         val romanTimes = currentRomanTimes ?: return
-        val selectedTimes = state.value.times.filter { selectedTimeNumbers.contains(it.number) }.mapNotNull { timeItem ->
-            romanTimes.times.find { it.number == timeItem.number }
-        }
-        if (selectedTimes.isEmpty()) return
+        val selectedTimes = state.value.times
+            .filter { selectedTimeNumbers.contains(it.number) }
+            .mapNotNull { timeItem ->
+                romanTimes.times.find { it.number == timeItem.number }
+            }
         viewModelScope.launch {
             val params = SavedTimeScheduleParams(
                 lat = romanTimes.lat,

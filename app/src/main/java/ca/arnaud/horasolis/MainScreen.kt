@@ -1,7 +1,10 @@
 package ca.arnaud.horasolis
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,9 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -27,13 +33,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
+import ca.arnaud.horasolis.ui.theme.Typography
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 data class TimeItem(
     val number: Int,
@@ -50,6 +57,7 @@ data class MainScreenModel(
     val times: ImmutableList<TimeItem> = persistentListOf(),
 )
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
@@ -69,63 +77,72 @@ fun MainScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                Text(stringResource(R.string.save_schedule_button))
+                Text(
+                    text = stringResource(R.string.save_schedule_button),
+                    style = Typography.bodyLarge
+                )
             }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(40.dp)
+                .padding(horizontal = 8.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CityDropdown(
-                    selectedCity = selectedCity,
-                    onCitySelected = onCitySelected,
-                )
-            }
+            Spacer(modifier.height(10.dp))
 
-            LazyColumn(
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                items(model.times) { timeItem ->
-                    val color = if (timeItem.night) {
-                        Color(0xff3774bd)
-                    } else {
-                        Color.Unspecified
-                    }
-                    val background = if (timeItem.highlight) {
-                        Color(0xFFE3F2FD) // TODO - use a theme color
-                    } else {
-                        Color.Transparent
-                    }
-                    Row(
-                        modifier = Modifier
-                            .height(30.dp)
-                            .fillMaxWidth()
-                            .padding(horizontal = 4.dp)
-                            .then(if (timeItem.highlight) Modifier else Modifier)
-                            .background(background),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Checkbox(
-                            checked = timeItem.checked,
-                            onCheckedChange = { isChecked ->
-                                onTimeChecked(timeItem, isChecked)
-                            }
+            CityDropdown(
+                selectedCity = selectedCity,
+                onCitySelected = onCitySelected,
+            )
+
+            Spacer(modifier.height(20.dp))
+
+            val times = model.times
+            val half = (times.size + 1) / 2
+            val leftTimes = times.subList(0, half)
+            val rightTimes = times.subList(half, times.size)
+            val headerModifier = Modifier
+                .padding(bottom = 10.dp)
+                .fillMaxWidth()
+            Row(modifier = Modifier.fillMaxWidth()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp)
+                ) {
+                    stickyHeader {
+                        ListHeader(
+                            modifier = headerModifier,
+                            text = "\uD83C\uDF1E Day Times",
                         )
-                        Text(
-                            text = timeItem.label,
-                            color = color,
+                    }
+                    items(leftTimes) { timeItem ->
+                        TimeItemRow(
+                            modifier = Modifier.padding(bottom = 4.dp),
+                            timeItem,
+                            onTimeChecked
                         )
-                        Spacer(modifier.weight(1f))
-                        Text(
-                            text = timeItem.hour,
-                            color = color,
+                    }
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 4.dp)
+                ) {
+                    stickyHeader {
+                        ListHeader(
+                            modifier = headerModifier,
+                            text = "\uD83C\uDF1A Night Times",
+                        )
+                    }
+                    items(rightTimes) { timeItem ->
+                        TimeItemRow(
+                            modifier = Modifier.padding(bottom = 4.dp),
+                            timeItem,
+                            onTimeChecked
                         )
                     }
                 }
@@ -135,6 +152,23 @@ fun MainScreen(
                 text = model.message
             )
         }
+    }
+}
+
+@Composable
+private fun ListHeader(
+    modifier: Modifier = Modifier,
+    text: String,
+) {
+    Box(
+        modifier = modifier.background(HoraSolisTheme.colors.surface),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 6.dp),
+            text = text,
+            style = Typography.titleLarge,
+        )
     }
 }
 
@@ -182,13 +216,71 @@ private fun CityDropdown(
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+private fun TimeItemRow(
+    modifier: Modifier = Modifier,
+    timeItem: TimeItem,
+    onTimeChecked: (TimeItem, Boolean) -> Unit,
+) {
+    val color = if (timeItem.night) {
+        HoraSolisTheme.colors.secondaryContainer
+    } else {
+        HoraSolisTheme.colors.surfaceContainer
+    }
+    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.outline) else null
+
+    Card(
+        modifier = modifier,
+        border = border,
+        colors = CardDefaults.cardColors(
+            containerColor = color
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 2.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = timeItem.checked,
+                onCheckedChange = { isChecked ->
+                    onTimeChecked(timeItem, isChecked)
+                }
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = timeItem.label,
+                    style = Typography.bodyMedium,
+                )
+                Text(
+                    text = timeItem.hour,
+                    style = Typography.bodyLarge,
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+            }
+        }
+    }
+}
+
+@PreviewLightDark
 @Composable
 private fun MainScreenPreview() {
     HoraSolisTheme {
+        val previewTimes = List(24) { i ->
+            TimeItem(
+                number = i + 1,
+                label = "Time ${i + 1}",
+                hour = String.format("%02d:00", i),
+                night = i > 11,
+                checked = (i % 3 == 0),
+                highlight = (i == 12),
+            )
+        }.toImmutableList()
         MainScreen(
             model = MainScreenModel(
-                message = stringResource(id = R.string.app_name)
+                message = stringResource(id = R.string.app_name),
+                times = previewTimes
             ),
             onCitySelected = {},
             onTimeChecked = { _, _ -> },
