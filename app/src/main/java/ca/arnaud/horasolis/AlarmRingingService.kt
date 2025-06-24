@@ -71,7 +71,12 @@ class AlarmRingingService : Service() {
     private fun playAlarmSound() {
         val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val audioAttributes = android.media.AudioAttributes.Builder()
+            .setUsage(android.media.AudioAttributes.USAGE_ALARM)
+            .setContentType(android.media.AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
         mediaPlayer = MediaPlayer().apply {
+            setAudioAttributes(audioAttributes)
             setDataSource(applicationContext, alarmUri)
             isLooping = true
             setOnPreparedListener { start() }
