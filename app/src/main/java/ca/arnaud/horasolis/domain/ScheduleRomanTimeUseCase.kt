@@ -9,7 +9,11 @@ class ScheduleRomanTimeUseCase(
 ) {
 
     operator fun invoke(time: RomanTime) {
-        val nowDateTime = timeProvider.getNowDateTime()
+        /**
+         * Add extra minutes to makes sure we don't schedule too early.
+         * Fix for double schedule when alarm is ringing
+         */
+        val nowDateTime = timeProvider.getNowDateTime().plusMinutes(1)
         val atDate = if (time.startTime.isBefore(nowDateTime.toLocalTime())) {
             nowDateTime.toLocalDate().plusDays(1)
         } else {
