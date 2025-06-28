@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.remote.model
 
-import ca.arnaud.horasolis.domain.SunTime
+import ca.arnaud.horasolis.domain.model.SunTime
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.time.LocalDate

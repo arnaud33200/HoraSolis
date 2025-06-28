@@ -1,5 +1,6 @@
-package ca.arnaud.horasolis.domain
+package ca.arnaud.horasolis.domain.usecase
 
+import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

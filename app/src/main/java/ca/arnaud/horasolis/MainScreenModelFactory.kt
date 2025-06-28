@@ -1,8 +1,8 @@
 package ca.arnaud.horasolis
 
 import androidx.annotation.StringRes
-import ca.arnaud.horasolis.domain.RomanTime
-import ca.arnaud.horasolis.domain.TimeProvider
+import ca.arnaud.horasolis.domain.model.RomanTime
+import ca.arnaud.horasolis.domain.provider.TimeProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.time.LocalTime

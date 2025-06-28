@@ -1,7 +1,9 @@
-package ca.arnaud.horasolis.domain
+package ca.arnaud.horasolis.domain.usecase
 
 import ca.arnaud.horasolis.RomanTimeAlarmScheduleParam
 import ca.arnaud.horasolis.RomanTimeAlarmService
+import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.model.RomanTime
 
 class ScheduleRomanTimeUseCase(
     private val alarmService: RomanTimeAlarmService,

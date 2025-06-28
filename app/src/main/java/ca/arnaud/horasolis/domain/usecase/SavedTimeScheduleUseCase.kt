@@ -1,6 +1,7 @@
-package ca.arnaud.horasolis.domain
+package ca.arnaud.horasolis.domain.usecase
 
 import ca.arnaud.horasolis.RomanTimeAlarmService
+import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.local.ScheduleSettingsEntity
 import ca.arnaud.horasolis.local.SelectedTimeEntity

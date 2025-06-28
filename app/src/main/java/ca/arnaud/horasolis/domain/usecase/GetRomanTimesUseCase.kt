@@ -1,5 +1,9 @@
-package ca.arnaud.horasolis.domain
+package ca.arnaud.horasolis.domain.usecase
 
+import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.map
+import ca.arnaud.horasolis.domain.model.RomanTime
+import ca.arnaud.horasolis.domain.model.SunTime
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.remote.model.GetSunTime
 import ca.arnaud.horasolis.remote.model.RemoteSunTimeResponse
@@ -7,19 +11,6 @@ import ca.arnaud.horasolis.remote.toIsoString
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
-
-data class GetRomanTimesParams(
-    val lat: Double,
-    val lng: Double,
-    val timZoneId: String,
-    val date: LocalDate,
-)
-
-data class SunTime(
-    val date: LocalDate,
-    val sunrise: LocalTime,
-    val sunset: LocalTime,
-)
 
 data class RomanTimes(
     val date: LocalDate,
@@ -30,27 +21,14 @@ data class RomanTimes(
 )
 
 /**
- * Data for one time of the day or night.
- * For one full day, there are 12 day times and 12 night times.
- *
- * @param number The number of the time in the day or night (1 to 24).
- * @param startTime The start time of the day or night.
- * @param duration The duration of the time in hours.
- * @param type The type of the time, either Day or Night.
+ * GetRomanTimesParams(lat=43.6532, lng=-79.3832, timZoneId=America/New_York, date=2025-06-28)
  */
-data class RomanTime(
-    val number: Int,
-    val startTime: LocalTime,
-    val duration: Duration,
-    val type: Type,
-) {
-
-    val endTime: LocalTime = startTime.plus(duration)
-
-    enum class Type {
-        Day, Night
-    }
-}
+data class GetRomanTimesParams(
+    val lat: Double,
+    val lng: Double,
+    val timZoneId: String,
+    val date: LocalDate,
+)
 
 class GetRomanTimesUseCase(
     private val ktorClient: KtorClient

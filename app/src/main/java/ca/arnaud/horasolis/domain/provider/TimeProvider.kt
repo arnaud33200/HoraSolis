@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.domain
+package ca.arnaud.horasolis.domain.provider
 
 import java.time.LocalDate
 import java.time.LocalDateTime

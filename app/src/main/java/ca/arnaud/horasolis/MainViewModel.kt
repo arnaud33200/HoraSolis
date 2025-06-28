@@ -2,14 +2,14 @@ package ca.arnaud.horasolis
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.GetRomanTimesParams
-import ca.arnaud.horasolis.domain.GetRomanTimesUseCase
-import ca.arnaud.horasolis.domain.ObserveAlarmRingingUseCase
-import ca.arnaud.horasolis.domain.ObserveSelectedTimesUseCase
-import ca.arnaud.horasolis.domain.RomanTimes
-import ca.arnaud.horasolis.domain.SavedTimeScheduleParams
-import ca.arnaud.horasolis.domain.SavedTimeScheduleUseCase
-import ca.arnaud.horasolis.domain.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
+import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.ObserveSelectedTimesUseCase
+import ca.arnaud.horasolis.domain.usecase.RomanTimes
+import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleParams
+import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleUseCase
+import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest

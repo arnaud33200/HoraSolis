@@ -15,7 +15,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import ca.arnaud.horasolis.domain.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

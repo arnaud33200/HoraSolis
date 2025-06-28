@@ -9,8 +9,8 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmParam
-import ca.arnaud.horasolis.domain.ScheduleNextDayAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmParam
+import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmUseCase
 import org.koin.java.KoinJavaComponent
 
 data class ScheduleNextAlarmWorkerParam(

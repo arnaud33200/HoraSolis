@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.domain
+package ca.arnaud.horasolis.domain.usecase
 
 import ca.arnaud.horasolis.data.AlarmRepository
 import kotlinx.coroutines.flow.Flow
