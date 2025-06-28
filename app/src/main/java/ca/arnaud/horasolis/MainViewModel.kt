@@ -2,6 +2,7 @@ package ca.arnaud.horasolis
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
@@ -57,10 +58,13 @@ class MainViewModel(
     }
 
     private suspend fun refreshTimes(selectedCity: City) {
-        val params = GetRomanTimesParams(
+        val location = UserLocation(
             lat = selectedCity.latitude,
             lng = selectedCity.longitude,
             timZoneId = selectedCity.timeZone,
+        )
+        val params = GetRomanTimesParams(
+            location = location,
             date = LocalDate.now(),
         )
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
@@ -100,9 +104,7 @@ class MainViewModel(
             }
         viewModelScope.launch {
             val params = SavedTimeScheduleParams(
-                lat = romanTimes.lat,
-                lng = romanTimes.lng,
-                timZoneId = romanTimes.timZoneId,
+                location = romanTimes.location,
                 times = selectedTimes,
             )
             savedTimeSchedule(params)

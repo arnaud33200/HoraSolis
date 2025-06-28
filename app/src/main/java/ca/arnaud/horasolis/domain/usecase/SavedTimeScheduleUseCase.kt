@@ -2,14 +2,13 @@ package ca.arnaud.horasolis.domain.usecase
 
 import ca.arnaud.horasolis.RomanTimeAlarmService
 import ca.arnaud.horasolis.domain.model.RomanTime
+import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.local.ScheduleSettingsEntity
 import ca.arnaud.horasolis.local.SelectedTimeEntity
 
 data class SavedTimeScheduleParams(
-    val lat: Double,
-    val lng: Double,
-    val timZoneId: String,
+    val location: UserLocation,
     val times: List<RomanTime>,
 )
 
@@ -43,9 +42,9 @@ class SavedTimeScheduleUseCase(
 
         val settingsDao = database.scheduleSettingsDao()
         val scheduleSettingsEntity = ScheduleSettingsEntity(
-            lat = params.lat,
-            lng = params.lng,
-            timZoneId = params.timZoneId,
+            lat = params.location.lat,
+            lng = params.location.lng,
+            timZoneId = params.location.timZoneId,
         )
         settingsDao.insert(scheduleSettingsEntity)
     }

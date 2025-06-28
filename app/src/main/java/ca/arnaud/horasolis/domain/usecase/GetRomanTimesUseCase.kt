@@ -4,6 +4,7 @@ import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.map
 import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.domain.model.SunTime
+import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.remote.model.GetSunTime
 import ca.arnaud.horasolis.remote.model.RemoteSunTimeResponse
@@ -13,10 +14,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class RomanTimes(
+    val location: UserLocation,
     val date: LocalDate,
-    val lat: Double,
-    val lng: Double,
-    val timZoneId: String,
     val times: List<RomanTime>,
 )
 
@@ -24,9 +23,7 @@ data class RomanTimes(
  * GetRomanTimesParams(lat=43.6532, lng=-79.3832, timZoneId=America/New_York, date=2025-06-28)
  */
 data class GetRomanTimesParams(
-    val lat: Double,
-    val lng: Double,
-    val timZoneId: String,
+    val location: UserLocation,
     val date: LocalDate,
 )
 
@@ -45,9 +42,9 @@ class GetRomanTimesUseCase(
         params: GetRomanTimesParams,
     ): Response<RomanTimes, Throwable> {
         val resource = GetSunTime(
-            lat = params.lat,
-            lng = params.lng,
-            tzid = params.timZoneId,
+            lat = params.location.lat,
+            lng = params.location.lng,
+            tzid = params.location.timZoneId,
             date = params.date.toIsoString(),
         )
         return ktorClient.getResponse<GetSunTime, RemoteSunTimeResponse>(resource).map(
@@ -75,9 +72,7 @@ class GetRomanTimesUseCase(
         return RomanTimes(
             date = sunTime.date,
             times = dayTimes + nightTimes,
-            lat = params.lat,
-            lng = params.lng,
-            timZoneId = params.timZoneId,
+            location = params.location,
         )
     }
 

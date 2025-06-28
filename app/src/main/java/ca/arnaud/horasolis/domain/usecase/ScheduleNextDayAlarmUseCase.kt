@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.domain.usecase
 
+import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 
@@ -14,15 +15,18 @@ class ScheduleNextDayAlarmUseCase(
     private val timeProvider: TimeProvider,
 ) {
 
-    // TODO - return a Response
+    // TODO - return a Response (#8)
     suspend operator fun invoke(param: ScheduleNextDayAlarmParam) {
         val settingsDao = database.scheduleSettingsDao()
         val settings = settingsDao.getSettings() ?: return
 
-        val params = GetRomanTimesParams(
+        val location = UserLocation(
             lat = settings.lat,
             lng = settings.lng,
             timZoneId = settings.timZoneId,
+        )
+        val params = GetRomanTimesParams(
+            location = location,
             date = timeProvider.getNowDate().plusDays(1),
         )
         val times = getRomanTimesUseCase(params)
