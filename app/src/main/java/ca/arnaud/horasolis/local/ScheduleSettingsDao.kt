@@ -5,9 +5,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ScheduleSettingsDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(settings: ScheduleSettingsEntity)
 
@@ -16,6 +18,9 @@ interface ScheduleSettingsDao {
 
     @Query("SELECT * FROM schedule_settings WHERE id = 1 LIMIT 1")
     suspend fun getSettings(): ScheduleSettingsEntity?
+
+    @Query("SELECT * FROM schedule_settings")
+    fun observeAll(): Flow<List<ScheduleSettingsEntity>>
 
     @Query("DELETE FROM schedule_settings")
     suspend fun clear()

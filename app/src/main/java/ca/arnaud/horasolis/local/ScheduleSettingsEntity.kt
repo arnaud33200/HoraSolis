@@ -16,5 +16,5 @@ data class ScheduleSettingsEntity(
     @PrimaryKey val id: Int = 1,
     val lat: Double,
     val lng: Double,
-    val timZoneId: String
+    val timZoneId: String,
 )

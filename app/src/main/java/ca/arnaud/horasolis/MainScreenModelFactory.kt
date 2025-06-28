@@ -2,6 +2,7 @@ package ca.arnaud.horasolis
 
 import androidx.annotation.StringRes
 import ca.arnaud.horasolis.domain.model.RomanTime
+import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -12,56 +13,71 @@ class MainScreenModelFactory(
     private val stringProvider: StringProvider,
 ) {
 
-    fun create(
-        message: String,
-        selectedCity: City,
-        times: List<RomanTime>,
-        selectedTimeNumbers: Set<Int>,
-    ): MainScreenModel {
-        return MainScreenModel(
-            message = message,
-            selectedCity = selectedCity,
-            times = times.toTimeItems(selectedTimeNumbers),
-        )
-    }
-
     fun updateTimes(
         times: List<RomanTime>,
-        selectedTimeNumbers: Set<Int>,
+        settings: ScheduleSettings?,
         model: MainScreenModel
     ): MainScreenModel {
         return model.copy(
-            times = times.toTimeItems(selectedTimeNumbers)
+            times = times.toTimeItems(settings)
         )
     }
 
-    fun updateCheckedTimes(
+    fun updateSelectedTimes(
         model: MainScreenModel,
-        selectedTimeNumbers: Set<Int>
+        timeItem: TimeItem,
+        checked: Boolean,
     ): MainScreenModel {
+
+        val updatedTimes = model.times.map { time ->
+            if (time.number == timeItem.number) {
+                time.copy(checked = checked)
+            } else {
+                time
+            }
+        }
         return model.copy(
-            times = model.times.map { it.copy(checked = selectedTimeNumbers.contains(it.number)) }
-                .toImmutableList()
+            times = updatedTimes.toImmutableList(),
         )
     }
 
+    fun updateWithSettings(
+        model: MainScreenModel,
+        settings: ScheduleSettings?,
+    ): MainScreenModel {
+        val selectedTimeNumbers = settings.toSelectedTimeNumbers()
+        val selectedCity = City.firstOrNull(settings?.location)
+
+        return model.copy(
+            selectedCity = selectedCity ?: City.entries.first(),
+            times = model.times.map {
+                it.copy(checked = selectedTimeNumbers.contains(it.number))
+            }.toImmutableList()
+        )
+    }
+
+    private fun ScheduleSettings?.toSelectedTimeNumbers(): Set<Int> {
+        return this?.selectedTime?.map { it.number }?.toSet() ?: emptySet()
+    }
 
     private fun List<RomanTime>.toTimeItems(
-        selectedNumbers: Set<Int>,
+        settings: ScheduleSettings?,
     ): ImmutableList<TimeItem> {
         val nowDateTime = timeProvider.getNowDateTime()
+        val selectedTimeNumbers = settings.toSelectedTimeNumbers()
         return this.map { time ->
             val startDateTime = time.startTime.atDate(nowDateTime.toLocalDate())
             val endDateTime = time.endTime.atDate(nowDateTime.toLocalDate())
             val isNow = nowDateTime.isAfter(startDateTime) && nowDateTime.isBefore(endDateTime)
-            @StringRes val labelRes = if (isNow) R.string.time_item_now_label else R.string.time_item_label
+            @StringRes val labelRes =
+                if (isNow) R.string.time_item_now_label else R.string.time_item_label
             val label = stringProvider.getString(labelRes, time.number.toString())
             TimeItem(
                 number = time.number,
                 label = label,
                 hour = time.startTime.formatTime(),
                 night = time.type == RomanTime.Type.Night,
-                checked = selectedNumbers.contains(time.number),
+                checked = selectedTimeNumbers.contains(time.number),
                 highlight = isNow,
             )
         }.toImmutableList()

@@ -2,6 +2,7 @@ package ca.arnaud.horasolis
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
@@ -35,17 +36,17 @@ class MainViewModel(
     val ringingDialog: StateFlow<Boolean> = _ringingDialog
 
     private var currentRomanTimes: RomanTimes? = null
-    private var selectedTimeNumbers: Set<Int> = emptySet()
+    private var savedSettings: ScheduleSettings? = null
 
     init {
         viewModelScope.launch {
             val selectedCity = state.value.selectedCity
             refreshTimes(selectedCity)
 
-            observeSelectedTimes().collectLatest { selectedTimes ->
-                selectedTimeNumbers = selectedTimes.map { it.number }.toSet()
+            observeSelectedTimes().collectLatest { settings ->
+                savedSettings = settings
                 _state.update { model ->
-                    screenModelFactory.updateCheckedTimes(model, selectedTimeNumbers)
+                    screenModelFactory.updateWithSettings(model, settings)
                 }
             }
         }
@@ -72,7 +73,7 @@ class MainViewModel(
         _state.update { model ->
             screenModelFactory.updateTimes(
                 romanTimes.times,
-                selectedTimeNumbers,
+                savedSettings,
                 model.copy(selectedCity = selectedCity)
             )
         }
@@ -85,20 +86,15 @@ class MainViewModel(
     }
 
     fun onTimeChecked(timeItem: TimeItem, checked: Boolean) {
-        if (checked) {
-            selectedTimeNumbers = selectedTimeNumbers + timeItem.number
-        } else {
-            selectedTimeNumbers = selectedTimeNumbers - timeItem.number
-        }
         _state.update { model ->
-            screenModelFactory.updateCheckedTimes(model, selectedTimeNumbers)
+            screenModelFactory.updateSelectedTimes(model, timeItem, checked)
         }
     }
 
     fun onSaveClicked() {
         val romanTimes = currentRomanTimes ?: return
         val selectedTimes = state.value.times
-            .filter { selectedTimeNumbers.contains(it.number) }
+            .filter { it.checked }
             .mapNotNull { timeItem ->
                 romanTimes.times.find { it.number == timeItem.number }
             }

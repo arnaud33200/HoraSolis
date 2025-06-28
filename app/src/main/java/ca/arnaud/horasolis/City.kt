@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis
 
 import androidx.annotation.StringRes
+import ca.arnaud.horasolis.domain.model.UserLocation
 
 enum class City(
     @StringRes val nameRes: Int,
@@ -23,4 +24,16 @@ enum class City(
     Dubai(R.string.city_dubai, 25.276987, 55.296249, "Asia/Dubai"),
     Beijing(R.string.city_beijing, 39.9042, 116.407396, "Asia/Shanghai"),
     RioDeJaneiro(R.string.city_rio_de_janeiro, -22.906847, -43.172896, "America/Sao_Paulo");
+
+    companion object {
+
+        fun firstOrNull(location: UserLocation?): City? {
+            if (location == null) return null
+            return values().firstOrNull { city ->
+                city.latitude == location.lat &&
+                        city.longitude == location.lng &&
+                        city.timeZone == location.timZoneId
+            }
+        }
+    }
 }
