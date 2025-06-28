@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.local
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 /**
@@ -12,9 +13,20 @@ import androidx.room.PrimaryKey
  * @property duration The duration of the period in seconds.
  * @property type The type of the period, either "Day" or "Night".
  */
-@Entity(tableName = "selected_times")
+@Entity(
+    tableName = "selected_times",
+    foreignKeys = [
+        ForeignKey(
+            entity = ScheduleSettingsEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["scheduleSettingsId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class SelectedTimeEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val scheduleSettingsId: Int,
     val number: Int,
     val startTime: String,
     val duration: Long,

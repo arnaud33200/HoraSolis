@@ -25,6 +25,5 @@ abstract class HoraSolisDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun selectedTimeDao(): SelectedTimeDao
-    abstract fun scheduleSettingsDao(): ScheduleSettingsDao
+    abstract fun settingsWithTimesDao(): SettingsWithTimesDao
 }

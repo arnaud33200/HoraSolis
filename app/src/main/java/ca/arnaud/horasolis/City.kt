@@ -25,6 +25,12 @@ enum class City(
     Beijing(R.string.city_beijing, 39.9042, 116.407396, "Asia/Shanghai"),
     RioDeJaneiro(R.string.city_rio_de_janeiro, -22.906847, -43.172896, "America/Sao_Paulo");
 
+    fun toUserLocation() = UserLocation(
+        lat = latitude,
+        lng = longitude,
+        timZoneId = timeZone,
+    )
+
     companion object {
 
         fun firstOrNull(location: UserLocation?): City? {

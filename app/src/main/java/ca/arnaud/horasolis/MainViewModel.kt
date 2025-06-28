@@ -3,13 +3,11 @@ package ca.arnaud.horasolis
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.RomanTimes
-import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleParams
 import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +43,7 @@ class MainViewModel(
 
             observeSelectedTimes().collectLatest { settings ->
                 savedSettings = settings
-                _state.update { model ->
+                updateScreenModel { model ->
                     screenModelFactory.updateWithSettings(model, settings)
                 }
             }
@@ -59,18 +57,14 @@ class MainViewModel(
     }
 
     private suspend fun refreshTimes(selectedCity: City) {
-        val location = UserLocation(
-            lat = selectedCity.latitude,
-            lng = selectedCity.longitude,
-            timZoneId = selectedCity.timeZone,
-        )
+        val location = selectedCity.toUserLocation()
         val params = GetRomanTimesParams(
             location = location,
             date = LocalDate.now(),
         )
         val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
         currentRomanTimes = romanTimes
-        _state.update { model ->
+        updateScreenModel { model ->
             screenModelFactory.updateTimes(
                 romanTimes.times,
                 savedSettings,
@@ -86,24 +80,16 @@ class MainViewModel(
     }
 
     fun onTimeChecked(timeItem: TimeItem, checked: Boolean) {
-        _state.update { model ->
+        updateScreenModel { model ->
             screenModelFactory.updateSelectedTimes(model, timeItem, checked)
         }
     }
 
     fun onSaveClicked() {
-        val romanTimes = currentRomanTimes ?: return
-        val selectedTimes = state.value.times
-            .filter { it.checked }
-            .mapNotNull { timeItem ->
-                romanTimes.times.find { it.number == timeItem.number }
-            }
+        val updatedSettings = state.value.getUpdatedScheduleSettings(currentRomanTimes)
+            ?: return
         viewModelScope.launch {
-            val params = SavedTimeScheduleParams(
-                location = romanTimes.location,
-                times = selectedTimes,
-            )
-            savedTimeSchedule(params)
+            savedTimeSchedule(updatedSettings)
         }
     }
 
@@ -114,6 +100,18 @@ class MainViewModel(
     fun onStopRingingServiceFailed() {
         viewModelScope.launch {
             setAlarmRinging(false)
+        }
+    }
+
+    private fun updateScreenModel(
+        update: (MainScreenModel) -> MainScreenModel
+    ) {
+        _state.update { currentModel ->
+            val newModel = update(currentModel)
+            val updatedSettings = newModel.getUpdatedScheduleSettings(currentRomanTimes)
+            newModel.copy(
+                showSaveButton = savedSettings != updatedSettings,
+            )
         }
     }
 }

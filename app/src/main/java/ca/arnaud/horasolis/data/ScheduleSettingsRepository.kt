@@ -7,7 +7,6 @@ import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.local.ScheduleSettingsEntity
 import ca.arnaud.horasolis.local.SelectedTimeEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import java.time.Duration
 import java.time.LocalTime
@@ -16,21 +15,40 @@ class ScheduleSettingsRepository(
     database: HoraSolisDatabase,
 ) {
 
-    private val settingsDao = database.scheduleSettingsDao()
-    private val selectedTimeDao = database.selectedTimeDao()
+    private val settingsDao = database.settingsWithTimesDao()
+
+    suspend fun saveScheduleSettings(scheduleSettings: ScheduleSettings) {
+        val location = scheduleSettings.location
+        val scheduleSettingsEntity = ScheduleSettingsEntity(
+            lat = location.lat,
+            lng = location.lng,
+            timZoneId = location.timZoneId,
+        )
+        val timeEntities = scheduleSettings.selectedTime.map { time ->
+            SelectedTimeEntity(
+                number = time.number,
+                scheduleSettingsId = scheduleSettingsEntity.id,
+                startTime = time.startTime.toString(),
+                duration = time.duration.toMillis(),
+                type = time.type.name,
+            )
+        }
+        settingsDao.saveSettingsAndTimes(
+            settings = scheduleSettingsEntity,
+            times = timeEntities,
+        )
+    }
 
     suspend fun getScheduleSettingsOrNull(): ScheduleSettings? {
         val settings = settingsDao.getSettings() ?: return null
-        val selectedTimes = selectedTimeDao.getAll()
+        val selectedTimes = settingsDao.getAllTimes()
 
         return settings.toScheduleSettings(selectedTimes)
     }
 
     fun observeScheduleSettings(): Flow<ScheduleSettings?> {
-        val scheduleFlow = settingsDao.observeAll().map { it.firstOrNull() }
-        val selectedTimesFlow = selectedTimeDao.observeAll()
-        return scheduleFlow.combine(selectedTimesFlow) { settings, selectedTimes ->
-            settings?.toScheduleSettings(selectedTimes) ?: null
+        return settingsDao.observeSettingsAggregate().map { aggregate ->
+            aggregate?.settings?.toScheduleSettings(aggregate.selectedTimes)
         }
     }
 
@@ -52,7 +70,7 @@ class ScheduleSettingsRepository(
             RomanTime(
                 number = entity.number,
                 startTime = LocalTime.parse(entity.startTime),
-                duration = Duration.ofSeconds(entity.duration),
+                duration = Duration.ofMillis(entity.duration),
                 type = RomanTime.Type.valueOf(entity.type)
             )
         }

@@ -1,5 +1,8 @@
 package ca.arnaud.horasolis
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -38,8 +41,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 data class TimeItem(
@@ -49,12 +50,6 @@ data class TimeItem(
     val night: Boolean,
     val checked: Boolean = false,
     val highlight: Boolean = false,
-)
-
-data class MainScreenModel(
-    val message: String = "",
-    val selectedCity: City = City.Thiviers,
-    val times: ImmutableList<TimeItem> = persistentListOf(),
 )
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -71,16 +66,22 @@ fun MainScreen(
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            Button(
-                onClick = onSaveClicked,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+            AnimatedVisibility(
+                visible = model.showSaveButton,
+                enter = slideInVertically(initialOffsetY = { it }),
+                exit = slideOutVertically(targetOffsetY = { it }),
             ) {
-                Text(
-                    text = stringResource(R.string.save_schedule_button),
-                    style = Typography.bodyLarge
-                )
+                Button(
+                    onClick = onSaveClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.save_schedule_button),
+                        style = Typography.bodyLarge
+                    )
+                }
             }
         }
     ) { innerPadding ->
