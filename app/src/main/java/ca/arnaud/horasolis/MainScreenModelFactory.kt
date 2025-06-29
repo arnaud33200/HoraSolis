@@ -86,4 +86,13 @@ class MainScreenModelFactory(
     private fun LocalTime.formatTime(): String {
         return this.toString().split(".").first()
     }
+
+    fun updateSavedSettings(
+        model: MainScreenModel,
+    ): MainScreenModel {
+        return model.copy(
+            loading = null,
+            snackMessage = stringProvider.getString(R.string.settings_saved_message),
+        )
+    }
 }

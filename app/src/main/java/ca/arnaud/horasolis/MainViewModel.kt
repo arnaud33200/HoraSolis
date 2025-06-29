@@ -96,7 +96,15 @@ class MainViewModel(
         viewModelScope.launch {
             _state.update { it.copy(loading = MainScreenModel.Loading.Saving) }
             savedTimeSchedule(updatedSettings)
-            _state.update { it.copy(loading = null) }
+            updateScreenModel { model ->
+                screenModelFactory.updateSavedSettings(model)
+            }
+        }
+    }
+
+    fun onSnackbarDismissed() {
+        updateScreenModel { model ->
+            model.copy(snackMessage = null)
         }
     }
 

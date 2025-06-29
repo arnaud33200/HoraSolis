@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
                     onCitySelected = viewModel::onCitySelected,
                     onTimeChecked = viewModel::onTimeChecked,
                     onSaveClicked = viewModel::onSaveClicked,
+                    onSnackbarDismissed = viewModel::onSnackbarDismissed,
                 )
 
                 if (showRingingDialog) {

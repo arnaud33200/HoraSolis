@@ -6,11 +6,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class MainScreenModel(
-    val message: String = "",
     val selectedCity: City = City.Thiviers,
     val times: ImmutableList<TimeItem> = persistentListOf(),
     val showSaveButton: Boolean = false,
     val loading: Loading? = null,
+    val snackMessage: String? = null,
 ) {
 
     enum class Loading {

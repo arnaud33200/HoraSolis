@@ -1,6 +1,5 @@
 package ca.arnaud.horasolis
 
-import android.widget.Spinner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -29,9 +28,12 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,14 +64,24 @@ data class TimeItem(
 fun MainScreen(
     modifier: Modifier = Modifier,
     onCitySelected: (City) -> Unit,
-    model: MainScreenModel,
     onTimeChecked: (TimeItem, Boolean) -> Unit,
     onSaveClicked: () -> Unit,
+    onSnackbarDismissed: () -> Unit,
+    model: MainScreenModel,
 ) {
     val selectedCity = model.selectedCity
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(model.snackMessage) {
+        model.snackMessage?.let { message ->
+            snackbarHostState.showSnackbar(message)
+            onSnackbarDismissed()
+        }
+    }
+
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             AnimatedVisibility(
                 visible = model.showSaveButton,
@@ -161,10 +173,6 @@ fun MainScreen(
                     }
                 }
             }
-
-            Text(
-                text = model.message
-            )
         }
     }
 }
@@ -299,12 +307,12 @@ private fun MainScreenPreview() {
         }.toImmutableList()
         MainScreen(
             model = MainScreenModel(
-                message = stringResource(id = R.string.app_name),
                 times = previewTimes
             ),
             onCitySelected = {},
             onTimeChecked = { _, _ -> },
             onSaveClicked = {},
+            onSnackbarDismissed = {},
         )
     }
 }
