@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.domain.usecase
 
-import ca.arnaud.horasolis.RomanTimeAlarmService
+import ca.arnaud.horasolis.service.RomanTimeAlarmService
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings

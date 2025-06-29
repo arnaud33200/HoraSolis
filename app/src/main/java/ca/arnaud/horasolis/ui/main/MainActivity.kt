@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.ui.main
 
 import android.Manifest
 import android.os.Build
@@ -16,6 +16,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.service.AlarmRingingService
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted

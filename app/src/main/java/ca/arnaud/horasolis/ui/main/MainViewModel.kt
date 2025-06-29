@@ -1,7 +1,8 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ca.arnaud.horasolis.ui.main.City
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase

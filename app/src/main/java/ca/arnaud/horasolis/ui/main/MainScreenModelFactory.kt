@@ -1,12 +1,15 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.ui.main
 
-import androidx.annotation.StringRes
+import ca.arnaud.horasolis.ui.main.City
+import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class MainScreenModelFactory(
     private val timeProvider: TimeProvider,
@@ -46,7 +49,7 @@ class MainScreenModelFactory(
         settings: ScheduleSettings?,
     ): MainScreenModel {
         val selectedTimeNumbers = settings.toSelectedTimeNumbers()
-        val selectedCity = City.firstOrNull(settings?.location)
+        val selectedCity = City.Companion.firstOrNull(settings?.location)
 
         return model.copy(
             selectedCity = selectedCity ?: City.entries.first(),
@@ -86,7 +89,7 @@ class MainScreenModelFactory(
     }
 
     private fun LocalTime.formatTimeHHmm(): String {
-        return java.time.format.DateTimeFormatter.ofPattern("HH:mm").format(this)
+        return DateTimeFormatter.ofPattern("HH:mm").format(this)
     }
 
     fun updateSavedSettings(

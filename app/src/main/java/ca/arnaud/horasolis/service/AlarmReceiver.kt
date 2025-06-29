@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.service
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -19,7 +19,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         AlarmRingingService.startService(context)
 
-        ScheduleNextAlarmWorker.enqueue(
+        ScheduleNextAlarmWorker.Companion.enqueue(
             context = context,
             param = ScheduleNextAlarmWorkerParam(
                 number = param.number,

@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.ui.main
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -42,6 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import ca.arnaud.horasolis.ui.main.City
+import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
 import com.google.accompanist.placeholder.PlaceholderHighlight

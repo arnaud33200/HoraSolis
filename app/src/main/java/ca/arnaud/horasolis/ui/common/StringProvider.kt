@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.ui.common
 
 import android.content.Context
 import androidx.annotation.StringRes

@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis
+package ca.arnaud.horasolis.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -15,6 +15,8 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import ca.arnaud.horasolis.ui.main.MainActivity
+import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

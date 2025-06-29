@@ -17,6 +17,10 @@ import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.remote.KtorClient
+import ca.arnaud.horasolis.service.RomanTimeAlarmService
+import ca.arnaud.horasolis.ui.common.StringProvider
+import ca.arnaud.horasolis.ui.main.MainScreenModelFactory
+import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
