@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Hora Solis</string>
+
+    <string name="city_toronto">Toronto</string>
+    <string name="city_thiviers">Thiviers</string>
+    <string name="city_bordeaux">Bordeaux</string>
+    <string name="city_courtalain">Courtalain</string>
+    <string name="city_sydney">Sydney</string>
+    <string name="city_tokyo">Tokyo</string>
+    <string name="city_cape_town">Le Cap</string>
+    <string name="city_los_angeles">Los Angeles</string>
+    <string name="city_sao_paulo">São Paulo</string>
+    <string name="city_mumbai">Mumbai</string>
+    <string name="city_cairo">Le Caire</string>
+    <string name="city_moscow">Moscou</string>
+    <string name="city_dubai">Dubaï</string>
+    <string name="city_beijing">Pékin</string>
+    <string name="city_rio_de_janeiro">Rio de Janeiro</string>
+
+    <string name="city_dropdown_label">Choisir une ville</string>
+    <string name="save_schedule_button">Enregistrer</string>
+    <string name="ringing_alarm_dialog_title">L\'alarme sonne</string>
+    <string name="ringing_alarm_dialog_button">Arrêter l\'alarme</string>
+    <string name="ringing_alarm_dialog_message">Voulez-vous arrêter la sonnerie ?</string>
+    <string name="alarm_ringing_channel_name">Sonnerie d\'alarme</string>
+    <string name="alarm_ringing_notification_title">Alarme en cours</string>
+    <string name="alarm_ringing_notification_text">Touchez pour ouvrir l\'application et arrêter l\'alarme.</string>
+    <string name="notification_permission_required_toast_message">L\'autorisation de notification est requise pour les alertes.</string>
+
+    <string name="time_item_day_label">Jour %1$s</string>
+    <string name="time_item_night_label">Nuit %1$s</string>
+    <string name="settings_saved_message">Horaire enregistré !</string>
+</resources>

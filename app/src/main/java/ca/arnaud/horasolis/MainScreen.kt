@@ -72,7 +72,7 @@ fun MainScreen(
             MainScreenBottomBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(8.dp),
                 model = model,
                 onSaveClicked = onSaveClicked,
             )
@@ -139,7 +139,7 @@ private fun MainScreenContent(
             onCitySelected = onCitySelected,
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         val times = model.times
         val half = (times.size + 1) / 2
@@ -158,7 +158,7 @@ private fun MainScreenContent(
                 stickyHeader {
                     ListHeader(
                         modifier = headerModifier,
-                        text = "\uD83C\uDF1E Day Times",
+                        text = "\uD83C\uDF1E",
                     )
                 }
                 items(leftTimes) { timeItem ->
@@ -178,7 +178,7 @@ private fun MainScreenContent(
                 stickyHeader {
                     ListHeader(
                         modifier = headerModifier,
-                        text = "\uD83C\uDF1A Night Times",
+                        text = "\uD83C\uDF1A",
                     )
                 }
                 items(rightTimes) { timeItem ->
@@ -206,7 +206,7 @@ private fun ListHeader(
         Text(
             modifier = Modifier.padding(vertical = 6.dp),
             text = text,
-            style = Typography.titleLarge,
+            style = Typography.headlineMedium,
         )
     }
 }
@@ -267,7 +267,7 @@ private fun TimeItemRow(
     } else {
         HoraSolisTheme.colors.surfaceContainer
     }
-    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.outline) else null
+    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.primary) else null
 
     Card(
         modifier = modifier,
@@ -279,7 +279,7 @@ private fun TimeItemRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 2.dp, vertical = 4.dp),
+                .padding(horizontal = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
@@ -288,11 +288,13 @@ private fun TimeItemRow(
                     onTimeChecked(timeItem, isChecked)
                 }
             )
-            Column(modifier = Modifier.weight(1f)) {
+            
+            Row(modifier = Modifier.weight(1f)) {
                 Text(
                     text = timeItem.label,
                     style = Typography.bodyMedium,
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
                     modifier = Modifier.placeholder(
                         visible = loading,
@@ -302,7 +304,7 @@ private fun TimeItemRow(
                     text = timeItem.hour,
                     style = Typography.bodyLarge,
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }

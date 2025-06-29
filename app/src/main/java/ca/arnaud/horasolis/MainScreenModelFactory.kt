@@ -69,13 +69,15 @@ class MainScreenModelFactory(
             val startDateTime = time.startTime.atDate(nowDateTime.toLocalDate())
             val endDateTime = time.endTime.atDate(nowDateTime.toLocalDate())
             val isNow = nowDateTime.isAfter(startDateTime) && nowDateTime.isBefore(endDateTime)
-            @StringRes val labelRes =
-                if (isNow) R.string.time_item_now_label else R.string.time_item_label
-            val label = stringProvider.getString(labelRes, time.number.toString())
+            val label = if (time.type == RomanTime.Type.Night) {
+                stringProvider.getString(R.string.time_item_night_label, (time.number - 12).toString())
+            } else {
+                stringProvider.getString(R.string.time_item_day_label, time.number.toString())
+            }
             TimeItem(
                 number = time.number,
                 label = label,
-                hour = time.startTime.formatTime(),
+                hour = time.startTime.formatTimeHHmm(),
                 night = time.type == RomanTime.Type.Night,
                 checked = selectedTimeNumbers.contains(time.number),
                 highlight = isNow,
@@ -83,8 +85,8 @@ class MainScreenModelFactory(
         }.toImmutableList()
     }
 
-    private fun LocalTime.formatTime(): String {
-        return this.toString().split(".").first()
+    private fun LocalTime.formatTimeHHmm(): String {
+        return java.time.format.DateTimeFormatter.ofPattern("HH:mm").format(this)
     }
 
     fun updateSavedSettings(
