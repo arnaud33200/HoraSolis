@@ -29,7 +29,7 @@ class MainViewModel(
     private val screenModelFactory: MainScreenModelFactory,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(MainScreenModel())
+    private val _state = MutableStateFlow(screenModelFactory.createInitialLoading())
     val state: StateFlow<MainScreenModel> = _state
 
     private val _ringingDialog = MutableStateFlow<AlertDialogModel?>(null)

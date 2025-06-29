@@ -19,6 +19,38 @@ class MainScreenModelFactory(
     private val stringProvider: StringProvider,
 ) {
 
+    fun createInitialLoading(): MainScreenModel {
+        return MainScreenModel(
+            loading = MainScreenModel.Loading.Content,
+            dayTimes = TimeListModel(
+                times = List(12) {
+                    TimeItem(
+                        number = it + 1,
+                        label = stringProvider.getString(
+                            R.string.time_item_day_label,
+                            (it + 1).toString()
+                        ),
+                        hour = "00:00",
+                        night = false,
+                    )
+                }.toImmutableList()
+            ),
+            nightTimes = TimeListModel(
+                times = List(12) {
+                    TimeItem(
+                        number = it + 13,
+                        label = stringProvider.getString(
+                            R.string.time_item_night_label,
+                            (it + 1).toString()
+                        ),
+                        hour = "00:00",
+                        night = true,
+                    )
+                }.toImmutableList(),
+            ),
+        )
+    }
+
     fun updateTimes(
         romanTimes: RomanTimes,
         settings: ScheduleSettings?,

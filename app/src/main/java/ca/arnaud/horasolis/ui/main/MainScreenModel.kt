@@ -45,10 +45,10 @@ data class TimeListModel(
 )
 
 data class TimeItem(
-    val number: Int,
-    val label: String,
-    val hour: String,
-    val night: Boolean,
+    val number: Int = 0,
+    val label: String = "",
+    val hour: String = "",
+    val night: Boolean = false,
     val checked: Boolean = false,
     val highlight: Boolean = false,
 )
