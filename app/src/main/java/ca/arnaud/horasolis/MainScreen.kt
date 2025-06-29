@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis
 
+import android.widget.Spinner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -22,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -41,6 +43,9 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 import kotlinx.collections.immutable.toImmutableList
 
 data class TimeItem(
@@ -73,14 +78,19 @@ fun MainScreen(
             ) {
                 Button(
                     onClick = onSaveClicked,
+                    enabled = model.loading == null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.save_schedule_button),
-                        style = Typography.bodyLarge
-                    )
+                    if (model.loading == MainScreenModel.Loading.Saving) {
+                        CircularProgressIndicator()
+                    } else {
+                        Text(
+                            text = stringResource(R.string.save_schedule_button),
+                            style = Typography.bodyLarge
+                        )
+                    }
                 }
             }
         }
@@ -108,6 +118,7 @@ fun MainScreen(
             val headerModifier = Modifier
                 .padding(bottom = 10.dp)
                 .fillMaxWidth()
+            val contentLoading = model.loading == MainScreenModel.Loading.Content
             Row(modifier = Modifier.fillMaxWidth()) {
                 LazyColumn(
                     modifier = Modifier
@@ -123,8 +134,9 @@ fun MainScreen(
                     items(leftTimes) { timeItem ->
                         TimeItemRow(
                             modifier = Modifier.padding(bottom = 4.dp),
-                            timeItem,
-                            onTimeChecked
+                            timeItem = timeItem,
+                            loading = contentLoading,
+                            onTimeChecked = onTimeChecked,
                         )
                     }
                 }
@@ -142,8 +154,9 @@ fun MainScreen(
                     items(rightTimes) { timeItem ->
                         TimeItemRow(
                             modifier = Modifier.padding(bottom = 4.dp),
-                            timeItem,
-                            onTimeChecked
+                            timeItem = timeItem,
+                            loading = contentLoading,
+                            onTimeChecked = onTimeChecked,
                         )
                     }
                 }
@@ -220,8 +233,9 @@ private fun CityDropdown(
 @Composable
 private fun TimeItemRow(
     modifier: Modifier = Modifier,
-    timeItem: TimeItem,
     onTimeChecked: (TimeItem, Boolean) -> Unit,
+    timeItem: TimeItem,
+    loading: Boolean,
 ) {
     val color = if (timeItem.night) {
         HoraSolisTheme.colors.secondaryContainer
@@ -255,6 +269,11 @@ private fun TimeItemRow(
                     style = Typography.bodyMedium,
                 )
                 Text(
+                    modifier = Modifier.placeholder(
+                        visible = loading,
+                        color = HoraSolisTheme.colors.onSurface.copy(alpha = 0.1f),
+                        highlight = PlaceholderHighlight.shimmer(),
+                    ),
                     text = timeItem.hour,
                     style = Typography.bodyLarge,
                 )

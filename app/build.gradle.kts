@@ -74,8 +74,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
-    testImplementation(libs.room.testing)
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.accompanist.permissions)
+    implementation(libs.accompanist.placeholder)
 }

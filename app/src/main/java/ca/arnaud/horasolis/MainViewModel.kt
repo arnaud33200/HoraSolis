@@ -62,11 +62,16 @@ class MainViewModel(
             location = location,
             date = LocalDate.now(),
         )
-        val romanTimes = getRomanTimes(params).getDataOrNull() ?: return
+
+        _state.update { it.copy(loading = MainScreenModel.Loading.Content) }
+        val romanTimes = getRomanTimes(params).getDataOrNull()
+        _state.update { it.copy(loading = null) }
+
+        val times = romanTimes?.times ?: emptyList()
         currentRomanTimes = romanTimes
         updateScreenModel { model ->
             screenModelFactory.updateTimes(
-                romanTimes.times,
+                times,
                 savedSettings,
                 model.copy(selectedCity = selectedCity)
             )
@@ -89,7 +94,9 @@ class MainViewModel(
         val updatedSettings = state.value.getUpdatedScheduleSettings(currentRomanTimes)
             ?: return
         viewModelScope.launch {
+            _state.update { it.copy(loading = MainScreenModel.Loading.Saving) }
             savedTimeSchedule(updatedSettings)
+            _state.update { it.copy(loading = null) }
         }
     }
 

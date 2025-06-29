@@ -10,7 +10,12 @@ data class MainScreenModel(
     val selectedCity: City = City.Thiviers,
     val times: ImmutableList<TimeItem> = persistentListOf(),
     val showSaveButton: Boolean = false,
+    val loading: Loading? = null,
 ) {
+
+    enum class Loading {
+        Content, Saving,
+    }
 
     fun getUpdatedScheduleSettings(
         romanTimes: RomanTimes?,
