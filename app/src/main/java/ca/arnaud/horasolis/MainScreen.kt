@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -50,16 +49,6 @@ import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import kotlinx.collections.immutable.toImmutableList
 
-data class TimeItem(
-    val number: Int,
-    val label: String,
-    val hour: String,
-    val night: Boolean,
-    val checked: Boolean = false,
-    val highlight: Boolean = false,
-)
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
@@ -69,8 +58,6 @@ fun MainScreen(
     onSnackbarDismissed: () -> Unit,
     model: MainScreenModel,
 ) {
-    val selectedCity = model.selectedCity
-
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
         model.snackMessage?.let { message ->
@@ -78,99 +65,129 @@ fun MainScreen(
             onSnackbarDismissed()
         }
     }
-
     Scaffold(
         modifier = modifier,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
-            AnimatedVisibility(
-                visible = model.showSaveButton,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
-            ) {
-                Button(
-                    onClick = onSaveClicked,
-                    enabled = model.loading == null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    if (model.loading == MainScreenModel.Loading.Saving) {
-                        CircularProgressIndicator()
-                    } else {
-                        Text(
-                            text = stringResource(R.string.save_schedule_button),
-                            style = Typography.bodyLarge
-                        )
-                    }
-                }
-            }
+            MainScreenBottomBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                model = model,
+                onSaveClicked = onSaveClicked,
+            )
         }
     ) { innerPadding ->
-        Column(
+        MainScreenContent(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = 8.dp)
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Spacer(modifier.height(10.dp))
+            model = model,
+            onCitySelected = onCitySelected,
+            onTimeChecked = onTimeChecked,
+        )
+    }
+}
 
-            CityDropdown(
-                selectedCity = selectedCity,
-                onCitySelected = onCitySelected,
-            )
+@Composable
+private fun MainScreenBottomBar(
+    modifier: Modifier = Modifier,
+    model: MainScreenModel,
+    onSaveClicked: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = model.showSaveButton,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it }),
+    ) {
+        Button(
+            modifier = modifier,
+            onClick = onSaveClicked,
+            enabled = model.loading == null,
 
-            Spacer(modifier.height(20.dp))
+            ) {
+            if (model.loading == MainScreenModel.Loading.Saving) {
+                CircularProgressIndicator()
+            } else {
+                Text(
+                    text = stringResource(R.string.save_schedule_button),
+                    style = Typography.bodyLarge
+                )
+            }
+        }
+    }
+}
 
-            val times = model.times
-            val half = (times.size + 1) / 2
-            val leftTimes = times.subList(0, half)
-            val rightTimes = times.subList(half, times.size)
-            val headerModifier = Modifier
-                .padding(bottom = 10.dp)
-                .fillMaxWidth()
-            val contentLoading = model.loading == MainScreenModel.Loading.Content
-            Row(modifier = Modifier.fillMaxWidth()) {
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 4.dp)
-                ) {
-                    stickyHeader {
-                        ListHeader(
-                            modifier = headerModifier,
-                            text = "\uD83C\uDF1E Day Times",
-                        )
-                    }
-                    items(leftTimes) { timeItem ->
-                        TimeItemRow(
-                            modifier = Modifier.padding(bottom = 4.dp),
-                            timeItem = timeItem,
-                            loading = contentLoading,
-                            onTimeChecked = onTimeChecked,
-                        )
-                    }
+@Composable
+private fun MainScreenContent(
+    modifier: Modifier = Modifier,
+    model: MainScreenModel,
+    onCitySelected: (City) -> Unit,
+    onTimeChecked: (TimeItem, Boolean) -> Unit,
+) {
+    val selectedCity = model.selectedCity
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+
+        CityDropdown(
+            selectedCity = selectedCity,
+            onCitySelected = onCitySelected,
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        val times = model.times
+        val half = (times.size + 1) / 2
+        val leftTimes = times.subList(0, half)
+        val rightTimes = times.subList(half, times.size)
+        val headerModifier = Modifier
+            .padding(bottom = 10.dp)
+            .fillMaxWidth()
+        val contentLoading = model.loading == MainScreenModel.Loading.Content
+        Row(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 4.dp)
+            ) {
+                stickyHeader {
+                    ListHeader(
+                        modifier = headerModifier,
+                        text = "\uD83C\uDF1E Day Times",
+                    )
                 }
-                LazyColumn(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 4.dp)
-                ) {
-                    stickyHeader {
-                        ListHeader(
-                            modifier = headerModifier,
-                            text = "\uD83C\uDF1A Night Times",
-                        )
-                    }
-                    items(rightTimes) { timeItem ->
-                        TimeItemRow(
-                            modifier = Modifier.padding(bottom = 4.dp),
-                            timeItem = timeItem,
-                            loading = contentLoading,
-                            onTimeChecked = onTimeChecked,
-                        )
-                    }
+                items(leftTimes) { timeItem ->
+                    TimeItemRow(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        timeItem = timeItem,
+                        loading = contentLoading,
+                        onTimeChecked = onTimeChecked,
+                    )
+                }
+            }
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 4.dp)
+            ) {
+                stickyHeader {
+                    ListHeader(
+                        modifier = headerModifier,
+                        text = "\uD83C\uDF1A Night Times",
+                    )
+                }
+                items(rightTimes) { timeItem ->
+                    TimeItemRow(
+                        modifier = Modifier.padding(bottom = 4.dp),
+                        timeItem = timeItem,
+                        loading = contentLoading,
+                        onTimeChecked = onTimeChecked,
+                    )
                 }
             }
         }

@@ -33,3 +33,12 @@ data class MainScreenModel(
         )
     }
 }
+
+data class TimeItem(
+    val number: Int,
+    val label: String,
+    val hour: String,
+    val night: Boolean,
+    val checked: Boolean = false,
+    val highlight: Boolean = false,
+)

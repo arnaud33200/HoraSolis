@@ -47,6 +47,12 @@ android {
     }
 }
 
+kotlin {
+    sourceSets.all {
+        languageSettings.optIn("androidx.compose.foundation.ExperimentalFoundationApi")
+    }
+}
+
 dependencies {
 
     implementation(libs.kotlin.immutableCollections)
