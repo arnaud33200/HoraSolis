@@ -6,13 +6,13 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -42,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import ca.arnaud.horasolis.ui.main.City
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
@@ -74,7 +74,8 @@ fun MainScreen(
             MainScreenBottomBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(8.dp)
+                    .navigationBarsPadding(),
                 model = model,
                 onSaveClicked = onSaveClicked,
             )
@@ -121,6 +122,7 @@ private fun MainScreenBottomBar(
     }
 }
 
+
 @Composable
 private fun MainScreenContent(
     modifier: Modifier = Modifier,
@@ -129,69 +131,68 @@ private fun MainScreenContent(
     onTimeChecked: (TimeItem, Boolean) -> Unit,
 ) {
     val selectedCity = model.selectedCity
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(10.dp))
-
         CityDropdown(
             selectedCity = selectedCity,
             onCitySelected = onCitySelected,
         )
-
         Spacer(modifier = Modifier.height(10.dp))
-
-        val times = model.times
-        val half = (times.size + 1) / 2
-        val leftTimes = times.subList(0, half)
-        val rightTimes = times.subList(half, times.size)
-        val headerModifier = Modifier
-            .padding(bottom = 10.dp)
-            .fillMaxWidth()
         val contentLoading = model.loading == MainScreenModel.Loading.Content
         Row(modifier = Modifier.fillMaxWidth()) {
-            LazyColumn(
+            TimeListColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 4.dp)
-            ) {
-                stickyHeader {
-                    ListHeader(
-                        modifier = headerModifier,
-                        text = "\uD83C\uDF1E",
-                    )
-                }
-                items(leftTimes) { timeItem ->
-                    TimeItemRow(
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        timeItem = timeItem,
-                        loading = contentLoading,
-                        onTimeChecked = onTimeChecked,
-                    )
-                }
-            }
-            LazyColumn(
+                    .padding(end = 4.dp),
+                header = "\uD83C\uDF1E",
+                model = model.dayTimes,
+                loading = contentLoading,
+                onTimeChecked = onTimeChecked
+            )
+            TimeListColumn(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 4.dp)
-            ) {
-                stickyHeader {
-                    ListHeader(
-                        modifier = headerModifier,
-                        text = "\uD83C\uDF1A",
-                    )
-                }
-                items(rightTimes) { timeItem ->
-                    TimeItemRow(
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        timeItem = timeItem,
-                        loading = contentLoading,
-                        onTimeChecked = onTimeChecked,
-                    )
-                }
-            }
+                    .padding(start = 4.dp),
+                header = "\uD83C\uDF1A",
+                model = model.nightTimes,
+                loading = contentLoading,
+                onTimeChecked = onTimeChecked
+            )
+        }
+    }
+}
+
+@Composable
+private fun TimeListColumn(
+    modifier: Modifier = Modifier,
+    model: TimeListModel,
+    header: String,
+    loading: Boolean,
+    onTimeChecked: (TimeItem, Boolean) -> Unit
+) {
+    val headerModifier = Modifier
+        .padding(bottom = 10.dp)
+        .fillMaxWidth()
+    LazyColumn(
+        modifier = modifier,
+    ) {
+        stickyHeader {
+            ListHeader(
+                modifier = headerModifier,
+                text = header,
+                description = model.description,
+            )
+        }
+        items(model.times) { timeItem ->
+            TimeItemRow(
+                modifier = Modifier.padding(bottom = 4.dp),
+                timeItem = timeItem,
+                loading = loading,
+                onTimeChecked = onTimeChecked,
+            )
         }
     }
 }
@@ -200,15 +201,21 @@ private fun MainScreenContent(
 private fun ListHeader(
     modifier: Modifier = Modifier,
     text: String,
+    description: String,
 ) {
-    Box(
+    Column(
         modifier = modifier.background(HoraSolisTheme.colors.surface),
-        contentAlignment = Alignment.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             modifier = Modifier.padding(vertical = 6.dp),
             text = text,
             style = Typography.headlineMedium,
+        )
+
+        Text(
+            text = description,
+            style = Typography.bodyMedium,
         )
     }
 }
@@ -286,11 +293,14 @@ private fun TimeItemRow(
         ) {
             Checkbox(
                 checked = timeItem.checked,
+                colors = CheckboxDefaults.colors().copy(
+                    uncheckedBorderColor = HoraSolisTheme.colors.onSurface,
+                ),
                 onCheckedChange = { isChecked ->
                     onTimeChecked(timeItem, isChecked)
                 }
             )
-            
+
             Row(modifier = Modifier.weight(1f)) {
                 Text(
                     text = timeItem.label,
@@ -316,19 +326,34 @@ private fun TimeItemRow(
 @Composable
 private fun MainScreenPreview() {
     HoraSolisTheme {
-        val previewTimes = List(24) { i ->
-            TimeItem(
-                number = i + 1,
-                label = "Time ${i + 1}",
-                hour = String.format("%02d:00", i),
-                night = i > 11,
-                checked = (i % 3 == 0),
-                highlight = (i == 12),
-            )
-        }.toImmutableList()
         MainScreen(
             model = MainScreenModel(
-                times = previewTimes
+                dayTimes = TimeListModel(
+                    description = "15:34",
+                    times = List(12) { i ->
+                        TimeItem(
+                            number = i + 1,
+                            label = "Day ${i + 1}",
+                            hour = String.format("%02d:00", i),
+                            night = false,
+                            checked = (i % 3 == 0),
+                            highlight = (i == 6),
+                        )
+                    }.toImmutableList()
+                ),
+                nightTimes = TimeListModel(
+                    description = "08:45",
+                    times = List(12) { i ->
+                        TimeItem(
+                            number = i + 1,
+                            label = "Night ${i + 1}",
+                            hour = String.format("%02d:00", i),
+                            night = false,
+                            checked = (i % 3 == 0),
+                            highlight = (i == 6),
+                        )
+                    }.toImmutableList()
+                )
             ),
             onCitySelected = {},
             onTimeChecked = { _, _ -> },

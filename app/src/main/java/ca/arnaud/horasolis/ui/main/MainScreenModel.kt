@@ -11,7 +11,8 @@ import kotlinx.collections.immutable.persistentListOf
 
 data class MainScreenModel(
     val selectedCity: City = City.Thiviers,
-    val times: ImmutableList<TimeItem> = persistentListOf(),
+    val dayTimes: TimeListModel = TimeListModel(),
+    val nightTimes: TimeListModel = TimeListModel(),
     val showSaveButton: Boolean = false,
     val loading: Loading? = null,
     val snackMessage: String? = null,
@@ -25,7 +26,7 @@ data class MainScreenModel(
         romanTimes: RomanTimes?,
     ): ScheduleSettings? {
         if (romanTimes == null) return null
-        val selectedTimes = times
+        val selectedTimes = (dayTimes.times + nightTimes.times)
             .filter { it.checked }
             .mapNotNull { timeItem ->
                 romanTimes.times.find { it.number == timeItem.number }
@@ -37,6 +38,11 @@ data class MainScreenModel(
         )
     }
 }
+
+data class TimeListModel(
+    val description: String = "",
+    val times: ImmutableList<TimeItem> = persistentListOf(),
+)
 
 data class TimeItem(
     val number: Int,

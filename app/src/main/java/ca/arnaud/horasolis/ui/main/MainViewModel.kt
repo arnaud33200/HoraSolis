@@ -68,12 +68,15 @@ class MainViewModel(
         _state.update { it.copy(loading = MainScreenModel.Loading.Content) }
         val romanTimes = getRomanTimes(params).getDataOrNull()
         _state.update { it.copy(loading = null) }
+        if (romanTimes == null) {
+            _state.update { it.copy(snackMessage = "Failed to load times") } // TODO hardcoded string
+            return
+        }
 
-        val times = romanTimes?.times ?: emptyList()
         currentRomanTimes = romanTimes
         updateScreenModel { model ->
             screenModelFactory.updateTimes(
-                times,
+                romanTimes,
                 savedSettings,
                 model.copy(selectedCity = selectedCity)
             )

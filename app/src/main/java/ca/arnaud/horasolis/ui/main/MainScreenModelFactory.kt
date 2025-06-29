@@ -1,15 +1,16 @@
 package ca.arnaud.horasolis.ui.main
 
-import ca.arnaud.horasolis.ui.main.City
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.RomanTimes
 import ca.arnaud.horasolis.ui.common.AlertDialogModel
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import java.time.Duration
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -19,12 +20,13 @@ class MainScreenModelFactory(
 ) {
 
     fun updateTimes(
-        times: List<RomanTime>,
+        romanTimes: RomanTimes,
         settings: ScheduleSettings?,
         model: MainScreenModel
     ): MainScreenModel {
         return model.copy(
-            times = times.toTimeItems(settings)
+            dayTimes = romanTimes.toTimeListModel(settings, RomanTime.Type.Day),
+            nightTimes = romanTimes.toTimeListModel(settings, RomanTime.Type.Night),
         )
     }
 
@@ -33,16 +35,24 @@ class MainScreenModelFactory(
         timeItem: TimeItem,
         checked: Boolean,
     ): MainScreenModel {
-
-        val updatedTimes = model.times.map { time ->
-            if (time.number == timeItem.number) {
-                time.copy(checked = checked)
-            } else {
-                time
-            }
-        }
         return model.copy(
-            times = updatedTimes.toImmutableList(),
+            dayTimes = model.dayTimes.updateChecked(timeItem.number, checked),
+            nightTimes = model.nightTimes.updateChecked(timeItem.number, checked),
+        )
+    }
+
+    private fun TimeListModel.updateChecked(
+        number: Int,
+        checked: Boolean,
+    ): TimeListModel {
+        return this.copy(
+            times = this.times.map { time ->
+                if (time.number == number) {
+                    time.copy(checked = checked)
+                } else {
+                    time
+                }
+            }.toImmutableList()
         )
     }
 
@@ -55,9 +65,16 @@ class MainScreenModelFactory(
 
         return model.copy(
             selectedCity = selectedCity ?: City.entries.first(),
-            times = model.times.map {
-                it.copy(checked = selectedTimeNumbers.contains(it.number))
-            }.toImmutableList()
+            dayTimes = model.dayTimes.copy(
+                times = model.dayTimes.times.map {
+                    it.copy(checked = selectedTimeNumbers.contains(it.number))
+                }.toImmutableList()
+            ),
+            nightTimes = model.nightTimes.copy(
+                times = model.nightTimes.times.map {
+                    it.copy(checked = selectedTimeNumbers.contains(it.number))
+                }.toImmutableList()
+            ),
         )
     }
 
@@ -65,17 +82,36 @@ class MainScreenModelFactory(
         return this?.selectedTime?.map { it.number }?.toSet() ?: emptySet()
     }
 
+    private fun RomanTimes.toTimeListModel(
+        settings: ScheduleSettings?,
+        forType: RomanTime.Type,
+    ): TimeListModel {
+        val timeItems = times.toTimeItems(settings, forType)
+        val description = when (forType) {
+            RomanTime.Type.Day -> dayDuration.formatToHours()
+            RomanTime.Type.Night -> nightDuration.formatToHours()
+        }
+        return TimeListModel(
+            description = description,
+            times = timeItems,
+        )
+    }
+
     private fun List<RomanTime>.toTimeItems(
         settings: ScheduleSettings?,
+        forType: RomanTime.Type,
     ): ImmutableList<TimeItem> {
         val nowDateTime = timeProvider.getNowDateTime()
         val selectedTimeNumbers = settings.toSelectedTimeNumbers()
-        return this.map { time ->
+        return this.filter { it.type == forType }.map { time ->
             val startDateTime = time.startTime.atDate(nowDateTime.toLocalDate())
             val endDateTime = time.endTime.atDate(nowDateTime.toLocalDate())
             val isNow = nowDateTime.isAfter(startDateTime) && nowDateTime.isBefore(endDateTime)
             val label = if (time.type == RomanTime.Type.Night) {
-                stringProvider.getString(R.string.time_item_night_label, (time.number - 12).toString())
+                stringProvider.getString(
+                    R.string.time_item_night_label,
+                    (time.number - 12).toString()
+                )
             } else {
                 stringProvider.getString(R.string.time_item_day_label, time.number.toString())
             }
@@ -92,6 +128,12 @@ class MainScreenModelFactory(
 
     private fun LocalTime.formatTimeHHmm(): String {
         return DateTimeFormatter.ofPattern("HH:mm").format(this)
+    }
+
+    private fun Duration.formatToHours(): String {
+        val hours = this.toHours()
+        val minutes = this.minusHours(hours).toMinutes()
+        return String.format("%02d:%02d", hours, minutes)
     }
 
     fun updateSavedSettings(

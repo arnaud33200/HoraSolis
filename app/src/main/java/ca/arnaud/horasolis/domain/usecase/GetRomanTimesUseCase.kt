@@ -17,6 +17,8 @@ data class RomanTimes(
     val location: UserLocation,
     val date: LocalDate,
     val times: List<RomanTime>,
+    val dayDuration: Duration,
+    val nightDuration: Duration,
 )
 
 /**
@@ -73,6 +75,8 @@ class GetRomanTimesUseCase(
             date = sunTime.date,
             times = dayTimes + nightTimes,
             location = params.location,
+            dayDuration = dayDuration,
+            nightDuration = nightDuration,
         )
     }
 
