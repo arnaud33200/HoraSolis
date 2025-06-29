@@ -8,7 +8,8 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         SelectedTimeEntity::class,
-        ScheduleSettingsEntity::class
+        ScheduleSettingsEntity::class,
+        AlarmRingingEntity::class,
     ],
     version = 1
 )
@@ -26,4 +27,5 @@ abstract class HoraSolisDatabase : RoomDatabase() {
     }
 
     abstract fun settingsWithTimesDao(): SettingsWithTimesDao
+    abstract fun alarmDao(): AlarmDao
 }

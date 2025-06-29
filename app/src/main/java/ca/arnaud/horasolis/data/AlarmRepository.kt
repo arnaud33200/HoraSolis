@@ -1,29 +1,26 @@
 package ca.arnaud.horasolis.data
 
-import androidx.datastore.core.DataStore
+import ca.arnaud.horasolis.domain.usecase.AlarmRinging
+import ca.arnaud.horasolis.local.AlarmDao
+import ca.arnaud.horasolis.local.AlarmRingingEntity
+import ca.arnaud.horasolis.local.HoraSolisDatabase
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 
 class AlarmRepository(
-    private val dataStore: DataStore<Preferences>,
+    database: HoraSolisDatabase,
 ) {
 
-    companion object {
+    private val alarmDao: AlarmDao = database.alarmDao()
 
-        private val alarmRingingPreferenceKey = booleanPreferencesKey("alarm_ringing")
-    }
-
-    suspend fun setAlarmRinging(ringing: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[alarmRingingPreferenceKey] = ringing
+    suspend fun setAlarmRinging(params: AlarmRinging?) {
+        if (params == null) {
+            alarmDao.clearAlarmRinging()
+        } else {
+            val entity = AlarmRingingEntity(number = params.number)
+            alarmDao.setAlarmRinging(entity)
         }
     }
 
-    fun getRingingFlow(): Flow<Boolean> =
-        dataStore.data.map { preferences ->
-            preferences[alarmRingingPreferenceKey] ?: false
-        }
+    fun getRingingFlow(): Flow<AlarmRinging?> =
+        alarmDao.observeRinging()
 }

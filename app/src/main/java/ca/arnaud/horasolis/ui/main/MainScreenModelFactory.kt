@@ -5,6 +5,8 @@ import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.usecase.AlarmRinging
+import ca.arnaud.horasolis.ui.common.AlertDialogModel
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -99,5 +101,19 @@ class MainScreenModelFactory(
             loading = null,
             snackMessage = stringProvider.getString(R.string.settings_saved_message),
         )
+    }
+
+    fun createRingingDialog(alarmRinging: AlarmRinging?): AlertDialogModel? {
+        return if (alarmRinging != null) {
+            AlertDialogModel(
+                title = stringProvider.getString(
+                    R.string.ringing_alarm_dialog_title,
+                    alarmRinging.number.toString(),
+                ),
+                message = stringProvider.getString(R.string.ringing_alarm_dialog_message),
+            )
+        } else {
+            null
+        }
     }
 }

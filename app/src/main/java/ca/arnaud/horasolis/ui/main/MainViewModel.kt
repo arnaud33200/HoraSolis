@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.ui.main.City
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
+import ca.arnaud.horasolis.domain.usecase.AlarmRinging
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
@@ -11,6 +12,7 @@ import ca.arnaud.horasolis.domain.usecase.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.RomanTimes
 import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.ui.common.AlertDialogModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -30,9 +32,8 @@ class MainViewModel(
     private val _state = MutableStateFlow(MainScreenModel())
     val state: StateFlow<MainScreenModel> = _state
 
-    // TODO - setup a model so we can tell which alarm is ringing
-    private val _ringingDialog = MutableStateFlow(false)
-    val ringingDialog: StateFlow<Boolean> = _ringingDialog
+    private val _ringingDialog = MutableStateFlow<AlertDialogModel?>(null)
+    val ringingDialog: StateFlow<AlertDialogModel?> = _ringingDialog
 
     private var currentRomanTimes: RomanTimes? = null
     private var savedSettings: ScheduleSettings? = null
@@ -51,8 +52,8 @@ class MainViewModel(
         }
 
         viewModelScope.launch {
-            observeAlarmRinging().collectLatest { ringing ->
-                _ringingDialog.value = ringing
+            observeAlarmRinging().collectLatest { alarmRinging ->
+                _ringingDialog.value = screenModelFactory.createRingingDialog(alarmRinging)
             }
         }
     }
@@ -115,7 +116,7 @@ class MainViewModel(
      */
     fun onStopRingingServiceFailed() {
         viewModelScope.launch {
-            setAlarmRinging(false)
+            setAlarmRinging(null)
         }
     }
 

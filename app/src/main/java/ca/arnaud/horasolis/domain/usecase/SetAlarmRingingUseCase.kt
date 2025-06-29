@@ -2,11 +2,15 @@ package ca.arnaud.horasolis.domain.usecase
 
 import ca.arnaud.horasolis.data.AlarmRepository
 
+data class AlarmRinging(
+    val number: Int,
+)
+
 class SetAlarmRingingUseCase(
     private val alarmRepository: AlarmRepository,
 ) {
 
-    suspend operator fun invoke(ringing: Boolean) {
-        alarmRepository.setAlarmRinging(ringing)
+    suspend operator fun invoke(params: AlarmRinging?) {
+        alarmRepository.setAlarmRinging(params)
     }
 }

@@ -15,9 +15,10 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import ca.arnaud.horasolis.ui.main.MainActivity
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.domain.usecase.AlarmRinging
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -27,12 +28,16 @@ import org.koin.java.KoinJavaComponent
 class AlarmRingingService : Service() {
 
     companion object {
-
         private const val NOTIFICATION_ID = 1001
         private const val NOTIFICATION_CHANNEL_ID = "alarm_ringing_channel"
+        private const val EXTRA_PARAMS = "alarm_ringing_params"
 
-        fun startService(context: Context) {
+        fun startService(
+            context: Context,
+            params: RomanTimeAlarmScheduleParam,
+        ) {
             val serviceIntent = Intent(context, AlarmRingingService::class.java)
+            serviceIntent.putExtra(EXTRA_PARAMS, params)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(serviceIntent)
             } else {
@@ -54,10 +59,12 @@ class AlarmRingingService : Service() {
 
     private val scope = CoroutineScope(context = Dispatchers.Default + SupervisorJob())
 
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val params = intent?.getParcelableExtra<RomanTimeAlarmScheduleParam>(EXTRA_PARAMS)
         startForeground(NOTIFICATION_ID, createNotification())
         if (mediaPlayer?.isPlaying != true) {
-            playAlarmSound()
+            playAlarmSound(params)
         }
         return START_STICKY
     }
@@ -67,12 +74,12 @@ class AlarmRingingService : Service() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
-        scope.launch { setAlarmRinging(false) }
+        scope.launch { setAlarmRinging(null) }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private fun playAlarmSound() {
+    private fun playAlarmSound(params: RomanTimeAlarmScheduleParam?) {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setLegacyStreamType(AudioManager.STREAM_ALARM)
@@ -81,7 +88,10 @@ class AlarmRingingService : Service() {
 
         requestAudioFocus(audioAttributes)
         playAlarmRingtone(audioAttributes)
-        scope.launch { setAlarmRinging(true) }
+        scope.launch {
+            val alarmRinging = AlarmRinging(number = params?.number ?: 0)
+            setAlarmRinging(alarmRinging)
+        }
     }
 
     private fun playAlarmRingtone(audioAttributes: AudioAttributes) {

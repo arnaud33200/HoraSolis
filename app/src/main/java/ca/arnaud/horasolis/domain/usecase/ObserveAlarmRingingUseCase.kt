@@ -7,5 +7,5 @@ class ObserveAlarmRingingUseCase(
     private val alarmRepository: AlarmRepository,
 ) {
 
-    operator fun invoke(): Flow<Boolean> = alarmRepository.getRingingFlow()
+    operator fun invoke(): Flow<AlarmRinging?> = alarmRepository.getRingingFlow()
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.service.AlarmRingingService
+import ca.arnaud.horasolis.ui.common.AlertDialogModel
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
             HoraSolisTheme {
                 NotificationPermissionRequest()
                 val state by viewModel.state.collectAsState()
-                val showRingingDialog by viewModel.ringingDialog.collectAsState()
+                val ringingDialog by viewModel.ringingDialog.collectAsState()
 
                 MainScreen(
                     model = state,
@@ -46,8 +47,9 @@ class MainActivity : ComponentActivity() {
                     onSnackbarDismissed = viewModel::onSnackbarDismissed,
                 )
 
-                if (showRingingDialog) {
+                ringingDialog?.let {
                     RingtoneDialog(
+                        model = it,
                         onButtonClick = {
                             if (!AlarmRingingService.stopService(context = this)) {
                                 viewModel.onStopRingingServiceFailed()
@@ -63,6 +65,7 @@ class MainActivity : ComponentActivity() {
     private fun RingtoneDialog(
         modifier: Modifier = Modifier,
         onButtonClick: () -> Unit,
+        model: AlertDialogModel,
     ) {
         AlertDialog(
             onDismissRequest = {}, // Not dismissable by outside touch or back press
@@ -72,10 +75,10 @@ class MainActivity : ComponentActivity() {
                 }
             },
             title = {
-                Text(stringResource(id = R.string.ringing_alarm_dialog_title))
+                Text(model.title)
             },
             text = {
-                Text(stringResource(id = R.string.ringing_alarm_dialog_message))
+                Text(model.message)
             },
             modifier = modifier
         )
