@@ -2,9 +2,7 @@ package ca.arnaud.horasolis.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.ui.main.City
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.usecase.AlarmRinging
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
@@ -13,12 +11,14 @@ import ca.arnaud.horasolis.domain.usecase.RomanTimes
 import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.common.AlertDialogModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import kotlin.time.Duration.Companion.minutes
 
 class MainViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
@@ -40,13 +40,17 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            val selectedCity = state.value.selectedCity
-            refreshTimes(selectedCity)
-
             observeSelectedTimes().collectLatest { settings ->
                 savedSettings = settings
-                updateScreenModel { model ->
-                    screenModelFactory.updateWithSettings(model, settings)
+                if (currentRomanTimes == null) {
+                    val selectedCity = savedSettings?.let {
+                        City.firstOrNull(it.location)
+                    } ?: state.value.selectedCity
+                    refreshTimes(selectedCity)
+                } else {
+                    updateScreenModel { model ->
+                        screenModelFactory.updateWithSettings(model, settings)
+                    }
                 }
             }
         }
@@ -54,6 +58,15 @@ class MainViewModel(
         viewModelScope.launch {
             observeAlarmRinging().collectLatest { alarmRinging ->
                 _ringingDialog.value = screenModelFactory.createRingingDialog(alarmRinging)
+            }
+        }
+
+        viewModelScope.launch {
+            while (true) {
+                updateScreenModel { model ->
+                    screenModelFactory.updateNowTime(model, currentRomanTimes)
+                }
+                delay(1.minutes)
             }
         }
     }

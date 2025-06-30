@@ -31,7 +31,6 @@ class MainScreenModelFactory(
                             (it + 1).toString()
                         ),
                         hour = "00:00",
-                        night = false,
                     )
                 }.toImmutableList()
             ),
@@ -44,7 +43,6 @@ class MainScreenModelFactory(
                             (it + 1).toString()
                         ),
                         hour = "00:00",
-                        night = true,
                     )
                 }.toImmutableList(),
             ),
@@ -59,6 +57,26 @@ class MainScreenModelFactory(
         return model.copy(
             dayTimes = romanTimes.toTimeListModel(settings, RomanTime.Type.Day),
             nightTimes = romanTimes.toTimeListModel(settings, RomanTime.Type.Night),
+        )
+    }
+
+    fun updateNowTime(
+        model: MainScreenModel,
+        romanTimes: RomanTimes?,
+    ): MainScreenModel {
+        val nowTime = timeProvider.getNowDateTime().toLocalTime()
+        val nowRomanTime = romanTimes?.times?.find { it.isNow(nowTime) } ?: return model
+
+        val transformItem: (TimeItem) -> TimeItem = { item ->
+            item.copy(highlight = item.number == nowRomanTime.number)
+        }
+        return model.copy(
+            dayTimes = model.dayTimes.copy(
+                times = model.dayTimes.times.map(transformItem).toImmutableList()
+            ),
+            nightTimes = model.nightTimes.copy(
+                times = model.nightTimes.times.map(transformItem).toImmutableList()
+            ),
         )
     }
 
@@ -133,12 +151,9 @@ class MainScreenModelFactory(
         settings: ScheduleSettings?,
         forType: RomanTime.Type,
     ): ImmutableList<TimeItem> {
-        val nowDateTime = timeProvider.getNowDateTime()
+        val nowTime = timeProvider.getNowDateTime().toLocalTime()
         val selectedTimeNumbers = settings.toSelectedTimeNumbers()
         return this.filter { it.type == forType }.map { time ->
-            val startDateTime = time.startTime.atDate(nowDateTime.toLocalDate())
-            val endDateTime = time.endTime.atDate(nowDateTime.toLocalDate())
-            val isNow = nowDateTime.isAfter(startDateTime) && nowDateTime.isBefore(endDateTime)
             val label = if (time.type == RomanTime.Type.Night) {
                 stringProvider.getString(
                     R.string.time_item_night_label,
@@ -151,9 +166,8 @@ class MainScreenModelFactory(
                 number = time.number,
                 label = label,
                 hour = time.startTime.formatTimeHHmm(),
-                night = time.type == RomanTime.Type.Night,
                 checked = selectedTimeNumbers.contains(time.number),
-                highlight = isNow,
+                highlight = time.isNow(nowTime),
             )
         }.toImmutableList()
     }
@@ -178,16 +192,13 @@ class MainScreenModelFactory(
     }
 
     fun createRingingDialog(alarmRinging: AlarmRinging?): AlertDialogModel? {
-        return if (alarmRinging != null) {
-            AlertDialogModel(
-                title = stringProvider.getString(
-                    R.string.ringing_alarm_dialog_title,
-                    alarmRinging.number.toString(),
-                ),
-                message = stringProvider.getString(R.string.ringing_alarm_dialog_message),
-            )
-        } else {
-            null
-        }
+        if (alarmRinging == null) return null
+        return AlertDialogModel(
+            title = stringProvider.getString(
+                R.string.ringing_alarm_dialog_title,
+                alarmRinging.number.toString(),
+            ),
+            message = stringProvider.getString(R.string.ringing_alarm_dialog_message),
+        )
     }
 }

@@ -24,4 +24,8 @@ data class RomanTime(
     enum class Type {
         Day, Night
     }
+
+    fun isNow(nowTime: LocalTime): Boolean {
+        return nowTime.isAfter(startTime) && nowTime.isBefore(endTime)
+    }
 }

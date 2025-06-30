@@ -159,7 +159,8 @@ private fun MainScreenContent(
                 header = "\uD83C\uDF1A",
                 model = model.nightTimes,
                 loading = contentLoading,
-                onTimeChecked = onTimeChecked
+                onTimeChecked = onTimeChecked,
+                night = true,
             )
         }
     }
@@ -171,6 +172,7 @@ private fun TimeListColumn(
     model: TimeListModel,
     header: String,
     loading: Boolean,
+    night: Boolean = false,
     onTimeChecked: (TimeItem, Boolean) -> Unit
 ) {
     val headerModifier = Modifier
@@ -192,6 +194,7 @@ private fun TimeListColumn(
                 timeItem = timeItem,
                 loading = loading,
                 onTimeChecked = onTimeChecked,
+                night = night,
             )
         }
     }
@@ -270,20 +273,28 @@ private fun TimeItemRow(
     onTimeChecked: (TimeItem, Boolean) -> Unit,
     timeItem: TimeItem,
     loading: Boolean,
+    night: Boolean,
 ) {
-    val color = if (timeItem.night) {
+    val containerColor = if (night) {
         HoraSolisTheme.colors.secondaryContainer
     } else {
         HoraSolisTheme.colors.surfaceContainer
     }
-    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.primary) else null
+    val contentColor = if (night) {
+        HoraSolisTheme.colors.onSecondaryContainer
+    } else {
+        HoraSolisTheme.colors.onSurface
+    }
 
+    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.primary) else null
+    val cardColors = CardDefaults.cardColors(
+        containerColor = if (timeItem.highlight) contentColor else containerColor,
+        contentColor = if (timeItem.highlight) containerColor else contentColor,
+    )
     Card(
         modifier = modifier,
         border = border,
-        colors = CardDefaults.cardColors(
-            containerColor = color
-        ),
+        colors = cardColors,
     ) {
         Row(
             modifier = Modifier
@@ -294,7 +305,7 @@ private fun TimeItemRow(
             Checkbox(
                 checked = timeItem.checked,
                 colors = CheckboxDefaults.colors().copy(
-                    uncheckedBorderColor = HoraSolisTheme.colors.onSurface,
+                    uncheckedBorderColor = cardColors.contentColor,
                 ),
                 onCheckedChange = { isChecked ->
                     onTimeChecked(timeItem, isChecked)
@@ -335,7 +346,6 @@ private fun MainScreenPreview() {
                             number = i + 1,
                             label = "Day ${i + 1}",
                             hour = String.format("%02d:00", i),
-                            night = false,
                             checked = (i % 3 == 0),
                             highlight = (i == 6),
                         )
@@ -348,7 +358,6 @@ private fun MainScreenPreview() {
                             number = i + 1,
                             label = "Night ${i + 1}",
                             hour = String.format("%02d:00", i),
-                            night = false,
                             checked = (i % 3 == 0),
                             highlight = (i == 6),
                         )
