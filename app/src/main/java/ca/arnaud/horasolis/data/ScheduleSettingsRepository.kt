@@ -29,7 +29,7 @@ class ScheduleSettingsRepository(
                 number = time.number,
                 scheduleSettingsId = scheduleSettingsEntity.id,
                 startTime = time.startTime.toString(),
-                duration = time.duration.toMillis(),
+                duration = time.duration.toString(),
                 type = time.type.name,
             )
         }
@@ -70,7 +70,7 @@ class ScheduleSettingsRepository(
             RomanTime(
                 number = entity.number,
                 startTime = LocalTime.parse(entity.startTime),
-                duration = Duration.ofMillis(entity.duration),
+                duration = Duration.parse(entity.duration),
                 type = RomanTime.Type.valueOf(entity.type)
             )
         }

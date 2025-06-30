@@ -29,6 +29,6 @@ data class SelectedTimeEntity(
     val scheduleSettingsId: Int,
     val number: Int,
     val startTime: String,
-    val duration: Long,
+    val duration: String,
     val type: String
 )
