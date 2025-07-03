@@ -2,4 +2,8 @@
 <resources>
 
     <style name="Theme.HoraSolis" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.HoraSolis.Splash" parent="Theme.HoraSolis">
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
+    </style>
 </resources>
