@@ -19,7 +19,7 @@
 
     <string name="city_dropdown_label">Choisir une ville</string>
     <string name="save_schedule_button">Enregistrer</string>
-    <string name="ringing_alarm_dialog_title">L\'alarme %$1s</string>
+    <string name="ringing_alarm_dialog_title">L\'alarme pour l\'heure %1$s</string>
     <string name="ringing_alarm_dialog_button">Arrêter l\'alarme</string>
     <string name="ringing_alarm_dialog_message">Voulez-vous arrêter la sonnerie ?</string>
     <string name="alarm_ringing_channel_name">Sonnerie d\'alarme</string>

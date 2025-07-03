@@ -20,7 +20,7 @@
     <string name="city_dropdown_label">Select City</string>
     <string name="save_schedule_button">Save</string>
 
-    <string name="ringing_alarm_dialog_title">%1$s Alarm</string>
+    <string name="ringing_alarm_dialog_title">Alarm for hour %1$s</string>
     <string name="ringing_alarm_dialog_message">would you like to stop the ringing?</string>
     <string name="ringing_alarm_dialog_button">Stop Alarm</string>
 
