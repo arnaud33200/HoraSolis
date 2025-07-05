@@ -30,4 +30,5 @@
     <string name="time_item_day_label">Jour %1$s</string>
     <string name="time_item_night_label">Nuit %1$s</string>
     <string name="settings_saved_message">Horaire enregistré !</string>
+    <string name="location_permission_required_toast_message">La permission de localisation is requis pour recuper votre position</string>
 </resources>

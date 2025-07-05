@@ -32,4 +32,5 @@
     <string name="time_item_day_label">Day %1$s</string>
     <string name="time_item_night_label">Night %1$s</string>
     <string name="settings_saved_message">Schedule Saved!</string>
+    <string name="location_permission_required_toast_message">Location permission required to get accurate sun times</string>
 </resources>

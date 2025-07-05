@@ -22,7 +22,7 @@ abstract class HoraSolisDatabase : RoomDatabase() {
                 context = context,
                 klass = HoraSolisDatabase::class.java,
                 name = "hora_solis.db",
-            ).build()
+            ).fallbackToDestructiveMigration().build()
         }
     }
 

@@ -15,8 +15,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.extension.getCurrentLocation
 import ca.arnaud.horasolis.service.AlarmRingingService
 import ca.arnaud.horasolis.ui.common.AlertDialogModel
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
@@ -38,6 +40,13 @@ class MainActivity : ComponentActivity() {
                 NotificationPermissionRequest()
                 val state by viewModel.state.collectAsState()
                 val ringingDialog by viewModel.ringingDialog.collectAsState()
+
+                val context = LocalContext.current
+
+                LaunchedEffect(Unit) {
+                    // TEST location
+                    val response = context.getCurrentLocation()
+                }
 
                 MainScreen(
                     model = state,
@@ -97,6 +106,24 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(
                     this,
                     getString(R.string.notification_permission_required_toast_message),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun LocationPermissionRequest() {
+        val permissionState = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (!permissionState.status.isGranted) {
+            LaunchedEffect(Unit) {
+                permissionState.launchPermissionRequest()
+            }
+            if (permissionState.status.shouldShowRationale) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.location_permission_required_toast_message),
                     Toast.LENGTH_LONG
                 ).show()
             }
