@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.ui.main
+package ca.arnaud.horasolis.ui.timelist
 
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.RomanTime
@@ -6,7 +6,7 @@ import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.AlarmRinging
 import ca.arnaud.horasolis.domain.usecase.RomanTimes
-import ca.arnaud.horasolis.ui.common.AlertDialogModel
+import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -14,7 +14,7 @@ import java.time.Duration
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class MainScreenModelFactory(
+class TimeListScreenModelFactory(
     private val timeProvider: TimeProvider,
     private val stringProvider: StringProvider,
 ) {
@@ -191,9 +191,9 @@ class MainScreenModelFactory(
         )
     }
 
-    fun createRingingDialog(alarmRinging: AlarmRinging?): AlertDialogModel? {
+    fun createRingingDialog(alarmRinging: AlarmRinging?): HoraAlertDialogModel? {
         if (alarmRinging == null) return null
-        return AlertDialogModel(
+        return HoraAlertDialogModel(
             title = stringProvider.getString(
                 R.string.ringing_alarm_dialog_title,
                 alarmRinging.number.toString(),

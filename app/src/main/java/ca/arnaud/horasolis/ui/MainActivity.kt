@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.ui.main
+package ca.arnaud.horasolis.ui
 
 import android.Manifest
 import android.os.Build
@@ -7,21 +7,14 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.extension.getCurrentLocation
-import ca.arnaud.horasolis.service.AlarmRingingService
-import ca.arnaud.horasolis.ui.common.AlertDialogModel
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
+import ca.arnaud.horasolis.ui.timelist.TimeListDestination
+import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -30,7 +23,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    val viewModel: MainViewModel by viewModel()
+    val viewModel: TimeListViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,59 +31,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             HoraSolisTheme {
                 NotificationPermissionRequest()
-                val state by viewModel.state.collectAsState()
-                val ringingDialog by viewModel.ringingDialog.collectAsState()
-
                 val context = LocalContext.current
-
                 LaunchedEffect(Unit) {
                     // TEST location
                     val response = context.getCurrentLocation()
                 }
 
-                MainScreen(
-                    model = state,
-                    onCitySelected = viewModel::onCitySelected,
-                    onTimeChecked = viewModel::onTimeChecked,
-                    onSaveClicked = viewModel::onSaveClicked,
-                    onSnackbarDismissed = viewModel::onSnackbarDismissed,
+                TimeListDestination(
+                    viewModel = viewModel,
                 )
-
-                ringingDialog?.let {
-                    RingtoneDialog(
-                        model = it,
-                        onButtonClick = {
-                            if (!AlarmRingingService.stopService(context = this)) {
-                                viewModel.onStopRingingServiceFailed()
-                            }
-                        },
-                    )
-                }
             }
         }
-    }
-
-    @Composable
-    private fun RingtoneDialog(
-        modifier: Modifier = Modifier,
-        onButtonClick: () -> Unit,
-        model: AlertDialogModel,
-    ) {
-        AlertDialog(
-            onDismissRequest = {}, // Not dismissable by outside touch or back press
-            confirmButton = {
-                Button(onClick = onButtonClick) {
-                    Text(stringResource(id = R.string.ringing_alarm_dialog_button))
-                }
-            },
-            title = {
-                Text(model.title)
-            },
-            text = {
-                Text(model.message)
-            },
-            modifier = modifier
-        )
     }
 
     @OptIn(ExperimentalPermissionsApi::class)

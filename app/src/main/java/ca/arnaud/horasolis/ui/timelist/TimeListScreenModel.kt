@@ -1,8 +1,7 @@
-package ca.arnaud.horasolis.ui.main
+package ca.arnaud.horasolis.ui.timelist
 
 import androidx.annotation.StringRes
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.ui.main.City
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.domain.usecase.RomanTimes

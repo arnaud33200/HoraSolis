@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.ui.main
+package ca.arnaud.horasolis.ui.timelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,7 @@ import ca.arnaud.horasolis.domain.usecase.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.RomanTimes
 import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
-import ca.arnaud.horasolis.ui.common.AlertDialogModel
+import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,20 +20,20 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
-class MainViewModel(
+class TimeListViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
     private val observeAlarmRinging: ObserveAlarmRingingUseCase,
     private val setAlarmRinging: SetAlarmRingingUseCase,
-    private val screenModelFactory: MainScreenModelFactory,
+    private val screenModelFactory: TimeListScreenModelFactory,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(screenModelFactory.createInitialLoading())
     val state: StateFlow<MainScreenModel> = _state
 
-    private val _ringingDialog = MutableStateFlow<AlertDialogModel?>(null)
-    val ringingDialog: StateFlow<AlertDialogModel?> = _ringingDialog
+    private val _ringingDialog = MutableStateFlow<HoraAlertDialogModel?>(null)
+    val ringingDialog: StateFlow<HoraAlertDialogModel?> = _ringingDialog
 
     private var currentRomanTimes: RomanTimes? = null
     private var savedSettings: ScheduleSettings? = null
