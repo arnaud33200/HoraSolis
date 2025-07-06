@@ -33,4 +33,8 @@
     <string name="time_item_night_label">Night %1$s</string>
     <string name="settings_saved_message">Schedule Saved!</string>
     <string name="location_permission_required_toast_message">Location permission required to get accurate sun times</string>
+
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="current_location_button">Current Location</string>
 </resources>

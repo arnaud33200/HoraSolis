@@ -37,7 +37,7 @@ fun MainScreen(
     onTimeChecked: (TimeItem, Boolean) -> Unit,
     onSaveClicked: () -> Unit,
     onSnackbarDismissed: () -> Unit,
-    model: MainScreenModel,
+    model: TimeListScreenModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
@@ -75,7 +75,7 @@ fun MainScreen(
 @Composable
 private fun MainScreenBottomBar(
     modifier: Modifier = Modifier,
-    model: MainScreenModel,
+    model: TimeListScreenModel,
     onSaveClicked: () -> Unit
 ) {
     AnimatedVisibility(
@@ -89,7 +89,7 @@ private fun MainScreenBottomBar(
             enabled = model.loading == null,
 
             ) {
-            if (model.loading == MainScreenModel.Loading.Saving) {
+            if (model.loading == TimeListScreenModel.Loading.Saving) {
                 CircularProgressIndicator()
             } else {
                 Text(
@@ -105,7 +105,7 @@ private fun MainScreenBottomBar(
 @Composable
 private fun MainScreenContent(
     modifier: Modifier = Modifier,
-    model: MainScreenModel,
+    model: TimeListScreenModel,
     onCitySelected: (City) -> Unit,
     onTimeChecked: (TimeItem, Boolean) -> Unit,
 ) {
@@ -120,7 +120,7 @@ private fun MainScreenContent(
             onCitySelected = onCitySelected,
         )
         Spacer(modifier = Modifier.height(10.dp))
-        val contentLoading = model.loading == MainScreenModel.Loading.Content
+        val contentLoading = model.loading == TimeListScreenModel.Loading.Content
         TimeCheckList(
             dayTimes = model.dayTimes,
             nightTimes = model.nightTimes,
@@ -136,7 +136,7 @@ private fun MainScreenContent(
 private fun MainScreenPreview() {
     HoraSolisTheme {
         MainScreen(
-            model = MainScreenModel(
+            model = TimeListScreenModel(
                 dayTimes = TimeListModel(
                     description = "15:34",
                     times = List(12) { i ->

@@ -31,4 +31,7 @@
     <string name="time_item_night_label">Nuit %1$s</string>
     <string name="settings_saved_message">Horaire enregistré !</string>
     <string name="location_permission_required_toast_message">La permission de localisation is requis pour recuper votre position</string>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="current_location_button">Location Actuel</string>
 </resources>

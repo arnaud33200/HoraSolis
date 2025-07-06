@@ -8,7 +8,7 @@ import ca.arnaud.horasolis.domain.usecase.RomanTimes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class MainScreenModel(
+data class TimeListScreenModel(
     val selectedCity: City = City.Thiviers,
     val dayTimes: TimeListModel = TimeListModel(),
     val nightTimes: TimeListModel = TimeListModel(),

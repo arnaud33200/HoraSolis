@@ -54,6 +54,8 @@ android {
 kotlin {
     sourceSets.all {
         languageSettings.optIn("androidx.compose.foundation.ExperimentalFoundationApi")
+        languageSettings.optIn("com.google.accompanist.permissions.ExperimentalPermissionsApi")
+        languageSettings.optIn("androidx.compose.foundation.text2.ExperimentalText2Api")
     }
 }
 
@@ -81,6 +83,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.materialIcon)
     implementation(libs.androidx.work.runtime.ktx)
     debugImplementation(libs.androidx.ui.tooling)
 

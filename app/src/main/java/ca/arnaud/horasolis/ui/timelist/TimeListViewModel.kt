@@ -30,7 +30,7 @@ class TimeListViewModel(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(screenModelFactory.createInitialLoading())
-    val state: StateFlow<MainScreenModel> = _state
+    val state: StateFlow<TimeListScreenModel> = _state
 
     private val _ringingDialog = MutableStateFlow<HoraAlertDialogModel?>(null)
     val ringingDialog: StateFlow<HoraAlertDialogModel?> = _ringingDialog
@@ -78,7 +78,7 @@ class TimeListViewModel(
             date = LocalDate.now(),
         )
 
-        _state.update { it.copy(loading = MainScreenModel.Loading.Content) }
+        _state.update { it.copy(loading = TimeListScreenModel.Loading.Content) }
         val romanTimes = getRomanTimes(params).getDataOrNull()
         _state.update { it.copy(loading = null) }
         if (romanTimes == null) {
@@ -112,7 +112,7 @@ class TimeListViewModel(
         val updatedSettings = state.value.getUpdatedScheduleSettings(currentRomanTimes)
             ?: return
         viewModelScope.launch {
-            _state.update { it.copy(loading = MainScreenModel.Loading.Saving) }
+            _state.update { it.copy(loading = TimeListScreenModel.Loading.Saving) }
             savedTimeSchedule(updatedSettings)
             updateScreenModel { model ->
                 screenModelFactory.updateSavedSettings(model)
@@ -137,7 +137,7 @@ class TimeListViewModel(
     }
 
     private fun updateScreenModel(
-        update: (MainScreenModel) -> MainScreenModel
+        update: (TimeListScreenModel) -> TimeListScreenModel
     ) {
         _state.update { currentModel ->
             val newModel = update(currentModel)

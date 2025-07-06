@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import ca.arnaud.horasolis.data.AlarmRepository
+import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
@@ -15,9 +16,10 @@ import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleRomanTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.local.HoraSolisDatabase
-import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.remote.KtorClient
+import ca.arnaud.horasolis.service.LocationService
 import ca.arnaud.horasolis.service.RomanTimeAlarmService
+import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
 import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
@@ -38,10 +40,12 @@ class HoraSolisApplication : Application() {
     val appModule = module {
         single<Context> { applicationContext }
         viewModelOf(::TimeListViewModel)
+        viewModelOf(::AlarmManagerViewModel)
         singleOf(::RomanTimeAlarmService)
         singleOf(::StringProvider)
         workerOf(::ScheduleNextAlarmWorker)
         factoryOf(::TimeListScreenModelFactory)
+        factoryOf(::LocationService)
     }
 
     val domainModule = module {

@@ -19,9 +19,9 @@ class TimeListScreenModelFactory(
     private val stringProvider: StringProvider,
 ) {
 
-    fun createInitialLoading(): MainScreenModel {
-        return MainScreenModel(
-            loading = MainScreenModel.Loading.Content,
+    fun createInitialLoading(): TimeListScreenModel {
+        return TimeListScreenModel(
+            loading = TimeListScreenModel.Loading.Content,
             dayTimes = TimeListModel(
                 times = List(12) {
                     TimeItem(
@@ -52,8 +52,8 @@ class TimeListScreenModelFactory(
     fun updateTimes(
         romanTimes: RomanTimes,
         settings: ScheduleSettings?,
-        model: MainScreenModel
-    ): MainScreenModel {
+        model: TimeListScreenModel
+    ): TimeListScreenModel {
         return model.copy(
             dayTimes = romanTimes.toTimeListModel(settings, RomanTime.Type.Day),
             nightTimes = romanTimes.toTimeListModel(settings, RomanTime.Type.Night),
@@ -61,9 +61,9 @@ class TimeListScreenModelFactory(
     }
 
     fun updateNowTime(
-        model: MainScreenModel,
+        model: TimeListScreenModel,
         romanTimes: RomanTimes?,
-    ): MainScreenModel {
+    ): TimeListScreenModel {
         val nowTime = timeProvider.getNowDateTime().toLocalTime()
         val nowRomanTime = romanTimes?.times?.find { it.isNow(nowTime) } ?: return model
 
@@ -81,10 +81,10 @@ class TimeListScreenModelFactory(
     }
 
     fun updateSelectedTimes(
-        model: MainScreenModel,
+        model: TimeListScreenModel,
         timeItem: TimeItem,
         checked: Boolean,
-    ): MainScreenModel {
+    ): TimeListScreenModel {
         return model.copy(
             dayTimes = model.dayTimes.updateChecked(timeItem.number, checked),
             nightTimes = model.nightTimes.updateChecked(timeItem.number, checked),
@@ -107,9 +107,9 @@ class TimeListScreenModelFactory(
     }
 
     fun updateWithSettings(
-        model: MainScreenModel,
+        model: TimeListScreenModel,
         settings: ScheduleSettings?,
-    ): MainScreenModel {
+    ): TimeListScreenModel {
         val selectedTimeNumbers = settings.toSelectedTimeNumbers()
         val selectedCity = City.Companion.firstOrNull(settings?.location)
 
@@ -183,8 +183,8 @@ class TimeListScreenModelFactory(
     }
 
     fun updateSavedSettings(
-        model: MainScreenModel,
-    ): MainScreenModel {
+        model: TimeListScreenModel,
+    ): TimeListScreenModel {
         return model.copy(
             loading = null,
             snackMessage = stringProvider.getString(R.string.settings_saved_message),
