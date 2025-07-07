@@ -3,9 +3,9 @@ package ca.arnaud.horasolis.ui.alarmmanager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.extension.PermissionResult
 import ca.arnaud.horasolis.extension.setText
 import ca.arnaud.horasolis.service.LocationService
-import ca.arnaud.horasolis.ui.common.PermissionResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

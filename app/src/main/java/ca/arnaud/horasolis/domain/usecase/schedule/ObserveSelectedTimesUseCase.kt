@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.domain.usecase
+package ca.arnaud.horasolis.domain.usecase.schedule
 
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.domain.model.ScheduleSettings

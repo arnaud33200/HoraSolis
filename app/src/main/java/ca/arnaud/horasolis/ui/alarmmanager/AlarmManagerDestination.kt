@@ -4,7 +4,7 @@ import android.Manifest
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import ca.arnaud.horasolis.ui.common.PermissionResult
+import ca.arnaud.horasolis.extension.PermissionResult
 import com.google.accompanist.permissions.rememberPermissionState
 
 @Composable

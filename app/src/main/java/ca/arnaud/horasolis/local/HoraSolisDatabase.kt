@@ -4,15 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(
     entities = [
         SelectedTimeEntity::class,
         ScheduleSettingsEntity::class,
         AlarmRingingEntity::class,
+        LocationEntity::class,
+        AlarmEntity::class,
     ],
     version = 1
 )
+@TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
 
     companion object {
@@ -28,4 +32,5 @@ abstract class HoraSolisDatabase : RoomDatabase() {
 
     abstract fun settingsWithTimesDao(): SettingsWithTimesDao
     abstract fun alarmDao(): AlarmDao
+    abstract fun locationDao(): LocationDao
 }

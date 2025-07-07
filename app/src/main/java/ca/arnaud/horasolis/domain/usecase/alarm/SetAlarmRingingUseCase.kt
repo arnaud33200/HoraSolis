@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.domain.usecase
+package ca.arnaud.horasolis.domain.usecase.alarm
 
 import ca.arnaud.horasolis.data.AlarmRepository
 

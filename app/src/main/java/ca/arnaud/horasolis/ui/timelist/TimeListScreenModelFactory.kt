@@ -4,7 +4,7 @@ import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.RomanTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
 import ca.arnaud.horasolis.domain.usecase.RomanTimes
 import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import ca.arnaud.horasolis.ui.common.StringProvider

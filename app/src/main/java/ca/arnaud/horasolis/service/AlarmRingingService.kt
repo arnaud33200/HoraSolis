@@ -16,8 +16,8 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.domain.usecase.AlarmRinging
-import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

@@ -6,10 +6,10 @@ import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
 import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
-import ca.arnaud.horasolis.domain.usecase.ObserveSelectedTimesUseCase
+import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.RomanTimes
-import ca.arnaud.horasolis.domain.usecase.SavedTimeScheduleUseCase
-import ca.arnaud.horasolis.domain.usecase.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

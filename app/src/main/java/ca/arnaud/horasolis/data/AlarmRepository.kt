@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.data
 
-import ca.arnaud.horasolis.domain.usecase.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
 import ca.arnaud.horasolis.local.AlarmDao
 import ca.arnaud.horasolis.local.AlarmRingingEntity
 import ca.arnaud.horasolis.local.HoraSolisDatabase
