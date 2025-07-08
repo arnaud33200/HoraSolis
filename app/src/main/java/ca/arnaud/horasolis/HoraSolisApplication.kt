@@ -26,6 +26,7 @@ import ca.arnaud.horasolis.service.RomanTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.common.StringProvider
+import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
 import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
@@ -46,6 +47,7 @@ class HoraSolisApplication : Application() {
         single<Context> { applicationContext }
         viewModelOf(::TimeListViewModel)
         viewModelOf(::AlarmManagerViewModel)
+        viewModelOf(::MainViewModel)
         singleOf(::RomanTimeAlarmService)
         singleOf(::StringProvider)
         workerOf(::ScheduleNextAlarmWorker)

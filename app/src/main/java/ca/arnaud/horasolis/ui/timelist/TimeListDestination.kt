@@ -12,7 +12,6 @@ fun TimeListDestination(
     viewModel: TimeListViewModel,
 ) {
     val state by viewModel.state.collectAsState()
-    val ringingDialog by viewModel.ringingDialog.collectAsState()
 
     MainScreen(
         model = state,
@@ -21,16 +20,4 @@ fun TimeListDestination(
         onSaveClicked = viewModel::onSaveClicked,
         onSnackbarDismissed = viewModel::onSnackbarDismissed,
     )
-
-    ringingDialog?.let { dialogModel ->
-        val context = LocalContext.current
-        HoraAlertDialog(
-            model = dialogModel,
-            onButtonClick = {
-                if (!AlarmRingingService.stopService(context = context)) {
-                    viewModel.onStopRingingServiceFailed()
-                }
-            },
-        )
-    }
 }

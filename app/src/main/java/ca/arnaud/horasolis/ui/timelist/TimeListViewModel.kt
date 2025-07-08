@@ -24,16 +24,11 @@ class TimeListViewModel(
     private val getRomanTimes: GetRomanTimesUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
-    private val observeAlarmRinging: ObserveAlarmRingingUseCase,
-    private val setAlarmRinging: SetAlarmRingingUseCase,
     private val screenModelFactory: TimeListScreenModelFactory,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(screenModelFactory.createInitialLoading())
     val state: StateFlow<TimeListScreenModel> = _state
-
-    private val _ringingDialog = MutableStateFlow<HoraAlertDialogModel?>(null)
-    val ringingDialog: StateFlow<HoraAlertDialogModel?> = _ringingDialog
 
     private var currentRomanTimes: RomanTimes? = null
     private var savedSettings: ScheduleSettings? = null
@@ -52,12 +47,6 @@ class TimeListViewModel(
                         screenModelFactory.updateWithSettings(model, settings)
                     }
                 }
-            }
-        }
-
-        viewModelScope.launch {
-            observeAlarmRinging().collectLatest { alarmRinging ->
-                _ringingDialog.value = screenModelFactory.createRingingDialog(alarmRinging)
             }
         }
 
@@ -123,16 +112,6 @@ class TimeListViewModel(
     fun onSnackbarDismissed() {
         updateScreenModel { model ->
             model.copy(snackMessage = null)
-        }
-    }
-
-    /**
-     * Fallback when the service is already stopped but ringing state is still true.
-     * This can happen if the service was stopped manually or due to an error.
-     */
-    fun onStopRingingServiceFailed() {
-        viewModelScope.launch {
-            setAlarmRinging(null)
         }
     }
 

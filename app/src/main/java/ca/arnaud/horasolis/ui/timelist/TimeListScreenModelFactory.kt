@@ -190,15 +190,4 @@ class TimeListScreenModelFactory(
             snackMessage = stringProvider.getString(R.string.settings_saved_message),
         )
     }
-
-    fun createRingingDialog(alarmRinging: AlarmRinging?): HoraAlertDialogModel? {
-        if (alarmRinging == null) return null
-        return HoraAlertDialogModel(
-            title = stringProvider.getString(
-                R.string.ringing_alarm_dialog_title,
-                alarmRinging.number.toString(),
-            ),
-            message = stringProvider.getString(R.string.ringing_alarm_dialog_message),
-        )
-    }
 }
