@@ -5,6 +5,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
     id("kotlin-kapt")
+
+    // Firebase / Crashlytics
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -56,6 +60,10 @@ kotlin {
 dependencies {
 
     implementation(libs.kotlin.immutableCollections)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.firebase.analytics)
 
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)
