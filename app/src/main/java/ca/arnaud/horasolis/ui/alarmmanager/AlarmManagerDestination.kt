@@ -22,6 +22,7 @@ fun AlarmManagerDestination(
             viewModel.onCurrentLocationClick(permissionResult)
         }
     )
+    val timePickerDialogModel by viewModel.timePickerDialogModel.collectAsState()
 
     AlarmManagerScreen(
         model = state,
@@ -31,5 +32,8 @@ fun AlarmManagerDestination(
         },
         onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
         onAddClick = viewModel::onAddClick,
+        timePickerDialogModel = timePickerDialogModel,
+        onTimePicked = viewModel::onTimePicked,
+        onDialogDismiss = viewModel::onDialogDismiss,
     )
 }

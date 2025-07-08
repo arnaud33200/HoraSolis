@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
-
 class AlarmManagerViewModel(
     private val locationService: LocationService,
     private val observeSavedAlarms: ObserveSavedAlarmsUseCase,
@@ -28,6 +27,9 @@ class AlarmManagerViewModel(
 
     private val _state = MutableStateFlow(AlarmManagerScreenModel())
     val state: StateFlow<AlarmManagerScreenModel> = _state
+
+    private val _timePickerDialogModel = MutableStateFlow<TimePickerDialogModel?>(null)
+    val timePickerDialogModel: StateFlow<TimePickerDialogModel?> = _timePickerDialogModel
 
     init {
         viewModelScope.launch {
@@ -42,14 +44,24 @@ class AlarmManagerViewModel(
     }
 
     fun onAddClick() {
+        // TODO - setup model to have picker on add or edit
+        _timePickerDialogModel.value = TimePickerDialogModel()
+    }
+
+    fun onTimePicked(time: LocalTime) {
         viewModelScope.launch {
             val alarm = NewAlarm(
-                label = "MY ALARM",
-                solisTime = LocalTime.of(12, 20),
+                label = "Alarm",
+                solisTime = time,
                 enabled = true,
             )
             upsertAlarm(alarm)
+            _timePickerDialogModel.value = null
         }
+    }
+
+    fun onDialogDismiss() {
+        _timePickerDialogModel.value = null
     }
 
     fun onAlarmDeleteClick(item: AlarmItemModel) {

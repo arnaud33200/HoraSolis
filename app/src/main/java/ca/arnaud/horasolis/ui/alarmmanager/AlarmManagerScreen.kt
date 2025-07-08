@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.common.HoraTextField
 import ca.arnaud.horasolis.ui.theme.Typography
+import java.time.LocalTime
 
 data class AlarmManagerScreenModel(
     val snackMessage: String? = null,
@@ -38,6 +39,9 @@ fun AlarmManagerScreen(
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAddClick: () -> Unit,
     model: AlarmManagerScreenModel,
+    timePickerDialogModel: TimePickerDialogModel? = null,
+    onTimePicked: (LocalTime) -> Unit = {},
+    onDialogDismiss: () -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
@@ -91,6 +95,13 @@ fun AlarmManagerScreen(
                 onDelete = onAlarmDeleteClick,
             )
         }
+    }
+    if (timePickerDialogModel != null) {
+        TimePickerDialog(
+            model = timePickerDialogModel,
+            onConfirm = onTimePicked,
+            onDismiss = onDialogDismiss
+        )
     }
 }
 
