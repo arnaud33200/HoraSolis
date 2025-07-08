@@ -34,4 +34,5 @@
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>
     <string name="current_location_button">Location Actuel</string>
+    <string name="alarm_manager_screen_add_button">Ajouter une alarme</string>
 </resources>

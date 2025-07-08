@@ -14,7 +14,7 @@ import androidx.room.TypeConverters
         LocationEntity::class,
         AlarmEntity::class,
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {

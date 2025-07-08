@@ -1,10 +1,16 @@
 package ca.arnaud.horasolis.data
 
+import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.Alarm
+import ca.arnaud.horasolis.domain.model.SavedAlarm
 import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmError
 import ca.arnaud.horasolis.local.AlarmDao
 import ca.arnaud.horasolis.local.AlarmRingingEntity
 import ca.arnaud.horasolis.local.HoraSolisDatabase
+import ca.arnaud.horasolis.local.toEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class AlarmRepository(
     database: HoraSolisDatabase,
@@ -23,4 +29,19 @@ class AlarmRepository(
 
     fun getRingingFlow(): Flow<AlarmRinging?> =
         alarmDao.observeRinging()
+
+    suspend fun upsertAlarm(alarm: Alarm): Response<SavedAlarm, UpsertAlarmError> {
+        alarmDao.upsertAlarm(alarm.toEntity())
+        return Response.Success(alarm.toSavedAlarm(0)) // TODO figure out a way to get the ID
+    }
+
+    fun getAlarmsFlow(): Flow<List<SavedAlarm>> {
+        return alarmDao.observeAlarms().map { alarms ->
+            alarms.map { it.toSavedAlarm() }
+        }
+    }
+
+    suspend fun deleteAlarm(alarmId: Int) {
+        alarmDao.deleteAlarm(alarmId)
+    }
 }

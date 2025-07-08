@@ -26,15 +26,15 @@ data class AlarmListModel(
 )
 
 data class AlarmItemModel(
-    val id: Long,
+    val id: Int,
     val title: String,
 )
 
 @Composable
 fun AlarmList(
     modifier: Modifier = Modifier,
-    model: AlarmListModel,
     onDelete: (AlarmItemModel) -> Unit,
+    model: AlarmListModel,
 ) {
     LazyColumn(modifier = modifier) {
         items(model.items, key = { it.id }) { item ->

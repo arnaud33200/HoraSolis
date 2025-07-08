@@ -29,5 +29,7 @@ fun AlarmManagerDestination(
         onCurrentLocationClick = {
             currentLocationPermissionState.launchPermissionRequest()
         },
+        onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
+        onAddClick = viewModel::onAddClick,
     )
 }

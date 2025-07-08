@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Button
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.common.HoraTextField
+import ca.arnaud.horasolis.ui.theme.Typography
 
 data class AlarmManagerScreenModel(
     val snackMessage: String? = null,
@@ -33,6 +35,8 @@ fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
     onSnackbarDismissed: () -> Unit,
     onCurrentLocationClick: () -> Unit,
+    onAlarmDeleteClick: (AlarmItemModel) -> Unit,
+    onAddClick: () -> Unit,
     model: AlarmManagerScreenModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -45,6 +49,15 @@ fun AlarmManagerScreen(
     Scaffold(
         modifier = modifier,
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            BottomBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .navigationBarsPadding(),
+                onAddClick = onAddClick,
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -69,7 +82,32 @@ fun AlarmManagerScreen(
             Button(onClick = onCurrentLocationClick) {
                 Text(stringResource(id = R.string.current_location_button))
             }
+
+            AlarmList(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                model = model.list,
+                onDelete = onAlarmDeleteClick,
+            )
         }
+    }
+}
+
+@Composable
+private fun BottomBar(
+    modifier: Modifier = Modifier,
+    onAddClick: () -> Unit
+) {
+    Button(
+        modifier = modifier,
+        onClick = onAddClick,
+
+        ) {
+        Text(
+            text = stringResource(R.string.alarm_manager_screen_add_button),
+            style = Typography.bodyLarge
+        )
     }
 }
 
@@ -83,5 +121,7 @@ private fun AlarmManagerScreenPreview() {
         ),
         onSnackbarDismissed = {},
         onCurrentLocationClick = {},
+        onAlarmDeleteClick = {},
+        onAddClick = {},
     )
 }

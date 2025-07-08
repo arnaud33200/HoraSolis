@@ -22,18 +22,13 @@ interface AlarmDao {
     fun observeRinging(): Flow<AlarmRinging?>
 
     @Query("SELECT * FROM alarm ORDER BY time ASC")
-    fun getAllAlarms(): Flow<List<AlarmEntity>>
-
-    @Query("SELECT * FROM alarm WHERE id = :id LIMIT 1")
-    suspend fun getAlarmById(id: Long): AlarmEntity?
+    fun observeAlarms(): Flow<List<AlarmEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAlarm(alarm: AlarmEntity): Long
+    suspend fun upsertAlarm(alarm: AlarmEntity)
 
-    @Update
-    suspend fun updateAlarm(alarm: AlarmEntity)
+    @Query("DELETE FROM alarm WHERE id = :alarmId")
+    suspend fun deleteAlarm(alarmId: Int)
 
-    @Delete
-    suspend fun deleteAlarm(alarm: AlarmEntity)
+
 }
-
