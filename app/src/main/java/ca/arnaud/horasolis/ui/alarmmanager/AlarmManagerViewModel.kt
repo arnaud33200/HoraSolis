@@ -28,8 +28,8 @@ class AlarmManagerViewModel(
     private val _state = MutableStateFlow(AlarmManagerScreenModel())
     val state: StateFlow<AlarmManagerScreenModel> = _state
 
-    private val _timePickerDialogModel = MutableStateFlow<TimePickerDialogModel?>(null)
-    val timePickerDialogModel: StateFlow<TimePickerDialogModel?> = _timePickerDialogModel
+    private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmParams?>(null)
+    val timePickerDialogModel: StateFlow<EditSolisAlarmParams?> = _timePickerDialogModel
 
     init {
         viewModelScope.launch {
@@ -45,14 +45,14 @@ class AlarmManagerViewModel(
 
     fun onAddClick() {
         // TODO - setup model to have picker on add or edit
-        _timePickerDialogModel.value = TimePickerDialogModel()
+        _timePickerDialogModel.value = EditSolisAlarmParams()
     }
 
-    fun onTimePicked(time: LocalTime) {
+    fun onTimePicked(params: EditSolisAlarmParams) {
         viewModelScope.launch {
             val alarm = NewAlarm(
                 label = "",
-                solisTime = time,
+                solisTime = params.getSolisTime(),
                 enabled = true,
             )
             upsertAlarm(alarm)

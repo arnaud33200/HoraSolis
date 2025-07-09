@@ -5,13 +5,14 @@ import androidx.room.PrimaryKey
 import ca.arnaud.horasolis.domain.model.Alarm
 import ca.arnaud.horasolis.domain.model.NewAlarm
 import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.SolisTime
 import java.time.LocalTime
 
 @Entity(tableName = "alarm")
 data class AlarmEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val label: String? = null,
-    val time: LocalTime,
+    val time: SolisTime,
     val enabled: Boolean = true,
 ) {
 

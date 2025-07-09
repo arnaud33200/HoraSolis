@@ -35,7 +35,7 @@ fun AlarmManagerDestination(
     )
 
     timePickerDialogModel?.let {
-        TimePickerDialog(
+        EditSolisAlarmDialog(
             model = it,
             onConfirm = viewModel::onTimePicked,
             onDismiss = viewModel::onDialogDismiss

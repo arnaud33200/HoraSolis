@@ -1,11 +1,9 @@
 package ca.arnaud.horasolis.domain.model
 
-import java.time.LocalTime
-
 sealed interface Alarm {
 
     val label: String?
-    val solisTime: LocalTime
+    val solisTime: SolisTime
     val enabled: Boolean
 
     fun toSavedAlarm(id: Int): SavedAlarm {
@@ -20,13 +18,13 @@ sealed interface Alarm {
 
 data class NewAlarm(
     override val label: String?,
-    override val solisTime: LocalTime,
+    override val solisTime: SolisTime,
     override val enabled: Boolean,
 ) : Alarm
 
 data class SavedAlarm(
     val id: Int,
     override val label: String?,
-    override val solisTime: LocalTime,
+    override val solisTime: SolisTime,
     override val enabled: Boolean,
 ) : Alarm
