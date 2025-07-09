@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -8,7 +9,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import ca.arnaud.horasolis.extension.formatSunTime
 import java.time.LocalTime
 
 data class TimePickerDialogModel(
@@ -26,6 +29,8 @@ fun TimePickerDialog(
         initialHour = model.hour,
         initialMinute = model.minute
     )
+    val sunTime = formatSunTime(timeState.hour, timeState.minute)
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Time") },
@@ -33,7 +38,8 @@ fun TimePickerDialog(
             Column {
                 TimePicker(state = timeState)
                 Text(
-                    text = "Selected time: ${timeState.hour}:${timeState.minute}",
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "$sunTime (${timeState.hour}:${timeState.minute})",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

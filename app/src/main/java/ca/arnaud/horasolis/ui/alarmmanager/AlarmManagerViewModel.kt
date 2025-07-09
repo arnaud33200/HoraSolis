@@ -51,7 +51,7 @@ class AlarmManagerViewModel(
     fun onTimePicked(time: LocalTime) {
         viewModelScope.launch {
             val alarm = NewAlarm(
-                label = "Alarm",
+                label = "",
                 solisTime = time,
                 enabled = true,
             )

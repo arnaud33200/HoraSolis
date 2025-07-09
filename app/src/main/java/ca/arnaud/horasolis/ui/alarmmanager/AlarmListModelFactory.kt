@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
 import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.extension.formatSunTime
 import kotlinx.collections.immutable.toImmutableList
 
 class AlarmListModelFactory {
@@ -16,9 +17,10 @@ class AlarmListModelFactory {
     }
 
     private fun SavedAlarm.toAlarmItemModel(): AlarmItemModel {
+        val formatted = solisTime.formatSunTime()
         return AlarmItemModel(
             id = id,
-            title = label ?: "",
+            title = formatted,
         )
     }
 }

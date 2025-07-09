@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ fun AlarmList(
             ) {
                 Text(
                     text = item.title,
+                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = { onDelete(item) }) {
@@ -67,9 +69,9 @@ private fun AlarmListPreview() {
         Surface {
             val sampleModel = AlarmListModel(
                 items = persistentListOf(
-                    AlarmItemModel(id = 1, title = "Wake up"),
-                    AlarmItemModel(id = 2, title = "Meeting"),
-                    AlarmItemModel(id = 3, title = "Workout")
+                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06"), // 5 ☀️ 06
+                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54"), // 10 🌚 54
+                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00") // 12 ☀️ 00
                 )
             )
             AlarmList(
