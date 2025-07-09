@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.NewAlarm
+import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
@@ -15,7 +17,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalTime
 
 class AlarmManagerViewModel(
     private val locationService: LocationService,
@@ -24,6 +25,8 @@ class AlarmManagerViewModel(
     private val deleteAlarm: DeleteAlarmUseCase,
     private val alarmListFactory: AlarmListModelFactory,
 ) : ViewModel() {
+
+    private var currentAlarms: List<SavedAlarm> = emptyList()
 
     private val _state = MutableStateFlow(AlarmManagerScreenModel())
     val state: StateFlow<AlarmManagerScreenModel> = _state
@@ -34,6 +37,7 @@ class AlarmManagerViewModel(
     init {
         viewModelScope.launch {
             observeSavedAlarms().collectLatest { alarms ->
+                currentAlarms = alarms
                 _state.update { model ->
                     model.copy(
                         list = alarmListFactory.create(alarms)
@@ -50,11 +54,22 @@ class AlarmManagerViewModel(
 
     fun onTimePicked(params: EditSolisAlarmParams) {
         viewModelScope.launch {
-            val alarm = NewAlarm(
-                label = "",
-                solisTime = params.getSolisTime(),
-                enabled = true,
-            )
+            val solisTime = params.getSolisTime()
+            val label = "" // TODO - setup a text field
+            val alarm = if (params.id != null) {
+                SavedAlarm(
+                    id = params.id,
+                    label = label,
+                    solisTime = params.getSolisTime(),
+                    enabled = true,
+                )
+            } else {
+                NewAlarm(
+                    label = label,
+                    solisTime = solisTime,
+                    enabled = true,
+                )
+            }
             upsertAlarm(alarm)
             _timePickerDialogModel.value = null
         }
@@ -94,5 +109,16 @@ class AlarmManagerViewModel(
                 // TODO - show error
             }
         }
+    }
+
+    fun onAlarmItemClick(item: AlarmItemModel) {
+        val alarm = currentAlarms.firstOrNull { it.id == item.id } ?: return
+        val params = EditSolisAlarmParams(
+            id = alarm.id,
+            hour = alarm.solisTime.hour,
+            minute = alarm.solisTime.minute,
+            isDay = alarm.solisTime.type == SolisTime.Type.Day,
+        )
+        _timePickerDialogModel.value = params
     }
 }

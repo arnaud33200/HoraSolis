@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ data class AlarmItemModel(
 fun AlarmList(
     modifier: Modifier = Modifier,
     onDelete: (AlarmItemModel) -> Unit,
+    onEdit: (AlarmItemModel) -> Unit,
     model: AlarmListModel,
 ) {
     LazyColumn(modifier = modifier) {
@@ -42,7 +44,8 @@ fun AlarmList(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .clickable { onEdit(item) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -76,7 +79,8 @@ private fun AlarmListPreview() {
             )
             AlarmList(
                 model = sampleModel,
-                onDelete = {}
+                onDelete = {},
+                onEdit = {}
             )
         }
     }

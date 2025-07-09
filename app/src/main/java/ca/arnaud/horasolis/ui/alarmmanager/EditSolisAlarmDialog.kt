@@ -29,6 +29,7 @@ import ca.arnaud.horasolis.domain.model.SolisTime
  * @param isDay Indicates whether the time is in AM (true) or PM (false).
  */
 data class EditSolisAlarmParams(
+    val id: Int? = null,
     val hour: Int = 3,
     val minute: Int = 45,
     val isDay: Boolean = true,

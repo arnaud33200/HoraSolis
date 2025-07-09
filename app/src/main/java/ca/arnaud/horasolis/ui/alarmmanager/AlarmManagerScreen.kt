@@ -37,6 +37,7 @@ fun AlarmManagerScreen(
     onCurrentLocationClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAddClick: () -> Unit,
+    onAlarmItemClick: (AlarmItemModel) -> Unit,
     model: AlarmManagerScreenModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -89,6 +90,7 @@ fun AlarmManagerScreen(
                     .padding(16.dp),
                 model = model.list,
                 onDelete = onAlarmDeleteClick,
+                onEdit = onAlarmItemClick, // Forward to AlarmList
             )
         }
     }
@@ -123,5 +125,6 @@ private fun AlarmManagerScreenPreview() {
         onCurrentLocationClick = {},
         onAlarmDeleteClick = {},
         onAddClick = {},
+        onAlarmItemClick = {},
     )
 }
