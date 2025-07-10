@@ -10,7 +10,7 @@ import kotlin.random.Random
 
 @Entity(tableName = "alarm")
 data class AlarmEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val label: String? = null,
     val time: SolisTime,
     val enabled: Boolean = true,
@@ -36,7 +36,6 @@ fun Alarm.toEntity(): AlarmEntity {
         )
 
         is NewAlarm -> return AlarmEntity(
-            id = Random.nextInt(),
             label = label,
             time = solisTime,
             enabled = enabled,
