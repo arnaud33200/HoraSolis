@@ -31,8 +31,9 @@ class AlarmRepository(
         alarmDao.observeRinging()
 
     suspend fun upsertAlarm(alarm: Alarm): Response<SavedAlarm, UpsertAlarmError> {
-        alarmDao.upsertAlarm(alarm.toEntity())
-        return Response.Success(alarm.toSavedAlarm(0)) // TODO figure out a way to get the ID
+        val entity = alarm.toEntity()
+        alarmDao.upsertAlarm(entity)
+        return Response.Success(entity.toSavedAlarm())
     }
 
     fun getAlarmsFlow(): Flow<List<SavedAlarm>> {

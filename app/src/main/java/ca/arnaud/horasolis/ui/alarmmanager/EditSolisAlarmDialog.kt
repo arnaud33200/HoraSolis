@@ -71,7 +71,7 @@ fun EditSolisAlarmDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                val params = EditSolisAlarmParams(
+                val params = model.copy(
                     hour = hourState,
                     minute = minuteState,
                     isDay = isDayState,
