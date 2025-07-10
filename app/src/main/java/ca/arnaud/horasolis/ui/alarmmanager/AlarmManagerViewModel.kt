@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.Response
@@ -9,20 +10,28 @@ import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.location.GetCurrentLocationUseCase
+import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationParams
+import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
 import ca.arnaud.horasolis.extension.PermissionResult
 import ca.arnaud.horasolis.extension.setText
 import ca.arnaud.horasolis.service.LocationService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 class AlarmManagerViewModel(
     private val locationService: LocationService,
     private val observeSavedAlarms: ObserveSavedAlarmsUseCase,
     private val upsertAlarm: UpsertAlarmUseCase,
     private val deleteAlarm: DeleteAlarmUseCase,
+    private val setCurrentLocation: SetCurrentLocationUseCase,
+    private val getCurrentLocation: GetCurrentLocationUseCase,
     private val alarmListFactory: AlarmListModelFactory,
 ) : ViewModel() {
 
@@ -35,6 +44,15 @@ class AlarmManagerViewModel(
     val timePickerDialogModel: StateFlow<EditSolisAlarmParams?> = _timePickerDialogModel
 
     init {
+        // TODO - setup a formater for location text fields
+        viewModelScope.launch {
+            getCurrentLocation()?.let { userLocation ->
+                state.value.latitude.setText(userLocation.lat.toString())
+                state.value.longitude.setText(userLocation.lng.toString())
+            }
+            observeLocationTextFields()
+        }
+
         viewModelScope.launch {
             observeSavedAlarms().collectLatest { alarms ->
                 currentAlarms = alarms
@@ -44,6 +62,18 @@ class AlarmManagerViewModel(
                     )
                 }
             }
+        }
+    }
+
+    private suspend fun observeLocationTextFields() {
+        snapshotFlow {
+            state.value.latitude.text to state.value.longitude.text
+        }.drop(1).debounce(1.seconds).collectLatest { (latitude, longitude) ->
+            val params = SetCurrentLocationParams(
+                lat = latitude.toString().toDoubleOrNull() ?: 0.0,
+                long = longitude.toString().toDoubleOrNull() ?: 0.0,
+            )
+            setCurrentLocation(params)
         }
     }
 
