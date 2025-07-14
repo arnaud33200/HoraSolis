@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,19 +45,20 @@ fun AlarmList(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(vertical = 8.dp)
                     .clickable { onEdit(item) },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = item.title,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = { onDelete(item) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete alarm"
+                        tint = LocalContentColor.current.copy(alpha = 0.6f),
+                        contentDescription = "Delete alarm",
                     )
                 }
             }

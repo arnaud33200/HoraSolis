@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.common.HoraTextField
+import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
 
 data class AlarmManagerScreenModel(
@@ -86,11 +87,10 @@ fun AlarmManagerScreen(
 
             AlarmList(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                    .fillMaxWidth(),
                 model = model.list,
                 onDelete = onAlarmDeleteClick,
-                onEdit = onAlarmItemClick, // Forward to AlarmList
+                onEdit = onAlarmItemClick,
             )
         }
     }
@@ -116,15 +116,25 @@ private fun BottomBar(
 @PreviewLightDark
 @Composable
 private fun AlarmManagerScreenPreview() {
-    AlarmManagerScreen(
-        model = AlarmManagerScreenModel(
-            latitude = TextFieldState("48.858844"),
-            longitude = TextFieldState("2.294351")
-        ),
-        onSnackbarDismissed = {},
-        onCurrentLocationClick = {},
-        onAlarmDeleteClick = {},
-        onAddClick = {},
-        onAlarmItemClick = {},
-    )
+    HoraSolisTheme {
+        val sampleList = AlarmListModel(
+            items = kotlinx.collections.immutable.persistentListOf(
+                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06"), // 5 ☀️ 06
+                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54"), // 10 🌚 54
+                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00") // 12 ☀️ 00
+            )
+        )
+        AlarmManagerScreen(
+            model = AlarmManagerScreenModel(
+                latitude = TextFieldState("48.858844"),
+                longitude = TextFieldState("2.294351"),
+                list = sampleList
+            ),
+            onSnackbarDismissed = {},
+            onCurrentLocationClick = {},
+            onAlarmDeleteClick = {},
+            onAddClick = {},
+            onAlarmItemClick = {},
+        )
+    }
 }
