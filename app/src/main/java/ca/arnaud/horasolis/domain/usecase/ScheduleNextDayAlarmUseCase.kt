@@ -8,8 +8,8 @@ data class ScheduleNextDayAlarmParam(
 )
 
 class ScheduleNextDayAlarmUseCase(
-    private val getRomanTimesUseCase: GetRomanTimesUseCase,
-    private val scheduleRomanTime: ScheduleRomanTimeUseCase,
+    private val getSolisHoursUseCase: GetSolisHoursUseCase,
+    private val scheduleRomanTime: ScheduleSolisAlarmUseCase,
     private val scheduleSettingsRepository: ScheduleSettingsRepository,
     private val timeProvider: TimeProvider,
 ) {
@@ -18,11 +18,11 @@ class ScheduleNextDayAlarmUseCase(
     suspend operator fun invoke(param: ScheduleNextDayAlarmParam) {
         val settings = scheduleSettingsRepository.getScheduleSettingsOrNull() ?: return
 
-        val params = GetRomanTimesParams(
+        val params = GetSolisHoursParams(
             location = settings.location,
             date = timeProvider.getNowDate().plusDays(1),
         )
-        val times = getRomanTimesUseCase(params)
+        val times = getSolisHoursUseCase(params)
         val timeToSchedule = times.getDataOrNull()?.times?.find {
             it.number == param.number
         } ?: return

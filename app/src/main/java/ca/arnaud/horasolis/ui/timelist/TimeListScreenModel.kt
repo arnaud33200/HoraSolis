@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
-import ca.arnaud.horasolis.domain.usecase.RomanTimes
+import ca.arnaud.horasolis.domain.usecase.SolisTimes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -22,13 +22,13 @@ data class TimeListScreenModel(
     }
 
     fun getUpdatedScheduleSettings(
-        romanTimes: RomanTimes?,
+        solisTimes: SolisTimes?,
     ): ScheduleSettings? {
-        if (romanTimes == null) return null
+        if (solisTimes == null) return null
         val selectedTimes = (dayTimes.times + nightTimes.times)
             .filter { it.checked }
             .mapNotNull { timeItem ->
-                romanTimes.times.find { it.number == timeItem.number }
+                solisTimes.times.find { it.number == timeItem.number }
             }
         val location = selectedCity.toUserLocation()
         return ScheduleSettings(

@@ -2,12 +2,12 @@ package ca.arnaud.horasolis.domain.usecase.schedule
 
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.usecase.ScheduleRomanTimeUseCase
+import ca.arnaud.horasolis.domain.usecase.ScheduleSolisAlarmUseCase
 import ca.arnaud.horasolis.service.RomanTimeAlarmService
 
 class SavedTimeScheduleUseCase(
     private val scheduleSettingsRepository: ScheduleSettingsRepository,
-    private val scheduleRomanTime: ScheduleRomanTimeUseCase,
+    private val scheduleRomanTime: ScheduleSolisAlarmUseCase,
     private val alarmService: RomanTimeAlarmService,
 ) {
 

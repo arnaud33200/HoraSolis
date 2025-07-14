@@ -17,7 +17,7 @@ import java.time.LocalTime
  * @param duration The duration of the time in hours.
  * @param type The type of the time, either Day or Night.
  */
-data class RomanTime(
+data class SolisHour(
     val number: Int,
     val startTime: LocalTime,
     val duration: Duration,

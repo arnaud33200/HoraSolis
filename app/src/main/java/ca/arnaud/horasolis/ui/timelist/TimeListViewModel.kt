@@ -3,14 +3,11 @@ package ca.arnaud.horasolis.ui.timelist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.usecase.GetRomanTimesParams
-import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
-import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.GetSolisHoursParams
+import ca.arnaud.horasolis.domain.usecase.GetSolisHoursUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
-import ca.arnaud.horasolis.domain.usecase.RomanTimes
+import ca.arnaud.horasolis.domain.usecase.SolisTimes
 import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
-import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +18,7 @@ import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
 class TimeListViewModel(
-    private val getRomanTimes: GetRomanTimesUseCase,
+    private val getRomanTimes: GetSolisHoursUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
     private val screenModelFactory: TimeListScreenModelFactory,
@@ -30,14 +27,14 @@ class TimeListViewModel(
     private val _state = MutableStateFlow(screenModelFactory.createInitialLoading())
     val state: StateFlow<TimeListScreenModel> = _state
 
-    private var currentRomanTimes: RomanTimes? = null
+    private var currentSolisTimes: SolisTimes? = null
     private var savedSettings: ScheduleSettings? = null
 
     init {
         viewModelScope.launch {
             observeSelectedTimes().collectLatest { settings ->
                 savedSettings = settings
-                if (currentRomanTimes == null) {
+                if (currentSolisTimes == null) {
                     val selectedCity = savedSettings?.let {
                         City.firstOrNull(it.location)
                     } ?: state.value.selectedCity
@@ -53,7 +50,7 @@ class TimeListViewModel(
         viewModelScope.launch {
             while (true) {
                 updateScreenModel { model ->
-                    screenModelFactory.updateNowTime(model, currentRomanTimes)
+                    screenModelFactory.updateNowTime(model, currentSolisTimes)
                 }
                 delay(1.minutes)
             }
@@ -62,7 +59,7 @@ class TimeListViewModel(
 
     private suspend fun refreshTimes(selectedCity: City) {
         val location = selectedCity.toUserLocation()
-        val params = GetRomanTimesParams(
+        val params = GetSolisHoursParams(
             location = location,
             date = LocalDate.now(),
         )
@@ -75,7 +72,7 @@ class TimeListViewModel(
             return
         }
 
-        currentRomanTimes = romanTimes
+        currentSolisTimes = romanTimes
         updateScreenModel { model ->
             screenModelFactory.updateTimes(
                 romanTimes,
@@ -98,7 +95,7 @@ class TimeListViewModel(
     }
 
     fun onSaveClicked() {
-        val updatedSettings = state.value.getUpdatedScheduleSettings(currentRomanTimes)
+        val updatedSettings = state.value.getUpdatedScheduleSettings(currentSolisTimes)
             ?: return
         viewModelScope.launch {
             _state.update { it.copy(loading = TimeListScreenModel.Loading.Saving) }
@@ -120,7 +117,7 @@ class TimeListViewModel(
     ) {
         _state.update { currentModel ->
             val newModel = update(currentModel)
-            val updatedSettings = newModel.getUpdatedScheduleSettings(currentRomanTimes)
+            val updatedSettings = newModel.getUpdatedScheduleSettings(currentSolisTimes)
             newModel.copy(
                 showSaveButton = savedSettings != updatedSettings,
             )

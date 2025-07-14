@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.domain.usecase
 
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.map
-import ca.arnaud.horasolis.domain.model.RomanTime
+import ca.arnaud.horasolis.domain.model.SolisHour
 import ca.arnaud.horasolis.domain.model.SunTime
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.remote.KtorClient
@@ -13,10 +13,10 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 
-data class RomanTimes(
+data class SolisTimes(
     val location: UserLocation,
     val date: LocalDate,
-    val times: List<RomanTime>,
+    val times: List<SolisHour>,
     val dayDuration: Duration,
     val nightDuration: Duration,
 )
@@ -24,12 +24,12 @@ data class RomanTimes(
 /**
  * GetRomanTimesParams(lat=43.6532, lng=-79.3832, timZoneId=America/New_York, date=2025-06-28)
  */
-data class GetRomanTimesParams(
+data class GetSolisHoursParams(
     val location: UserLocation,
     val date: LocalDate,
 )
 
-class GetRomanTimesUseCase(
+class GetSolisHoursUseCase(
     private val ktorClient: KtorClient
 ) {
 
@@ -41,8 +41,8 @@ class GetRomanTimesUseCase(
     }
 
     suspend operator fun invoke(
-        params: GetRomanTimesParams,
-    ): Response<RomanTimes, Throwable> {
+        params: GetSolisHoursParams,
+    ): Response<SolisTimes, Throwable> {
         val resource = GetSunTime(
             lat = params.location.lat,
             lng = params.location.lng,
@@ -59,19 +59,19 @@ class GetRomanTimesUseCase(
 
     private fun calculateRomanTimes(
         sunTime: SunTime,
-        params: GetRomanTimesParams,
-    ): RomanTimes {
+        params: GetSolisHoursParams,
+    ): SolisTimes {
         val dayDuration = Duration.between(sunTime.sunrise, sunTime.sunset)
         val dayTimes = sunTime.sunrise
             .toRomanDayTimes(sunTime.sunset)
-            .toRomanTimes(dayDuration, RomanTime.Type.Day)
+            .toRomanTimes(dayDuration, SolisHour.Type.Day)
 
         val nightDuration = fullDayDuration.minus(dayDuration)
         val nightTimes = sunTime.sunset
             .toRomanNightTimes(nightDuration)
-            .toRomanTimes(nightDuration, RomanTime.Type.Night)
+            .toRomanTimes(nightDuration, SolisHour.Type.Night)
 
-        return RomanTimes(
+        return SolisTimes(
             date = sunTime.date,
             times = dayTimes + nightTimes,
             location = params.location,
@@ -101,13 +101,13 @@ class GetRomanTimesUseCase(
 
     private fun List<LocalTime>.toRomanTimes(
         duration: Duration,
-        type: RomanTime.Type,
-    ): List<RomanTime> {
-        val count = if (type == RomanTime.Type.Day) DAY_HOUR_COUNT else NIGHT_HOUR_COUNT
+        type: SolisHour.Type,
+    ): List<SolisHour> {
+        val count = if (type == SolisHour.Type.Day) DAY_HOUR_COUNT else NIGHT_HOUR_COUNT
         val timeDuration = duration.dividedBy(count.toLong())
-        val offsetIndex = if (type == RomanTime.Type.Day) 0 else DAY_HOUR_COUNT
+        val offsetIndex = if (type == SolisHour.Type.Day) 0 else DAY_HOUR_COUNT
         return this.mapIndexed { index, time ->
-            RomanTime(
+            SolisHour(
                 number = index + 1 + offsetIndex,
                 startTime = time,
                 duration = timeDuration,

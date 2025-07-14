@@ -9,10 +9,10 @@ import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.GetRomanTimesUseCase
+import ca.arnaud.horasolis.domain.usecase.GetSolisHoursUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmUseCase
-import ca.arnaud.horasolis.domain.usecase.ScheduleRomanTimeUseCase
+import ca.arnaud.horasolis.domain.usecase.ScheduleSolisAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
@@ -59,10 +59,10 @@ class HoraSolisApplication : Application() {
     }
 
     val domainModule = module {
-        factoryOf(::GetRomanTimesUseCase)
+        factoryOf(::GetSolisHoursUseCase)
         factoryOf(::SavedTimeScheduleUseCase)
         factoryOf(::ScheduleNextDayAlarmUseCase)
-        factoryOf(::ScheduleRomanTimeUseCase)
+        factoryOf(::ScheduleSolisAlarmUseCase)
         factoryOf(::ObserveSelectedTimesUseCase)
         factoryOf(::SetAlarmRingingUseCase)
         factoryOf(::ObserveAlarmRingingUseCase)
