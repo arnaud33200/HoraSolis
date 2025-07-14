@@ -8,7 +8,9 @@ import androidx.datastore.preferences.preferencesDataStore
 import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
+import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisHoursUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmUseCase
@@ -59,6 +61,7 @@ class HoraSolisApplication : Application() {
     }
 
     val domainModule = module {
+        factoryOf(::GetSolisDayUseCase)
         factoryOf(::GetSolisHoursUseCase)
         factoryOf(::SavedTimeScheduleUseCase)
         factoryOf(::ScheduleNextDayAlarmUseCase)
@@ -75,6 +78,7 @@ class HoraSolisApplication : Application() {
     }
 
     val dataModule = module {
+        singleOf(::SolisRepository)
         singleOf(::AlarmRepository)
         singleOf(::ScheduleSettingsRepository)
         singleOf(::LocationRepository)

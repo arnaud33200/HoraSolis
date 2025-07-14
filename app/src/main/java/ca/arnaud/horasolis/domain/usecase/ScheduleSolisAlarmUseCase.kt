@@ -3,7 +3,6 @@ package ca.arnaud.horasolis.domain.usecase
 import ca.arnaud.horasolis.service.RomanTimeAlarmScheduleParam
 import ca.arnaud.horasolis.service.RomanTimeAlarmService
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.model.SolisHour
 import java.time.LocalTime
 
 class ScheduleSolisAlarmUseCase(
@@ -12,11 +11,11 @@ class ScheduleSolisAlarmUseCase(
 ) {
 
     operator fun invoke(
-        solisHour: SolisHour
+        solisCivilTime: SolisCivilTime
     ) {
         return invoke(
-            id = solisHour.number,
-            startTime = solisHour.startTime
+            id = solisCivilTime.number,
+            startTime = solisCivilTime.startTime
         )
     }
 

@@ -1,10 +1,10 @@
 package ca.arnaud.horasolis.ui.timelist
 
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.domain.model.SolisHour
+import ca.arnaud.horasolis.domain.usecase.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.SolisTimes
+import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -48,19 +48,19 @@ class TimeListScreenModelFactory(
     }
 
     fun updateTimes(
-        solisTimes: SolisTimes,
+        solisTimes: SolisCivilTimes,
         settings: ScheduleSettings?,
         model: TimeListScreenModel
     ): TimeListScreenModel {
         return model.copy(
-            dayTimes = solisTimes.toTimeListModel(settings, SolisHour.Type.Day),
-            nightTimes = solisTimes.toTimeListModel(settings, SolisHour.Type.Night),
+            dayTimes = solisTimes.toTimeListModel(settings, SolisCivilTime.Type.Day),
+            nightTimes = solisTimes.toTimeListModel(settings, SolisCivilTime.Type.Night),
         )
     }
 
     fun updateNowTime(
         model: TimeListScreenModel,
-        solisTimes: SolisTimes?,
+        solisTimes: SolisCivilTimes?,
     ): TimeListScreenModel {
         val nowTime = timeProvider.getNowDateTime().toLocalTime()
         val nowRomanTime = solisTimes?.times?.find { it.isNow(nowTime) } ?: return model
@@ -130,14 +130,14 @@ class TimeListScreenModelFactory(
         return this?.selectedTime?.map { it.number }?.toSet() ?: emptySet()
     }
 
-    private fun SolisTimes.toTimeListModel(
+    private fun SolisCivilTimes.toTimeListModel(
         settings: ScheduleSettings?,
-        forType: SolisHour.Type,
+        forType: SolisCivilTime.Type,
     ): TimeListModel {
         val timeItems = times.toTimeItems(settings, forType)
         val description = when (forType) {
-            SolisHour.Type.Day -> dayDuration.formatToHours()
-            SolisHour.Type.Night -> nightDuration.formatToHours()
+            SolisCivilTime.Type.Day -> dayDuration.formatToHours()
+            SolisCivilTime.Type.Night -> nightDuration.formatToHours()
         }
         return TimeListModel(
             description = description,
@@ -145,14 +145,14 @@ class TimeListScreenModelFactory(
         )
     }
 
-    private fun List<SolisHour>.toTimeItems(
+    private fun List<SolisCivilTime>.toTimeItems(
         settings: ScheduleSettings?,
-        forType: SolisHour.Type,
+        forType: SolisCivilTime.Type,
     ): ImmutableList<TimeItem> {
         val nowTime = timeProvider.getNowDateTime().toLocalTime()
         val selectedTimeNumbers = settings.toSelectedTimeNumbers()
         return this.filter { it.type == forType }.map { time ->
-            val label = if (time.type == SolisHour.Type.Night) {
+            val label = if (time.type == SolisCivilTime.Type.Night) {
                 stringProvider.getString(
                     R.string.time_item_night_label,
                     (time.number - 12).toString()

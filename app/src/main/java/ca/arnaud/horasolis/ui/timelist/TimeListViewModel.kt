@@ -3,10 +3,10 @@ package ca.arnaud.horasolis.ui.timelist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.usecase.GetSolisHoursParams
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayParams
 import ca.arnaud.horasolis.domain.usecase.GetSolisHoursUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
-import ca.arnaud.horasolis.domain.usecase.SolisTimes
+import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
 import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,7 @@ class TimeListViewModel(
     private val _state = MutableStateFlow(screenModelFactory.createInitialLoading())
     val state: StateFlow<TimeListScreenModel> = _state
 
-    private var currentSolisTimes: SolisTimes? = null
+    private var currentSolisTimes: SolisCivilTimes? = null
     private var savedSettings: ScheduleSettings? = null
 
     init {
@@ -59,7 +59,7 @@ class TimeListViewModel(
 
     private suspend fun refreshTimes(selectedCity: City) {
         val location = selectedCity.toUserLocation()
-        val params = GetSolisHoursParams(
+        val params = GetSolisDayParams(
             location = location,
             date = LocalDate.now(),
         )

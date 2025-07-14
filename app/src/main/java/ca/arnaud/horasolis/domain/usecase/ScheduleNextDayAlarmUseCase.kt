@@ -18,7 +18,7 @@ class ScheduleNextDayAlarmUseCase(
     suspend operator fun invoke(param: ScheduleNextDayAlarmParam) {
         val settings = scheduleSettingsRepository.getScheduleSettingsOrNull() ?: return
 
-        val params = GetSolisHoursParams(
+        val params = GetSolisDayParams(
             location = settings.location,
             date = timeProvider.getNowDate().plusDays(1),
         )

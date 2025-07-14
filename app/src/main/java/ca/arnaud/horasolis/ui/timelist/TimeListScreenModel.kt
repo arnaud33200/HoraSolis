@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
-import ca.arnaud.horasolis.domain.usecase.SolisTimes
+import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -22,7 +22,7 @@ data class TimeListScreenModel(
     }
 
     fun getUpdatedScheduleSettings(
-        solisTimes: SolisTimes?,
+        solisTimes: SolisCivilTimes?,
     ): ScheduleSettings? {
         if (solisTimes == null) return null
         val selectedTimes = (dayTimes.times + nightTimes.times)

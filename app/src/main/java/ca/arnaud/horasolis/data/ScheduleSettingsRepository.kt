@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.data
 
-import ca.arnaud.horasolis.domain.model.SolisHour
+import ca.arnaud.horasolis.domain.usecase.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.local.HoraSolisDatabase
@@ -65,13 +65,13 @@ class ScheduleSettingsRepository(
         )
     }
 
-    private fun List<SelectedTimeEntity>.toRomanTimes(): List<SolisHour> {
+    private fun List<SelectedTimeEntity>.toRomanTimes(): List<SolisCivilTime> {
         return this.map { entity ->
-            SolisHour(
+            SolisCivilTime(
                 number = entity.number,
                 startTime = LocalTime.parse(entity.startTime),
                 duration = Duration.parse(entity.duration),
-                type = SolisHour.Type.valueOf(entity.type)
+                type = SolisCivilTime.Type.valueOf(entity.type)
             )
         }
     }
