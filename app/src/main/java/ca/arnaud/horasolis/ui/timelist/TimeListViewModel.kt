@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayParams
-import ca.arnaud.horasolis.domain.usecase.GetSolisHoursUseCase
+import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
 import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
@@ -18,7 +18,7 @@ import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
 class TimeListViewModel(
-    private val getRomanTimes: GetSolisHoursUseCase,
+    private val getRomanTimes: GetSolisCivilTimeUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
     private val screenModelFactory: TimeListScreenModelFactory,

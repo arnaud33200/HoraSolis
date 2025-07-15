@@ -97,4 +97,13 @@ dependencies {
     implementation(libs.accompanist.placeholder)
 
     implementation(libs.play.services.location)
+
+    // Test
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

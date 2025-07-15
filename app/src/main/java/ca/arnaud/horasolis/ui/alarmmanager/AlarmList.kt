@@ -31,6 +31,7 @@ data class AlarmListModel(
 data class AlarmItemModel(
     val id: Int,
     val title: String,
+    val civilTime: String,
 )
 
 @Composable
@@ -54,6 +55,11 @@ fun AlarmList(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
                 )
+                Text(
+                    text = item.civilTime,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
                 IconButton(onClick = { onDelete(item) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -74,9 +80,9 @@ private fun AlarmListPreview() {
         Surface {
             val sampleModel = AlarmListModel(
                 items = persistentListOf(
-                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06"), // 5 ☀️ 06
-                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54"), // 10 🌚 54
-                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00") // 12 ☀️ 00
+                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", "12:56"), // 5 ☀️ 06
+                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", "12:56"), // 10 🌚 54
+                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", "12:56") // 12 ☀️ 00
                 )
             )
             AlarmList(

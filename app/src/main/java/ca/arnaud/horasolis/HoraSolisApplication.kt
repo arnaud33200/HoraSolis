@@ -11,7 +11,7 @@ import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
-import ca.arnaud.horasolis.domain.usecase.GetSolisHoursUseCase
+import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleSolisAlarmUseCase
@@ -62,7 +62,7 @@ class HoraSolisApplication : Application() {
 
     val domainModule = module {
         factoryOf(::GetSolisDayUseCase)
-        factoryOf(::GetSolisHoursUseCase)
+        factoryOf(::GetSolisCivilTimeUseCase)
         factoryOf(::SavedTimeScheduleUseCase)
         factoryOf(::ScheduleNextDayAlarmUseCase)
         factoryOf(::ScheduleSolisAlarmUseCase)

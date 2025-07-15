@@ -5,8 +5,6 @@ import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.map
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.UserLocation
-import ca.arnaud.horasolis.remote.model.GetSunTime
-import ca.arnaud.horasolis.remote.toIsoString
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
@@ -46,7 +44,7 @@ data class SolisCivilTime(
     }
 }
 
-class GetSolisHoursUseCase(
+class GetSolisCivilTimeUseCase(
     private val solisRepository: SolisRepository,
 ) {
 
@@ -54,38 +52,28 @@ class GetSolisHoursUseCase(
 
         private const val DAY_HOUR_COUNT = 12
         private const val NIGHT_HOUR_COUNT = 12
-        private val fullDayDuration = Duration.ofHours(24)
     }
 
     suspend operator fun invoke(
         params: GetSolisDayParams,
     ): Response<SolisCivilTimes, Throwable> {
-        val resource = GetSunTime(
-            lat = params.location.lat,
-            lng = params.location.lng,
-            tzid = params.location.timZoneId,
-            date = params.date.toIsoString(),
-        )
         return solisRepository.getSolisDay(params).map(
             transform = { solisDay ->
-                calculateRomanTimes(solisDay, params)
+                calculateSolisCivilTimes(solisDay, params)
             }
         )
     }
 
-    private fun calculateRomanTimes(
+    private fun calculateSolisCivilTimes(
         solisDay: SolisDay,
         params: GetSolisDayParams,
     ): SolisCivilTimes {
-        val dayDuration = Duration.between(
-            solisDay.civilSunriseTime,
-            solisDay.civilSunsetTime,
-        )
+        val dayDuration = solisDay.dayDuration
         val dayTimes = solisDay.civilSunriseTime
             .toRomanDayTimes(solisDay.civilSunsetTime)
             .toRomanTimes(dayDuration, SolisCivilTime.Type.Day)
 
-        val nightDuration = fullDayDuration.minus(dayDuration)
+        val nightDuration = solisDay.nightDuration
         val nightTimes = solisDay.civilSunsetTime
             .toRomanNightTimes(nightDuration)
             .toRomanTimes(nightDuration, SolisCivilTime.Type.Night)

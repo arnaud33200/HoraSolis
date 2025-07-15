@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.NewAlarm
 import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import kotlin.time.Duration.Companion.seconds
 
 class AlarmManagerViewModel(
@@ -32,6 +35,7 @@ class AlarmManagerViewModel(
     private val deleteAlarm: DeleteAlarmUseCase,
     private val setCurrentLocation: SetCurrentLocationUseCase,
     private val getCurrentLocation: GetCurrentLocationUseCase,
+    private val getSolisDay: GetSolisDayUseCase,
     private val alarmListFactory: AlarmListModelFactory,
 ) : ViewModel() {
 
@@ -42,6 +46,8 @@ class AlarmManagerViewModel(
 
     private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmParams?>(null)
     val timePickerDialogModel: StateFlow<EditSolisAlarmParams?> = _timePickerDialogModel
+
+    private var solisDay: SolisDay? = null
 
     init {
         // TODO - setup a formater for location text fields
@@ -56,12 +62,23 @@ class AlarmManagerViewModel(
         viewModelScope.launch {
             observeSavedAlarms().collectLatest { alarms ->
                 currentAlarms = alarms
-                _state.update { model ->
-                    model.copy(
-                        list = alarmListFactory.create(alarms)
-                    )
-                }
+                refreshAlarmList()
             }
+        }
+    }
+
+    private suspend fun refreshAlarmList() {
+        val solisDay = solisDay
+            ?: getSolisDay(LocalDate.now()).getDataOrNull()?.also {
+                this.solisDay = it
+            }
+        _state.update { model ->
+            model.copy(
+                list = alarmListFactory.create(
+                    savedAlarms = currentAlarms,
+                    solisDay = solisDay ?: getSolisDay(LocalDate.now()).getDataOrNull(),
+                )
+            )
         }
     }
 
@@ -74,6 +91,8 @@ class AlarmManagerViewModel(
                 long = longitude.toString().toDoubleOrNull() ?: 0.0,
             )
             setCurrentLocation(params)
+            solisDay = getSolisDay(LocalDate.now()).getDataOrNull()
+            refreshAlarmList()
         }
     }
 

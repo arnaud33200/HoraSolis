@@ -119,9 +119,9 @@ private fun AlarmManagerScreenPreview() {
     HoraSolisTheme {
         val sampleList = AlarmListModel(
             items = kotlinx.collections.immutable.persistentListOf(
-                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06"), // 5 ☀️ 06
-                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54"), // 10 🌚 54
-                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00") // 12 ☀️ 00
+                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", "12:45"), // 5 ☀️ 06
+                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", "12:45"), // 10 🌚 54
+                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", "12:45") // 12 ☀️ 00
             )
         )
         AlarmManagerScreen(
