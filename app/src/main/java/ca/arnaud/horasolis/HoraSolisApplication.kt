@@ -29,6 +29,7 @@ import ca.arnaud.horasolis.service.LocationService
 import ca.arnaud.horasolis.service.RomanTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
+import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
@@ -49,15 +50,25 @@ class HoraSolisApplication : Application() {
 
     val appModule = module {
         single<Context> { applicationContext }
-        viewModelOf(::TimeListViewModel)
-        viewModelOf(::AlarmManagerViewModel)
-        viewModelOf(::MainViewModel)
-        singleOf(::RomanTimeAlarmService)
+
+        // General
         singleOf(::StringProvider)
+
+        // Service & Worker
+        singleOf(::RomanTimeAlarmService)
         workerOf(::ScheduleNextAlarmWorker)
-        factoryOf(::TimeListScreenModelFactory)
-        factoryOf(::AlarmListModelFactory)
         factoryOf(::LocationService)
+
+        viewModelOf(::MainViewModel)
+
+        // Time List
+        viewModelOf(::TimeListViewModel)
+        factoryOf(::TimeListScreenModelFactory)
+
+        // Alarm Manager
+        viewModelOf(::AlarmManagerViewModel)
+        factoryOf(::AlarmListModelFactory)
+        factoryOf(::EditSolisAlarmDialogModelFactory)
     }
 
     val domainModule = module {

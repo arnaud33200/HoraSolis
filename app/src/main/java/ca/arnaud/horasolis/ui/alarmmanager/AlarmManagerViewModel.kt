@@ -7,7 +7,6 @@ import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.NewAlarm
 import ca.arnaud.horasolis.domain.model.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
-import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
@@ -34,9 +33,10 @@ class AlarmManagerViewModel(
     private val upsertAlarm: UpsertAlarmUseCase,
     private val deleteAlarm: DeleteAlarmUseCase,
     private val setCurrentLocation: SetCurrentLocationUseCase,
-    private val getCurrentLocation: GetCurrentLocationUseCase,
+    private val getCurrentLocation: GetCurrentLocationUseCase, // TODO - setup observe instead
     private val getSolisDay: GetSolisDayUseCase,
     private val alarmListFactory: AlarmListModelFactory,
+    private val editAlarmDialogFactory: EditSolisAlarmDialogModelFactory,
 ) : ViewModel() {
 
     private var currentAlarms: List<SavedAlarm> = emptyList()
@@ -44,8 +44,8 @@ class AlarmManagerViewModel(
     private val _state = MutableStateFlow(AlarmManagerScreenModel())
     val state: StateFlow<AlarmManagerScreenModel> = _state
 
-    private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmParams?>(null)
-    val timePickerDialogModel: StateFlow<EditSolisAlarmParams?> = _timePickerDialogModel
+    private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmDialogModel?>(null)
+    val timePickerDialogModel: StateFlow<EditSolisAlarmDialogModel?> = _timePickerDialogModel
 
     private var solisDay: SolisDay? = null
 
@@ -97,11 +97,10 @@ class AlarmManagerViewModel(
     }
 
     fun onAddClick() {
-        // TODO - setup model to have picker on add or edit
-        _timePickerDialogModel.value = EditSolisAlarmParams()
+        _timePickerDialogModel.value = editAlarmDialogFactory.createNewAlarm(solisDay)
     }
 
-    fun onTimePicked(params: EditSolisAlarmParams) {
+    fun onTimePicked(params: EditSolisAlarmDialogModel) {
         viewModelScope.launch {
             val solisTime = params.getSolisTime()
             val label = "" // TODO - setup a text field
@@ -162,12 +161,9 @@ class AlarmManagerViewModel(
 
     fun onAlarmItemClick(item: AlarmItemModel) {
         val alarm = currentAlarms.firstOrNull { it.id == item.id } ?: return
-        val params = EditSolisAlarmParams(
-            id = alarm.id,
-            hour = alarm.solisTime.hour,
-            minute = alarm.solisTime.minute,
-            isDay = alarm.solisTime.type == SolisTime.Type.Day,
+        _timePickerDialogModel.value = editAlarmDialogFactory.createEditAlarm(
+            alarm = alarm,
+            solisDay = solisDay,
         )
-        _timePickerDialogModel.value = params
     }
 }

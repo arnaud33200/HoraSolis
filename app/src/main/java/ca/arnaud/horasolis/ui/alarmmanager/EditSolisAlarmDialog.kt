@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.ui.alarmmanager
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,12 +28,14 @@ import ca.arnaud.horasolis.domain.model.SolisTime
  * @param hour The hour of the alarm (1-12).
  * @param minute The minute of the alarm (0-59).
  * @param isDay Indicates whether the time is in AM (true) or PM (false).
+ * @param toCivilTime lambda to convert and format select solis time to civil time string.
  */
-data class EditSolisAlarmParams(
+data class EditSolisAlarmDialogModel(
     val id: Int? = null,
     val hour: Int = 3,
     val minute: Int = 45,
     val isDay: Boolean = true,
+    val toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
 ) {
 
     fun getSolisTime(): SolisTime {
@@ -46,8 +49,8 @@ data class EditSolisAlarmParams(
 
 @Composable
 fun EditSolisAlarmDialog(
-    model: EditSolisAlarmParams = EditSolisAlarmParams(),
-    onConfirm: (EditSolisAlarmParams) -> Unit,
+    model: EditSolisAlarmDialogModel,
+    onConfirm: (EditSolisAlarmDialogModel) -> Unit,
     onDismiss: () -> Unit
 ) {
     var hourState by remember { mutableIntStateOf(model.hour) }
@@ -63,6 +66,7 @@ fun EditSolisAlarmDialog(
                     hour = hourState,
                     minute = minuteState,
                     isDay = isDayState,
+                    toCivilTime = model.toCivilTime,
                     onHourChange = { hourState = it },
                     onMinuteChange = { minuteState = it },
                     onDayNightToggle = { isDayState = it },
@@ -91,14 +95,20 @@ fun EditSolisAlarmDialog(
 
 @Composable
 fun CustomTimePicker(
-    hour: Int,
-    minute: Int,
-    isDay: Boolean,
+    modifier: Modifier = Modifier,
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit,
     onDayNightToggle: (Boolean) -> Unit,
-) {
-    Column {
+    toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
+    hour: Int,
+    minute: Int,
+    isDay: Boolean,
+
+    ) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Switch(
             checked = isDay,
             onCheckedChange = onDayNightToggle,
@@ -108,7 +118,7 @@ fun CustomTimePicker(
             }
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Text("Hour: $hour")
         Slider(
             value = hour.toFloat(),
@@ -123,6 +133,13 @@ fun CustomTimePicker(
             valueRange = 0f..59f,
             steps = 58
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = toCivilTime(hour, minute, isDay),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     }
 }
 
@@ -130,8 +147,14 @@ fun CustomTimePicker(
 @Composable
 private fun TimePickerDialogPreview() {
     MaterialTheme {
+        val model = EditSolisAlarmDialogModel(
+            hour = 8,
+            minute = 30,
+            isDay = true,
+            toCivilTime = { _, _, _ -> "08:40" }
+        )
         EditSolisAlarmDialog(
-            model = EditSolisAlarmParams(hour = 8, minute = 30),
+            model = model,
             onConfirm = {},
             onDismiss = {}
         )
