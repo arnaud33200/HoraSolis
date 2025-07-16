@@ -89,7 +89,7 @@ class AlarmRingingService : Service() {
         requestAudioFocus(audioAttributes)
         playAlarmRingtone(audioAttributes)
         scope.launch {
-            val setAlarmRingingParams = SetAlarmRingingParams(number = params?.number ?: 0)
+            val setAlarmRingingParams = SetAlarmRingingParams(alarmId = params?.number ?: 0)
             setAlarmRinging(setAlarmRingingParams)
         }
     }

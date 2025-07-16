@@ -39,9 +39,6 @@ class MainActivity : ComponentActivity() {
 
                 val ringingDialog by mainViewModel.ringingDialog.collectAsState()
 
-//                TimeListDestination(
-//                    viewModel = viewModel,
-//                )
                 AlarmManagerDestination(
                     viewModel = alarmManagerViewModel,
                 )

@@ -22,8 +22,8 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            observeAlarmRinging().mapNotNull { it }.collectLatest { alarm ->
-                _ringingDialog.value = horaAlertDialogFactory.create(alarm)
+            observeAlarmRinging().collectLatest { alarm ->
+                _ringingDialog.value = alarm?.let { horaAlertDialogFactory.create(alarm) }
             }
         }
     }

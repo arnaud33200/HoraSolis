@@ -3,7 +3,7 @@ package ca.arnaud.horasolis.domain.usecase.alarm
 import ca.arnaud.horasolis.data.AlarmRepository
 
 data class SetAlarmRingingParams(
-    val number: Int,
+    val alarmId: Int,
 )
 
 class SetAlarmRingingUseCase(

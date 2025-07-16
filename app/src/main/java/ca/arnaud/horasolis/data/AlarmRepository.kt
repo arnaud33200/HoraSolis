@@ -22,14 +22,14 @@ class AlarmRepository(
         if (params == null) {
             alarmDao.clearAlarmRinging()
         } else {
-            val entity = AlarmRingingEntity(number = params.number)
+            val entity = AlarmRingingEntity(alarmId = params.alarmId)
             alarmDao.setAlarmRinging(entity)
         }
     }
 
     fun getRingingFlow(): Flow<SavedAlarm?> =
         alarmDao.observeRinging().map { alarmRinging ->
-            alarmRinging?.id?.let { alarmId ->
+            alarmRinging?.alarmId?.let { alarmId ->
                 getAlarm(alarmId)
             }
         }
