@@ -1,12 +1,10 @@
 package ca.arnaud.horasolis.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
-import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,7 +17,7 @@ interface AlarmDao {
     suspend fun clearAlarmRinging()
 
     @Query("SELECT * FROM alarm_ringing WHERE id = 1")
-    fun observeRinging(): Flow<AlarmRinging?>
+    fun observeRinging(): Flow<AlarmRingingEntity?>
 
     @Query("SELECT * FROM alarm ORDER BY time ASC")
     fun observeAlarms(): Flow<List<AlarmEntity>>

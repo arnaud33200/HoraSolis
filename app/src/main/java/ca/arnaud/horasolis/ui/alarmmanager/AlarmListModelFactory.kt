@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.ui.alarmmanager
 
 import ca.arnaud.horasolis.domain.model.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
-import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.extension.format
 import kotlinx.collections.immutable.toImmutableList
 import java.time.format.DateTimeFormatter
 
@@ -29,14 +29,6 @@ class AlarmListModelFactory {
             title = formatted,
             civilTime = civilTime ?: "--:--",
         )
-    }
-
-    fun SolisTime.format(): String {
-        val emoji = when (type) {
-            SolisTime.Type.Day -> "\u2600\uFE0F"
-            SolisTime.Type.Night -> "\uD83C\uDF1A"
-        }
-        return "%02d %s %02d".format(hour, emoji, minute)
     }
 
 }

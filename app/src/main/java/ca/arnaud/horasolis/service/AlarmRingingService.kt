@@ -16,7 +16,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
@@ -89,8 +89,8 @@ class AlarmRingingService : Service() {
         requestAudioFocus(audioAttributes)
         playAlarmRingtone(audioAttributes)
         scope.launch {
-            val alarmRinging = AlarmRinging(number = params?.number ?: 0)
-            setAlarmRinging(alarmRinging)
+            val setAlarmRingingParams = SetAlarmRingingParams(number = params?.number ?: 0)
+            setAlarmRinging(setAlarmRingingParams)
         }
     }
 

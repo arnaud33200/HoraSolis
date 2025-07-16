@@ -2,21 +2,19 @@ package ca.arnaud.horasolis.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
-import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val observeAlarmRinging: ObserveAlarmRingingUseCase,
     private val setAlarmRinging: SetAlarmRingingUseCase,
-    private val stringProvider: StringProvider, // TODO - use a proper factory
+    private val horaAlertDialogFactory: HoraAlertDialogModelFactory,
 ) : ViewModel() {
 
     private val _ringingDialog = MutableStateFlow<HoraAlertDialogModel?>(null)
@@ -24,21 +22,10 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            observeAlarmRinging().collectLatest { alarmRinging ->
-                _ringingDialog.value = createRingingDialog(alarmRinging)
+            observeAlarmRinging().mapNotNull { it }.collectLatest { alarm ->
+                _ringingDialog.value = horaAlertDialogFactory.create(alarm)
             }
         }
-    }
-
-    private fun createRingingDialog(alarmRinging: AlarmRinging?): HoraAlertDialogModel? {
-        if (alarmRinging == null) return null
-        return HoraAlertDialogModel(
-            title = stringProvider.getString(
-                R.string.ringing_alarm_dialog_title,
-                alarmRinging.number.toString(),
-            ),
-            message = stringProvider.getString(R.string.ringing_alarm_dialog_message),
-        )
     }
 
     /**

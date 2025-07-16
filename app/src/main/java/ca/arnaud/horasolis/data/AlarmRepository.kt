@@ -3,7 +3,7 @@ package ca.arnaud.horasolis.data
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.Alarm
 import ca.arnaud.horasolis.domain.model.SavedAlarm
-import ca.arnaud.horasolis.domain.usecase.alarm.AlarmRinging
+import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmError
 import ca.arnaud.horasolis.local.AlarmDao
 import ca.arnaud.horasolis.local.AlarmRingingEntity
@@ -18,7 +18,7 @@ class AlarmRepository(
 
     private val alarmDao: AlarmDao = database.alarmDao()
 
-    suspend fun setAlarmRinging(params: AlarmRinging?) {
+    suspend fun setAlarmRinging(params: SetAlarmRingingParams?) {
         if (params == null) {
             alarmDao.clearAlarmRinging()
         } else {
@@ -27,8 +27,12 @@ class AlarmRepository(
         }
     }
 
-    fun getRingingFlow(): Flow<AlarmRinging?> =
-        alarmDao.observeRinging()
+    fun getRingingFlow(): Flow<SavedAlarm?> =
+        alarmDao.observeRinging().map { alarmRinging ->
+            alarmRinging?.id?.let { alarmId ->
+                getAlarm(alarmId)
+            }
+        }
 
     suspend fun upsertAlarm(alarm: Alarm): Response<SavedAlarm, UpsertAlarmError> {
         val entity = alarm.toEntity()

@@ -31,6 +31,7 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
 import ca.arnaud.horasolis.ui.common.StringProvider
+import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
 import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
@@ -59,7 +60,9 @@ class HoraSolisApplication : Application() {
         workerOf(::ScheduleNextAlarmWorker)
         factoryOf(::LocationService)
 
+        // Main
         viewModelOf(::MainViewModel)
+        factoryOf(::HoraAlertDialogModelFactory)
 
         // Time List
         viewModelOf(::TimeListViewModel)
