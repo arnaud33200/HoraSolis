@@ -42,6 +42,10 @@ class AlarmRepository(
         }
     }
 
+    suspend fun getAlarm(id: Int): SavedAlarm? {
+        return alarmDao.getAlarm(id)?.toSavedAlarm()
+    }
+
     suspend fun deleteAlarm(alarmId: Int) {
         alarmDao.deleteAlarm(alarmId)
     }

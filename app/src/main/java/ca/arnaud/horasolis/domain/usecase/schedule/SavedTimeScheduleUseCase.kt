@@ -2,18 +2,17 @@ package ca.arnaud.horasolis.domain.usecase.schedule
 
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.usecase.ScheduleSolisAlarmUseCase
 import ca.arnaud.horasolis.service.RomanTimeAlarmService
 
+// TODO - to remove as we use alarm instead of time schedule
 class SavedTimeScheduleUseCase(
     private val scheduleSettingsRepository: ScheduleSettingsRepository,
-    private val scheduleRomanTime: ScheduleSolisAlarmUseCase,
     private val alarmService: RomanTimeAlarmService,
 ) {
 
     suspend operator fun invoke(scheduleSettings: ScheduleSettings) {
         scheduleSettingsRepository.saveScheduleSettings(scheduleSettings)
         alarmService.cancelAll()
-        scheduleSettings.selectedTime.forEach(scheduleRomanTime::invoke)
+//        scheduleSettings.selectedTime.forEach(scheduleRomanTime::invoke)
     }
 }

@@ -24,6 +24,9 @@ interface AlarmDao {
     @Query("SELECT * FROM alarm ORDER BY time ASC")
     fun observeAlarms(): Flow<List<AlarmEntity>>
 
+    @Query("SELECT * FROM alarm WHERE id = :alarmId")
+    suspend fun getAlarm(alarmId: Int): AlarmEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAlarm(alarm: AlarmEntity)
 

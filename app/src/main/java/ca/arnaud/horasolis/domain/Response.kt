@@ -1,5 +1,7 @@
 package ca.arnaud.horasolis.domain
 
+import ca.arnaud.horasolis.domain.Response.Success
+
 sealed interface Response<out Data : Any?, Error> {
 
     data class Success<Data, Error>(
@@ -23,6 +25,15 @@ sealed interface Response<out Data : Any?, Error> {
             is Failure -> null
         }
     }
+}
+
+inline fun <Data, Error> Response<Data, Error>.onSuccess(
+    action: (Data) -> Unit,
+): Response<Data, Error> {
+    if (this is Success) {
+        action(data)
+    }
+    return this
 }
 
 /**
