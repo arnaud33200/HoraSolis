@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Hora Solis</string>
 
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+
+    <string name="location_content_description">Location</string>
+
     <string name="city_toronto">Toronto</string>
     <string name="city_thiviers">Thiviers</string>
     <string name="city_bordeaux">Bordeaux</string>
@@ -34,9 +39,11 @@
     <string name="settings_saved_message">Schedule Saved!</string>
     <string name="location_permission_required_toast_message">Location permission required to get accurate sun times</string>
 
+
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>
-    <string name="current_location_button">Current Location</string>
+    <string name="current_location_button">Use Current Location</string>
+    <string name="edit_alarm_dialog_save_button">Save</string>
 
     <string name="alarm_manager_screen_add_button">Add Alarm</string>
 

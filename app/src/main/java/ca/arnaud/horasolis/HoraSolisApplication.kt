@@ -10,8 +10,8 @@ import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleNextDayAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.ScheduleSolisAlarmUseCase
@@ -29,6 +29,7 @@ import ca.arnaud.horasolis.service.LocationService
 import ca.arnaud.horasolis.service.RomanTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
+import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
@@ -70,6 +71,7 @@ class HoraSolisApplication : Application() {
 
         // Alarm Manager
         viewModelOf(::AlarmManagerViewModel)
+        viewModelOf(::EditLocationViewModel)
         factoryOf(::AlarmListModelFactory)
         factoryOf(::EditSolisAlarmDialogModelFactory)
     }

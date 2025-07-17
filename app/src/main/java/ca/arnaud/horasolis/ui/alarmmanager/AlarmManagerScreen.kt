@@ -4,10 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -15,19 +20,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.ui.common.HoraTextField
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
 
 data class AlarmManagerScreenModel(
     val snackMessage: String? = null,
-    val latitude: TextFieldState = TextFieldState(),
-    val longitude: TextFieldState = TextFieldState(),
     val list: AlarmListModel = AlarmListModel(),
 )
 
@@ -35,7 +38,7 @@ data class AlarmManagerScreenModel(
 fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
     onSnackbarDismissed: () -> Unit,
-    onCurrentLocationClick: () -> Unit,
+    onLocationClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAddClick: () -> Unit,
     onAlarmItemClick: (AlarmItemModel) -> Unit,
@@ -51,6 +54,25 @@ fun AlarmManagerScreen(
     Scaffold(
         modifier = modifier,
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .height(60.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = onLocationClick,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = stringResource(R.string.location_content_description)
+                    )
+                }
+            }
+        },
         bottomBar = {
             BottomBar(
                 modifier = Modifier
@@ -66,25 +88,6 @@ fun AlarmManagerScreen(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                HoraTextField(
-                    state = model.latitude,
-                    label = stringResource(id = R.string.latitude_label),
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 8.dp)
-                )
-                HoraTextField(
-                    state = model.longitude,
-                    label = stringResource(id = R.string.longitude_label),
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            Spacer(modifier = Modifier.padding(8.dp))
-            Button(onClick = onCurrentLocationClick) {
-                Text(stringResource(id = R.string.current_location_button))
-            }
-
             AlarmList(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -126,12 +129,10 @@ private fun AlarmManagerScreenPreview() {
         )
         AlarmManagerScreen(
             model = AlarmManagerScreenModel(
-                latitude = TextFieldState("48.858844"),
-                longitude = TextFieldState("2.294351"),
                 list = sampleList
             ),
             onSnackbarDismissed = {},
-            onCurrentLocationClick = {},
+            onLocationClick = {},
             onAlarmDeleteClick = {},
             onAddClick = {},
             onAlarmItemClick = {},

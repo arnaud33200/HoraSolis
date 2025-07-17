@@ -1,35 +1,25 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
-import android.Manifest
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import ca.arnaud.horasolis.extension.PermissionResult
-import com.google.accompanist.permissions.rememberPermissionState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun AlarmManagerDestination(
     viewModel: AlarmManagerViewModel,
 ) {
     val state by viewModel.state.collectAsState()
-    val currentLocationPermissionState = rememberPermissionState(
-        permission = Manifest.permission.ACCESS_FINE_LOCATION,
-        onPermissionResult = { granted ->
-            val permissionResult = when (granted) {
-                true -> PermissionResult.Granted
-                false -> PermissionResult.Denied
-            }
-            viewModel.onCurrentLocationClick(permissionResult)
-        }
-    )
     val timePickerDialogModel by viewModel.timePickerDialogModel.collectAsState()
+
+    var showLocationDialog by remember { mutableStateOf(false) }
 
     AlarmManagerScreen(
         model = state,
         onSnackbarDismissed = {},
-        onCurrentLocationClick = {
-            currentLocationPermissionState.launchPermissionRequest()
-        },
+        onLocationClick = { showLocationDialog = true },
         onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
         onAddClick = viewModel::onAddClick,
         onAlarmItemClick = viewModel::onAlarmItemClick,
@@ -40,6 +30,12 @@ fun AlarmManagerDestination(
             model = it,
             onConfirm = viewModel::onTimePicked,
             onDismiss = viewModel::onDialogDismiss
+        )
+    }
+
+    if (showLocationDialog) {
+        EditLocationDialog(
+            onDismissRequest = { showLocationDialog = false },
         )
     }
 }
