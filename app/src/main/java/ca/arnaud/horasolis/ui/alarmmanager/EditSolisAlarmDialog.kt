@@ -17,8 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.SolisTime
 
 /**
@@ -59,7 +61,7 @@ fun EditSolisAlarmDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Time") },
+        title = { Text(stringResource(id = R.string.select_time_title)) },
         text = {
             Column {
                 CustomTimePicker(
@@ -82,12 +84,12 @@ fun EditSolisAlarmDialog(
                 )
                 onConfirm(params)
             }) {
-                Text("OK")
+                Text(stringResource(id = R.string.ok_button))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = R.string.cancel_button))
             }
         }
     )
@@ -119,14 +121,14 @@ fun CustomTimePicker(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Hour: $hour")
+        Text(stringResource(id = R.string.hour_label, hour))
         Slider(
             value = hour.toFloat(),
             onValueChange = { onHourChange(it.toInt()) },
             valueRange = 1f..12f,
             steps = 10
         )
-        Text("Minute: $minute")
+        Text(stringResource(id = R.string.minute_label, minute))
         Slider(
             value = minute.toFloat(),
             onValueChange = { onMinuteChange(it.toInt()) },

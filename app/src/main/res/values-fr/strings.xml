@@ -2,6 +2,9 @@
     <string name="app_name">Hora Solis</string>
 
     <string name="ok_button">OK</string>
+    <string name="cancel_button">Annuler</string>
+    <string name="location_content_description">Localisation</string>
+
     <string name="city_toronto">Toronto</string>
     <string name="city_thiviers">Thiviers</string>
     <string name="city_bordeaux">Bordeaux</string>
@@ -36,4 +39,10 @@
     <string name="longitude_label">Longitude</string>
     <string name="current_location_button">Location Actuel</string>
     <string name="alarm_manager_screen_add_button">Ajouter une alarme</string>
+    <string name="edit_alarm_dialog_save_button">Sauvegarder</string>
+    <string name="alarm_manager_screen_missing_location_message">Avant d\'ajouter une alarme, vous devez définir la localisation, elle est nécessaire pour calculer les heures solis</string>
+    <string name="alarm_manager_screen_missing_location_button">Ajouter la localisation</string>
+    <string name="select_time_title">Sélectionner l\'heure</string>
+    <string name="hour_label">Heure : %1$d</string>
+    <string name="minute_label">Minute : %1$d</string>
 </resources>
