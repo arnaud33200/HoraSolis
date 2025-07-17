@@ -71,7 +71,6 @@ fun EditLocationDialog(
         },
         dismissButton = {
             Button(
-                enabled = model.saveEnabled,
                 onClick = onDismissRequest,
             ) {
                 Text(stringResource(id = R.string.cancel_button))

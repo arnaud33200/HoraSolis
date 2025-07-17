@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -35,6 +36,10 @@ import ca.arnaud.horasolis.ui.theme.Typography
 sealed interface AlarmManagerScreenModel {
 
     val snackMessage: String?
+
+    data class Loading(
+        override val snackMessage: String? = null,
+    ) : AlarmManagerScreenModel
 
     data class MissingLocation(
         override val snackMessage: String? = null,
@@ -114,6 +119,18 @@ fun AlarmManagerScreen(
                     .fillMaxSize(),
                 onLocationClick = onLocationClick,
             )
+
+            is AlarmManagerScreenModel.Loading -> {
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     }
 }
