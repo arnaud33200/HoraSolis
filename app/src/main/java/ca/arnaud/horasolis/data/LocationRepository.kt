@@ -3,6 +3,8 @@ package ca.arnaud.horasolis.data
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.local.LocationEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class LocationRepository(
     database: HoraSolisDatabase,
@@ -27,11 +29,12 @@ class LocationRepository(
     }
 
     suspend fun getCurrentLocation(): UserLocation? {
-        val locationEntity = settingsDao.get(CURRENT_LOCATION_ID) ?: return null
-        return UserLocation(
-            lat = locationEntity.latitude,
-            lng = locationEntity.longitude,
-            timZoneId = locationEntity.zoneId,
-        )
+        return settingsDao.get(CURRENT_LOCATION_ID)?.toUserLocation()
+    }
+
+    fun observeLocation(): Flow<UserLocation?> {
+        return settingsDao.observe().map { locations ->
+            locations.firstOrNull { it.id == CURRENT_LOCATION_ID }?.toUserLocation()
+        }
     }
 }

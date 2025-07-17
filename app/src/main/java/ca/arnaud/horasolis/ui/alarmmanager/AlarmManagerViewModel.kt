@@ -9,6 +9,7 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.location.ObserveLocationUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -23,6 +24,7 @@ class AlarmManagerViewModel(
     private val getSolisDay: GetSolisDayUseCase,
     private val alarmListFactory: AlarmListModelFactory,
     private val editAlarmDialogFactory: EditSolisAlarmDialogModelFactory,
+    private val observeLocation: ObserveLocationUseCase,
 ) : ViewModel() {
 
     private var currentAlarms: List<SavedAlarm> = emptyList()
@@ -38,7 +40,7 @@ class AlarmManagerViewModel(
     init {
         // TODO - setup a formater for location text fields
         viewModelScope.launch {
-            observeLocationTextFields()
+            observeCurrentLocation()
         }
 
         viewModelScope.launch {
@@ -64,10 +66,16 @@ class AlarmManagerViewModel(
         }
     }
 
-    private suspend fun observeLocationTextFields() {
-        // TODO - setup observer location here
-//            solisDay = getSolisDay(LocalDate.now()).getDataOrNull()
-//            refreshAlarmList()
+    private suspend fun observeCurrentLocation() {
+        observeLocation().collectLatest { location ->
+            if (location == null) {
+                // TODO - setup screen state
+            } else {
+                // TODO - show loading on the alarm civil time
+                solisDay = getSolisDay(LocalDate.now()).getDataOrNull()
+                refreshAlarmList()
+            }
+        }
     }
 
     fun onAddClick() {

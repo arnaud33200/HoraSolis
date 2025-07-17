@@ -20,6 +20,7 @@ import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.location.GetCurrentLocationUseCase
+import ca.arnaud.horasolis.domain.usecase.location.ObserveLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
@@ -88,8 +89,12 @@ class HoraSolisApplication : Application() {
         factoryOf(::ObserveSavedAlarmsUseCase)
         factoryOf(::UpsertAlarmUseCase)
         factoryOf(::DeleteAlarmUseCase)
+
+        // location
         factoryOf(::GetCurrentLocationUseCase)
         factoryOf(::SetCurrentLocationUseCase)
+        factoryOf(::ObserveLocationUseCase)
+
         singleOf(::TimeProvider)
     }
 

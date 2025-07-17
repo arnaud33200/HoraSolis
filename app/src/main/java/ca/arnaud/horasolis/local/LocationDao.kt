@@ -12,6 +12,9 @@ interface LocationDao {
     @Query("SELECT * FROM location")
     suspend fun getAll(): List<LocationEntity>
 
+    @Query("SELECT * FROM location")
+    fun observe(): Flow<List<LocationEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(location: LocationEntity)
 
