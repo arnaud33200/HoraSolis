@@ -29,7 +29,7 @@ class AlarmManagerViewModel(
 
     private var currentAlarms: List<SavedAlarm> = emptyList()
 
-    private val _state = MutableStateFlow(AlarmManagerScreenModel())
+    private val _state = MutableStateFlow<AlarmManagerScreenModel>(AlarmManagerScreenModel.Content())
     val state: StateFlow<AlarmManagerScreenModel> = _state
 
     private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmDialogModel?>(null)
@@ -56,20 +56,25 @@ class AlarmManagerViewModel(
             ?: getSolisDay(LocalDate.now()).getDataOrNull()?.also {
                 this.solisDay = it
             }
+        if (solisDay == null) {
+            _state.value = AlarmManagerScreenModel.MissingLocation()
+            return
+        }
+
         _state.update { model ->
-            model.copy(
-                list = alarmListFactory.create(
-                    savedAlarms = currentAlarms,
-                    solisDay = solisDay ?: getSolisDay(LocalDate.now()).getDataOrNull(),
-                )
+            val list = alarmListFactory.create(
+                savedAlarms = currentAlarms,
+                solisDay = solisDay ?: getSolisDay(LocalDate.now()).getDataOrNull(),
             )
+            (model as? AlarmManagerScreenModel.Content)?.copy(list = list)
+                ?: AlarmManagerScreenModel.Content(list = list)
         }
     }
 
     private suspend fun observeCurrentLocation() {
         observeLocation().collectLatest { location ->
             if (location == null) {
-                // TODO - setup screen state
+                _state.value = AlarmManagerScreenModel.MissingLocation()
             } else {
                 // TODO - show loading on the alarm civil time
                 solisDay = getSolisDay(LocalDate.now()).getDataOrNull()

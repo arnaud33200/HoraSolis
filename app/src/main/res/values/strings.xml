@@ -45,6 +45,9 @@
     <string name="current_location_button">Use Current Location</string>
     <string name="edit_alarm_dialog_save_button">Save</string>
 
+
+    <string name="alarm_manager_screen_missing_location_message">Before adding any alarms, you need to set the location, it\'s required to calculate solis times</string>
+    <string name="alarm_manager_screen_missing_location_button">Set Location</string>
     <string name="alarm_manager_screen_add_button">Add Alarm</string>
 
 </resources>
