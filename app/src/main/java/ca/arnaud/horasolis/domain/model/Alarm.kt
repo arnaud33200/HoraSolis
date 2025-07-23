@@ -5,15 +5,6 @@ sealed interface Alarm {
     val label: String?
     val solisTime: SolisTime
     val enabled: Boolean
-
-    fun toSavedAlarm(id: Int): SavedAlarm {
-        return SavedAlarm(
-            id = id,
-            label = label,
-            solisTime = solisTime,
-            enabled = enabled,
-        )
-    }
 }
 
 data class NewAlarm(

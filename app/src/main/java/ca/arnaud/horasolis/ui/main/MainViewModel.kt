@@ -3,17 +3,16 @@ package ca.arnaud.horasolis.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val observeAlarmRinging: ObserveAlarmRingingUseCase,
-    private val setAlarmRinging: SetAlarmRingingUseCase,
+    private val clearAlarmRinging: ClearAlarmRingingUseCase,
     private val horaAlertDialogFactory: HoraAlertDialogModelFactory,
 ) : ViewModel() {
 
@@ -34,7 +33,7 @@ class MainViewModel(
      */
     fun onStopRingingServiceFailed() {
         viewModelScope.launch {
-            setAlarmRinging(null)
+            clearAlarmRinging()
         }
     }
 }

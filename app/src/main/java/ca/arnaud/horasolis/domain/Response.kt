@@ -36,6 +36,15 @@ inline fun <Data, Error> Response<Data, Error>.onSuccess(
     return this
 }
 
+inline fun <Data, Error> Response<Data, Error>.onFailure(
+    action: (Error) -> Unit,
+): Response<Data, Error> {
+    if (this is Response.Failure) {
+        action(error)
+    }
+    return this
+}
+
 /**
  * Maps the data type to a new value while leaving the error intact
  */

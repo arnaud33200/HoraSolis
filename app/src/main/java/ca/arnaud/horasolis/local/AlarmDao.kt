@@ -17,6 +17,9 @@ interface AlarmDao {
     suspend fun clearAlarmRinging()
 
     @Query("SELECT * FROM alarm_ringing WHERE id = 1")
+    suspend fun getAlarmRinging(): AlarmRingingEntity?
+
+    @Query("SELECT * FROM alarm_ringing WHERE id = 1")
     fun observeRinging(): Flow<AlarmRingingEntity?>
 
     @Query("SELECT * FROM alarm ORDER BY time ASC")
@@ -26,7 +29,7 @@ interface AlarmDao {
     suspend fun getAlarm(alarmId: Int): AlarmEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertAlarm(alarm: AlarmEntity)
+    suspend fun upsertAlarm(alarm: AlarmEntity): Long
 
     @Query("DELETE FROM alarm WHERE id = :alarmId")
     suspend fun deleteAlarm(alarmId: Int)

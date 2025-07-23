@@ -22,7 +22,7 @@ class AlarmReceiver : BroadcastReceiver() {
         ScheduleNextAlarmWorker.Companion.enqueue(
             context = context,
             param = ScheduleNextAlarmWorkerParam(
-                number = param.number,
+                number = param.alarmId,
             )
         )
     }

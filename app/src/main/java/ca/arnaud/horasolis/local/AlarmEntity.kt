@@ -6,19 +6,20 @@ import ca.arnaud.horasolis.domain.model.Alarm
 import ca.arnaud.horasolis.domain.model.NewAlarm
 import ca.arnaud.horasolis.domain.model.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisTime
-import kotlin.random.Random
 
 @Entity(tableName = "alarm")
 data class AlarmEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val label: String? = null,
     val time: SolisTime,
     val enabled: Boolean = true,
 ) {
 
-    fun toSavedAlarm(): SavedAlarm {
+    fun toSavedAlarm(
+        id: Long = this.id,
+    ): SavedAlarm {
         return SavedAlarm(
-            id = id,
+            id = id.toInt(),
             label = label,
             solisTime = time,
             enabled = enabled,
@@ -29,7 +30,7 @@ data class AlarmEntity(
 fun Alarm.toEntity(): AlarmEntity {
     return when (this) {
         is SavedAlarm -> return AlarmEntity(
-            id = id,
+            id = id.toLong(),
             label = label,
             time = solisTime,
             enabled = enabled,

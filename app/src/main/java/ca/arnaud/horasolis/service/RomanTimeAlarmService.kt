@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 
 @Parcelize
 data class RomanTimeAlarmScheduleParam(
-    val number: Int,
+    val alarmId: Int,
     val dateTime: LocalDateTime,
 ) : Parcelable {
 
-    val requestCode: Int = number
+    val requestCode: Int = alarmId
 }
 
 class RomanTimeAlarmService(

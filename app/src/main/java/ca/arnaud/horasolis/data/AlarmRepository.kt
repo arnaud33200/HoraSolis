@@ -29,15 +29,19 @@ class AlarmRepository(
 
     fun getRingingFlow(): Flow<SavedAlarm?> =
         alarmDao.observeRinging().map { alarmRinging ->
-            alarmRinging?.alarmId?.let { alarmId ->
-                getAlarm(alarmId)
+            when (alarmRinging) {
+                null -> null
+                else -> {
+                    val alarmId = alarmRinging.alarmId
+                    alarmDao.getAlarm(alarmId)?.toSavedAlarm()
+                }
             }
         }
 
     suspend fun upsertAlarm(alarm: Alarm): Response<SavedAlarm, UpsertAlarmError> {
         val entity = alarm.toEntity()
-        alarmDao.upsertAlarm(entity)
-        return Response.Success(entity.toSavedAlarm())
+        val id = alarmDao.upsertAlarm(entity)
+        return Response.Success(entity.toSavedAlarm(id))
     }
 
     fun getAlarmsFlow(): Flow<List<SavedAlarm>> {

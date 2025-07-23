@@ -16,6 +16,8 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.domain.onFailure
+import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.MainActivity
@@ -55,6 +57,10 @@ class AlarmRingingService : Service() {
         KoinJavaComponent.get(SetAlarmRingingUseCase::class.java)
     }
 
+    private val clearAlarmRinging: ClearAlarmRingingUseCase by lazy {
+        KoinJavaComponent.get(ClearAlarmRingingUseCase::class.java)
+    }
+
     private var mediaPlayer: MediaPlayer? = null
 
     private val scope = CoroutineScope(context = Dispatchers.Default + SupervisorJob())
@@ -63,6 +69,13 @@ class AlarmRingingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val params = intent?.getParcelableExtra<RomanTimeAlarmScheduleParam>(EXTRA_PARAMS)
         startForeground(NOTIFICATION_ID, createNotification())
+
+        if (params == null) {
+            // If no params are provided, stop the service
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
         if (mediaPlayer?.isPlaying != true) {
             playAlarmSound(params)
         }
@@ -74,12 +87,12 @@ class AlarmRingingService : Service() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
-        scope.launch { setAlarmRinging(null) }
+        scope.launch { clearAlarmRinging() }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private fun playAlarmSound(params: RomanTimeAlarmScheduleParam?) {
+    private fun playAlarmSound(params: RomanTimeAlarmScheduleParam) {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setLegacyStreamType(AudioManager.STREAM_ALARM)
@@ -89,8 +102,11 @@ class AlarmRingingService : Service() {
         requestAudioFocus(audioAttributes)
         playAlarmRingtone(audioAttributes)
         scope.launch {
-            val setAlarmRingingParams = SetAlarmRingingParams(alarmId = params?.number ?: 0)
-            setAlarmRinging(setAlarmRingingParams)
+            val alarmId = params.alarmId
+            val setAlarmRingingParams = SetAlarmRingingParams(alarmId = alarmId)
+            setAlarmRinging(setAlarmRingingParams).onFailure { error ->
+                stopSelf()
+            }
         }
     }
 

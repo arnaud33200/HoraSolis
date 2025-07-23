@@ -36,7 +36,7 @@ class ScheduleSolisAlarmUseCase(
             alarmDateTime
         }
         val alarmParams = RomanTimeAlarmScheduleParam(
-            number = savedAlarm.id,
+            alarmId = savedAlarm.id,
             dateTime = atDateTime,
         )
         alarmService.scheduleAlarm(alarmParams)
