@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
-import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.extension.format
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.coroutines.delay
@@ -38,7 +37,8 @@ class SolisClockModelFactory {
     ): SolisClockModel {
         val sunriseSeconds = solisDay.civilSunriseTime.toSecondOfDay().toLong()
         val sunsetSeconds = solisDay.civilSunsetTime.toSecondOfDay().toLong()
-        val dayDuration = if (sunsetSeconds >= sunriseSeconds) sunsetSeconds - sunriseSeconds else SECONDS_IN_DAY - sunriseSeconds + sunsetSeconds
+        val dayDuration =
+            if (sunsetSeconds >= sunriseSeconds) sunsetSeconds - sunriseSeconds else SECONDS_IN_DAY - sunriseSeconds + sunsetSeconds
         val dayStartAngle = sunriseSeconds.secondsToClockAngle()
         val daySweepAngle = (dayDuration / SECONDS_IN_DAY.toFloat()) * 360f
         val nightStartAngle = (sunriseSeconds + dayDuration) % SECONDS_IN_DAY
@@ -50,6 +50,7 @@ class SolisClockModelFactory {
                 // Place needle within day arc
                 dayStartAngle + ((atTime.hour - 1) + atTime.minute / 60f) * (daySweepAngle / 12f)
             }
+
             SolisTime.Type.Night -> {
                 // Place needle within night arc
                 nightStartAngleClock + ((atTime.hour - 1) + atTime.minute / 60f) * (nightSweepAngle / 12f)

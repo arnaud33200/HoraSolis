@@ -55,6 +55,7 @@ fun EditLocationDialog(
     LaunchedEffect(model.requestDismiss) {
         if (model.requestDismiss) {
             onDismissRequest()
+            viewModel.onRequestDismissHandled()
         }
     }
 

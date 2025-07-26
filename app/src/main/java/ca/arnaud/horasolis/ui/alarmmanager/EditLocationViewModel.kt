@@ -85,4 +85,10 @@ class EditLocationViewModel(
             }
         }
     }
+
+    fun onRequestDismissHandled() {
+        _state.update { model ->
+            model.copy(requestDismiss = false)
+        }
+    }
 }
