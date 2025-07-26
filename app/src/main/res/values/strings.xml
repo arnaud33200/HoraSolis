@@ -3,8 +3,10 @@
 
     <string name="ok_button">OK</string>
     <string name="cancel_button">Cancel</string>
+    <string name="close_button">Close</string>
 
     <string name="location_content_description">Location</string>
+    <string name="clock_content_description">Solis Clock</string>
 
     <string name="city_toronto">Toronto</string>
     <string name="city_thiviers">Thiviers</string>

@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.domain.model
 
+import java.time.Duration
 import java.time.LocalTime
 
 /**
@@ -46,15 +47,31 @@ data class SolisTime(
     fun plusMinutes(minutesToAdd: Int): SolisTime {
         val newMinute = minute + minutesToAdd
         val newHour = if (newMinute >= 60) hour + 1 else hour
-        val type = if (newHour >= 12) {
+        val type = if (newHour > 12) {
             if (type == Type.Day) Type.Night else Type.Day
         } else {
             type
         }
+
         return SolisTime(
-            hour = newHour % 12,
+            hour = (newHour % 13).takeIf { it > 0 } ?: 1,
             minute = newMinute % 60,
             type = type
         )
     }
+}
+
+fun LocalTime.toSolisTime(solisDay: SolisDay): SolisTime {
+    val isDay = this.isAfter(solisDay.civilSunriseTime)
+            && !this.isAfter(solisDay.civilSunsetTime)
+    val startTime = if (isDay) solisDay.civilSunriseTime else solisDay.civilSunsetTime
+    val durationSinceStart = Duration.between(startTime, this)
+    val totalMinutes = durationSinceStart.toMinutes().toInt()
+    val hour = (totalMinutes / 60) + 1
+    val minute = totalMinutes % 60
+    return SolisTime(
+        hour = hour.coerceIn(1, 12),
+        minute = minute,
+        type = if (isDay) SolisTime.Type.Day else SolisTime.Type.Night
+    )
 }

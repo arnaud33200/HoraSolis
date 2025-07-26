@@ -25,9 +25,7 @@ import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-class SolisClockModelFactory(
-    private val timeProvider: TimeProvider,
-) {
+class SolisClockModelFactory {
 
     companion object {
 
@@ -41,7 +39,6 @@ class SolisClockModelFactory(
         val sunriseSeconds = solisDay.civilSunriseTime.toSecondOfDay().toLong()
         val sunsetSeconds = solisDay.civilSunsetTime.toSecondOfDay().toLong()
         val dayDuration = if (sunsetSeconds >= sunriseSeconds) sunsetSeconds - sunriseSeconds else SECONDS_IN_DAY - sunriseSeconds + sunsetSeconds
-        val nightDuration = SECONDS_IN_DAY - dayDuration
         val dayStartAngle = sunriseSeconds.secondsToClockAngle()
         val daySweepAngle = (dayDuration / SECONDS_IN_DAY.toFloat()) * 360f
         val nightStartAngle = (sunriseSeconds + dayDuration) % SECONDS_IN_DAY
@@ -51,11 +48,11 @@ class SolisClockModelFactory(
         val needleAngle = when (atTime.type) {
             SolisTime.Type.Day -> {
                 // Place needle within day arc
-                dayStartAngle + (atTime.hour + atTime.minute / 60f) * (daySweepAngle / 12f)
+                dayStartAngle + ((atTime.hour - 1) + atTime.minute / 60f) * (daySweepAngle / 12f)
             }
             SolisTime.Type.Night -> {
                 // Place needle within night arc
-                nightStartAngleClock + (atTime.hour + atTime.minute / 60f) * (nightSweepAngle / 12f)
+                nightStartAngleClock + ((atTime.hour - 1) + atTime.minute / 60f) * (nightSweepAngle / 12f)
             }
         }
         return SolisClockModel(
@@ -86,7 +83,7 @@ class SolisClockModelFactoryPreviewProvider :
                 civilSunsetTime = LocalTime.of(18, 0)
             ),
             atTime = SolisTime(
-                hour = 11,
+                hour = 10,
                 minute = 0,
                 type = SolisTime.Type.Day,
             ),
@@ -98,7 +95,7 @@ class SolisClockModelFactoryPreviewProvider :
                 civilSunsetTime = LocalTime.of(18, 0)
             ),
             atTime = SolisTime(
-                hour = 0,
+                hour = 3,
                 minute = 0,
                 type = SolisTime.Type.Night,
             ),
@@ -110,7 +107,7 @@ class SolisClockModelFactoryPreviewProvider :
                 civilSunsetTime = LocalTime.of(19, 0)
             ),
             atTime = SolisTime(
-                hour = 0,
+                hour = 1,
                 minute = 0,
                 type = SolisTime.Type.Night,
             ),
@@ -135,7 +132,7 @@ class SolisClockModelFactoryPreviewProvider :
 fun SolisClockModelFactoryPreview(
     @PreviewParameter(SolisClockModelFactoryPreviewProvider::class) preview: SolisClockModelFactoryPreviewProvider.PreviewModel
 ) {
-    val factory = SolisClockModelFactory(TimeProvider())
+    val factory = SolisClockModelFactory()
 
     HoraSolisTheme {
         Surface {

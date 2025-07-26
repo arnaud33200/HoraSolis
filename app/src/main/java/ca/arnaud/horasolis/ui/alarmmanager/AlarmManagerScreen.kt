@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -56,6 +57,7 @@ fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
     onSnackbarDismissed: () -> Unit,
     onLocationClick: () -> Unit,
+    onClockClick: () -> Unit,
     onAddClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAlarmItemClick: (AlarmItemModel) -> Unit,
@@ -79,6 +81,14 @@ fun AlarmManagerScreen(
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                IconButton(
+                    onClick = onClockClick,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Schedule,
+                        contentDescription = stringResource(R.string.location_content_description)
+                    )
+                }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = onLocationClick,
@@ -221,6 +231,7 @@ private fun AlarmManagerScreenPreview() {
             onAlarmDeleteClick = {},
             onAddClick = {},
             onAlarmItemClick = {},
+            onClockClick = {},
         )
     }
 }

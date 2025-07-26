@@ -33,7 +33,9 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
+import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
+import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
@@ -80,6 +82,8 @@ class HoraSolisApplication : Application() {
 
         // Clock
         factoryOf(::SolisClockModelFactory)
+        factoryOf(::SolisClockDialogModelFactory)
+        viewModelOf(::SolisClockViewModel)
     }
 
     val domainModule = module {
