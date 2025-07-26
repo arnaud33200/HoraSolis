@@ -16,6 +16,8 @@ sealed interface HoraSolisColors {
 
     val nightSurface: Color
     val onNightSurface: Color
+
+    val onDayNightSurface: Color
 }
 
 data class LightHoraSolisColors(
@@ -28,7 +30,8 @@ data class LightHoraSolisColors(
     override val daySurface: Color = Color(0xffecb858),
     override val onDaySurface: Color = Color(0xff2c230c),
     override val nightSurface: Color = Color(0xff0f324c),
-    override val onNightSurface: Color = Color(0xffcfd3d8),
+    override val onNightSurface: Color = Color(0xffbbd8ff),
+    override val onDayNightSurface: Color = Color(0xffffffff),
 ) : HoraSolisColors
 
 data class DarkHoraSolisColors(
@@ -41,5 +44,6 @@ data class DarkHoraSolisColors(
     override val daySurface: Color = Color(0xffecb858),
     override val onDaySurface: Color = Color(0xff2c230c),
     override val nightSurface: Color = Color(0xff0f324c),
-    override val onNightSurface: Color = Color(0xffcfd3d8),
+    override val onNightSurface: Color = Color(0xffbbd8ff),
+    override val onDayNightSurface: Color = Color(0xffffffff),
 ) : HoraSolisColors

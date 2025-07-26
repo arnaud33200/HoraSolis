@@ -42,4 +42,19 @@ data class SolisTime(
 
         return startTime + hourDuration + minuteDuration
     }
+
+    fun plusMinutes(minutesToAdd: Int): SolisTime {
+        val newMinute = minute + minutesToAdd
+        val newHour = if (newMinute >= 60) hour + 1 else hour
+        val type = if (newHour >= 12) {
+            if (type == Type.Day) Type.Night else Type.Day
+        } else {
+            type
+        }
+        return SolisTime(
+            hour = newHour % 12,
+            minute = newMinute % 60,
+            type = type
+        )
+    }
 }
