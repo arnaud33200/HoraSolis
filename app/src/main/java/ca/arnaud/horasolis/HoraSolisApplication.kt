@@ -28,7 +28,7 @@ import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.service.LocationService
-import ca.arnaud.horasolis.service.RomanTimeAlarmService
+import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
@@ -59,7 +59,7 @@ class HoraSolisApplication : Application() {
         singleOf(::StringProvider)
 
         // Service & Worker
-        singleOf(::RomanTimeAlarmService)
+        singleOf(::SolisTimeAlarmService)
         workerOf(::ScheduleNextAlarmWorker)
         factoryOf(::LocationService)
 

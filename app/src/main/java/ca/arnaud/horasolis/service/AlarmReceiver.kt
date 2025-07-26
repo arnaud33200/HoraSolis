@@ -13,7 +13,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        val param = intent.getParcelableExtra<RomanTimeAlarmScheduleParam>(
+        val param = intent.getParcelableExtra<SolisTimeAlarmScheduleParam>(
             ROMAN_TIME_ALARM_SERVICE_PARAM_EXTRA_KEY
         ) ?: return
 

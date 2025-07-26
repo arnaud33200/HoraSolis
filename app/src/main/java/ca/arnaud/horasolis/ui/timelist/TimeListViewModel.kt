@@ -18,7 +18,7 @@ import java.time.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
 class TimeListViewModel(
-    private val getRomanTimes: GetSolisCivilTimeUseCase,
+    private val getSolisCivilTime: GetSolisCivilTimeUseCase,
     private val savedTimeSchedule: SavedTimeScheduleUseCase,
     private val observeSelectedTimes: ObserveSelectedTimesUseCase,
     private val screenModelFactory: TimeListScreenModelFactory,
@@ -65,17 +65,17 @@ class TimeListViewModel(
         )
 
         _state.update { it.copy(loading = TimeListScreenModel.Loading.Content) }
-        val romanTimes = getRomanTimes(params).getDataOrNull()
+        val solisCivilTimes = getSolisCivilTime(params).getDataOrNull()
         _state.update { it.copy(loading = null) }
-        if (romanTimes == null) {
+        if (solisCivilTimes == null) {
             _state.update { it.copy(snackMessage = "Failed to load times") } // TODO hardcoded string
             return
         }
 
-        currentSolisTimes = romanTimes
+        currentSolisTimes = solisCivilTimes
         updateScreenModel { model ->
             screenModelFactory.updateTimes(
-                romanTimes,
+                solisCivilTimes,
                 savedSettings,
                 model.copy(selectedCity = selectedCity)
             )

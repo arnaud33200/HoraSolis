@@ -3,13 +3,13 @@ package ca.arnaud.horasolis.domain.usecase
 import ca.arnaud.horasolis.domain.model.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.service.RomanTimeAlarmScheduleParam
-import ca.arnaud.horasolis.service.RomanTimeAlarmService
+import ca.arnaud.horasolis.service.SolisTimeAlarmScheduleParam
+import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import java.time.LocalDate
 import java.time.LocalTime
 
 class ScheduleSolisAlarmUseCase(
-    private val alarmService: RomanTimeAlarmService,
+    private val alarmService: SolisTimeAlarmService,
     private val timeProvider: TimeProvider,
     private val getSolisDay: GetSolisDayUseCase,
 ) {
@@ -35,7 +35,7 @@ class ScheduleSolisAlarmUseCase(
         } else {
             alarmDateTime
         }
-        val alarmParams = RomanTimeAlarmScheduleParam(
+        val alarmParams = SolisTimeAlarmScheduleParam(
             alarmId = savedAlarm.id,
             dateTime = atDateTime,
         )

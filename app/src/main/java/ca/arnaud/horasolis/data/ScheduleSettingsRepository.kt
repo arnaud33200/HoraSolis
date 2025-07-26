@@ -61,11 +61,11 @@ class ScheduleSettingsRepository(
                 lng = lng,
                 timZoneId = timZoneId,
             ),
-            selectedTime = selectedTimes.toRomanTimes(),
+            selectedTime = selectedTimes.toSolisCivilTimes(),
         )
     }
 
-    private fun List<SelectedTimeEntity>.toRomanTimes(): List<SolisCivilTime> {
+    private fun List<SelectedTimeEntity>.toSolisCivilTimes(): List<SolisCivilTime> {
         return this.map { entity ->
             SolisCivilTime(
                 number = entity.number,

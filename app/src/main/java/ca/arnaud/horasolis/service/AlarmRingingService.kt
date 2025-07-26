@@ -36,7 +36,7 @@ class AlarmRingingService : Service() {
 
         fun startService(
             context: Context,
-            params: RomanTimeAlarmScheduleParam,
+            params: SolisTimeAlarmScheduleParam,
         ) {
             val serviceIntent = Intent(context, AlarmRingingService::class.java)
             serviceIntent.putExtra(EXTRA_PARAMS, params)
@@ -67,7 +67,7 @@ class AlarmRingingService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val params = intent?.getParcelableExtra<RomanTimeAlarmScheduleParam>(EXTRA_PARAMS)
+        val params = intent?.getParcelableExtra<SolisTimeAlarmScheduleParam>(EXTRA_PARAMS)
         startForeground(NOTIFICATION_ID, createNotification())
 
         if (params == null) {
@@ -92,7 +92,7 @@ class AlarmRingingService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private fun playAlarmSound(params: RomanTimeAlarmScheduleParam) {
+    private fun playAlarmSound(params: SolisTimeAlarmScheduleParam) {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setLegacyStreamType(AudioManager.STREAM_ALARM)

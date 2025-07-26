@@ -70,13 +70,13 @@ class GetSolisCivilTimeUseCase(
     ): SolisCivilTimes {
         val dayDuration = solisDay.dayDuration
         val dayTimes = solisDay.civilSunriseTime
-            .toRomanDayTimes(solisDay.civilSunsetTime)
-            .toRomanTimes(dayDuration, SolisCivilTime.Type.Day)
+            .toSolisCivilDayTimes(solisDay.civilSunsetTime)
+            .toSolisCivilTimes(dayDuration, SolisCivilTime.Type.Day)
 
         val nightDuration = solisDay.nightDuration
         val nightTimes = solisDay.civilSunsetTime
-            .toRomanNightTimes(nightDuration)
-            .toRomanTimes(nightDuration, SolisCivilTime.Type.Night)
+            .toSolisCivilNightTimes(nightDuration)
+            .toSolisCivilTimes(nightDuration, SolisCivilTime.Type.Night)
 
         return SolisCivilTimes(
             date = solisDay.atDate,
@@ -87,7 +87,7 @@ class GetSolisCivilTimeUseCase(
         )
     }
 
-    private fun LocalTime.toRomanDayTimes(
+    private fun LocalTime.toSolisCivilDayTimes(
         sunsetTime: LocalTime
     ): List<LocalTime> {
         val duration = Duration.between(this, sunsetTime)
@@ -97,7 +97,7 @@ class GetSolisCivilTimeUseCase(
         }
     }
 
-    private fun LocalTime.toRomanNightTimes(
+    private fun LocalTime.toSolisCivilNightTimes(
         nightDuration: Duration
     ): List<LocalTime> {
         val unitDuration = nightDuration.dividedBy(NIGHT_HOUR_COUNT.toLong())
@@ -106,7 +106,7 @@ class GetSolisCivilTimeUseCase(
         }
     }
 
-    private fun List<LocalTime>.toRomanTimes(
+    private fun List<LocalTime>.toSolisCivilTimes(
         duration: Duration,
         type: SolisCivilTime.Type,
     ): List<SolisCivilTime> {

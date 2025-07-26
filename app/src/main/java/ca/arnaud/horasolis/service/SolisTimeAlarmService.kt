@@ -11,7 +11,7 @@ import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 @Parcelize
-data class RomanTimeAlarmScheduleParam(
+data class SolisTimeAlarmScheduleParam(
     val alarmId: Int,
     val dateTime: LocalDateTime,
 ) : Parcelable {
@@ -19,13 +19,13 @@ data class RomanTimeAlarmScheduleParam(
     val requestCode: Int = alarmId
 }
 
-class RomanTimeAlarmService(
+class SolisTimeAlarmService(
     private val context: Context,
     private val timeProvider: TimeProvider,
 ) {
 
     fun scheduleAlarm(
-        param: RomanTimeAlarmScheduleParam,
+        param: SolisTimeAlarmScheduleParam,
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = createPendingIntent(param.requestCode, param)
@@ -58,7 +58,7 @@ class RomanTimeAlarmService(
      */
     private fun createPendingIntent(
         requestCode: Int,
-        param: RomanTimeAlarmScheduleParam? = null,
+        param: SolisTimeAlarmScheduleParam? = null,
     ): PendingIntent {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             if (param != null) {
