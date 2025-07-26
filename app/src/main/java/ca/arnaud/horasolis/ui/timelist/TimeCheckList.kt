@@ -100,7 +100,7 @@ internal fun ListHeader(
     description: String,
 ) {
     Column(
-        modifier = modifier.background(HoraSolisTheme.colors.surface),
+        modifier = modifier.background(HoraSolisTheme.colors.materialColorScheme.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -124,16 +124,16 @@ internal fun TimeItemRow(
     night: Boolean,
 ) {
     val containerColor = if (night) {
-        HoraSolisTheme.colors.secondaryContainer
+        HoraSolisTheme.colors.materialColorScheme.secondaryContainer
     } else {
-        HoraSolisTheme.colors.surfaceContainer
+        HoraSolisTheme.colors.materialColorScheme.surfaceContainer
     }
     val contentColor = if (night) {
-        HoraSolisTheme.colors.onSecondaryContainer
+        HoraSolisTheme.colors.materialColorScheme.onSecondaryContainer
     } else {
-        HoraSolisTheme.colors.onSurface
+        HoraSolisTheme.colors.materialColorScheme.onSurface
     }
-    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.primary) else null
+    val border = if (timeItem.highlight) BorderStroke(3.dp, HoraSolisTheme.colors.materialColorScheme.primary) else null
     val cardColors = CardDefaults.cardColors(
         containerColor = if (timeItem.highlight) contentColor else containerColor,
         contentColor = if (timeItem.highlight) containerColor else contentColor,
@@ -167,7 +167,7 @@ internal fun TimeItemRow(
                 Text(
                     modifier = Modifier.placeholder(
                         visible = loading,
-                        color = HoraSolisTheme.colors.onSurface.copy(alpha = 0.1f),
+                        color = HoraSolisTheme.colors.materialColorScheme.onSurface.copy(alpha = 0.1f),
                         highlight = PlaceholderHighlight.shimmer(),
                     ),
                     text = timeItem.hour,
