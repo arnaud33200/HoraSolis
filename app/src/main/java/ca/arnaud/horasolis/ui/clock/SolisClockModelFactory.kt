@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.domain.model.toSolisTime
 import ca.arnaud.horasolis.extension.format
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.coroutines.delay
@@ -126,6 +127,46 @@ class SolisClockModelFactoryPreviewProvider :
             ),
         ),
     )
+}
+
+@PreviewLightDark
+@Composable
+fun SolisClockModelFactoryLocalTimePreview() {
+    val factory = SolisClockModelFactory()
+
+    HoraSolisTheme {
+        Surface {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                var atTime by remember { mutableStateOf(LocalDateTime.of(2025, 7,26,18, 0)) }
+
+                LaunchedEffect(Unit) {
+                    while (true) {
+                        delay(50)
+                        atTime = atTime.plusMinutes(10)
+                    }
+                }
+
+                val solisDay = SolisDay(
+                    atDate = LocalDateTime.now().toLocalDate(),
+                    civilSunriseTime = LocalTime.of(8, 0),
+                    civilSunsetTime = LocalTime.of(17, 0)
+                )
+                val solisTime = atTime.toSolisTime(solisDay)
+                val model = factory.create(
+                    solisDay = solisDay,
+                    atTime = solisTime,
+                )
+
+                Text(text = solisTime.format())
+                SolisClock(
+                    model = model,
+                    modifier = Modifier.size(300.dp)
+                )
+            }
+        }
+    }
 }
 
 @PreviewLightDark

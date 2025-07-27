@@ -18,7 +18,7 @@ class TimeProvider {
     }
 
     fun getNowSolisTime(solisDay: SolisDay): SolisTime {
-        return getNowDateTime().toLocalTime().toSolisTime(solisDay)
+        return getNowDateTime().toSolisTime(solisDay)
     }
 
     fun getZoneId(): ZoneId {

@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.domain.model
 
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
@@ -61,17 +62,40 @@ data class SolisTime(
     }
 }
 
-fun LocalTime.toSolisTime(solisDay: SolisDay): SolisTime {
-    val isDay = this.isAfter(solisDay.civilSunriseTime)
-            && !this.isAfter(solisDay.civilSunsetTime)
-    val startTime = if (isDay) solisDay.civilSunriseTime else solisDay.civilSunsetTime
-    val durationSinceStart = Duration.between(startTime, this)
-    val totalMinutes = durationSinceStart.toMinutes().toInt()
-    val hour = (totalMinutes / 60) + 1
-    val minute = totalMinutes % 60
+fun LocalDateTime.toSolisTime(solisDay: SolisDay): SolisTime {
+    val sunriseTime = solisDay.civilSunriseTime
+    val sunsetTime = solisDay.civilSunsetTime
+
+    // Compose LocalDateTime for sunrise and sunset on the same day as this
+    val date = this.toLocalDate()
+    val sunriseDateTime = sunriseTime.atDate(date)
+    val sunsetDateTime = sunsetTime.atDate(date)
+
+    val isDay = this >= sunriseDateTime && this < sunsetDateTime
+
+    val startDateTime = if (isDay) sunriseDateTime else {
+        if (this < sunriseDateTime) {
+            // between midnight and sunrise: sunset of the previous day
+            sunsetTime.atDate(date.minusDays(1))
+        } else {
+            // Night after sunset: sunset of this day
+            sunsetDateTime
+        }
+    }
+    val endDateTime = if (isDay) {
+        sunsetDateTime
+    } else {
+        sunriseTime.atDate(startDateTime.toLocalDate().plusDays(1))
+    }
+    val totalDuration = Duration.between(startDateTime, endDateTime)
+    val oneHourDuration = totalDuration.dividedBy(12)
+    val durationSinceStart = Duration.between(startDateTime, this)
+    val hour = (durationSinceStart.toMillis() / oneHourDuration.toMillis()).toInt() + 1
+    val minute = ((durationSinceStart.toMillis() % oneHourDuration.toMillis()) / (oneHourDuration.toMillis() / 60)).toInt()
+
     return SolisTime(
         hour = hour.coerceIn(1, 12),
-        minute = minute,
+        minute = minute.coerceIn(0, 59),
         type = if (isDay) SolisTime.Type.Day else SolisTime.Type.Night
     )
 }
