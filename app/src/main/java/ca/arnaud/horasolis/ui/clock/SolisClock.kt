@@ -39,8 +39,8 @@ data class SolisClockModel(
 
 @Composable
 fun SolisClock(
+    modifier: Modifier = Modifier,
     model: SolisClockModel,
-    modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier) {
         val daySurfaceColor = HoraSolisTheme.colors.daySurface
@@ -51,7 +51,7 @@ fun SolisClock(
         val clockBorderColor = HoraSolisTheme.colors.materialColorScheme
             .onSurface.copy(alpha = 0.5f)
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val radius = size.minDimension / 2 * 0.8f
+            val radius = size.minDimension / 2 * 0.98f
             val arcSize = Size(radius * 2, radius * 2)
             val center = Offset(size.width / 2, size.height / 2)
             val topLeft = Offset(center.x - radius, center.y - radius)

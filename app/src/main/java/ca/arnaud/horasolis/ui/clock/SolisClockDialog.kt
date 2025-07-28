@@ -2,6 +2,8 @@ package ca.arnaud.horasolis.ui.clock
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -78,8 +80,10 @@ private fun SolisClockDialog(
                     is SolisClockDialogModel.Content -> {
                         Text(
                             text = model.solisTime,
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.headlineLarge,
                         )
+
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         SolisClock(
                             model = model.clock,
