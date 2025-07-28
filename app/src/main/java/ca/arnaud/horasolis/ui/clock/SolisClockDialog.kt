@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 sealed interface SolisClockDialogModel {
@@ -40,8 +42,15 @@ fun SolisClockDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
 ) {
-    val viewModel: SolisClockViewModel = koinViewModel()
+    val viewModel = koinViewModel<SolisClockViewModel>()
     val model by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(250)
+            viewModel.refreshClock()
+        }
+    }
 
     SolisClockDialog(
         modifier = modifier,

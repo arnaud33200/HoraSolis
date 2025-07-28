@@ -14,6 +14,7 @@ import java.time.LocalTime
 data class SolisTime(
     val hour: Int,
     val minute: Int,
+    val seconds: Int = 0,
     val type: Type,
 ) {
 
@@ -49,9 +50,9 @@ data class SolisTime(
         val newMinute = minute + minutesToAdd
         val newHour = if (newMinute >= 60) hour + 1 else hour
         val type = if (newHour > 12) {
-            if (type == Type.Day) Type.Night else Type.Day
+            if (this.type == Type.Day) Type.Night else Type.Day
         } else {
-            type
+            this.type
         }
 
         return SolisTime(
@@ -92,10 +93,12 @@ fun LocalDateTime.toSolisTime(solisDay: SolisDay): SolisTime {
     val durationSinceStart = Duration.between(startDateTime, this)
     val hour = (durationSinceStart.toMillis() / oneHourDuration.toMillis()).toInt() + 1
     val minute = ((durationSinceStart.toMillis() % oneHourDuration.toMillis()) / (oneHourDuration.toMillis() / 60)).toInt()
+    val second = (((durationSinceStart.toMillis() % oneHourDuration.toMillis()) % (oneHourDuration.toMillis() / 60)) / (oneHourDuration.toMillis() / 3600)).toInt()
 
     return SolisTime(
         hour = hour.coerceIn(1, 12),
         minute = minute.coerceIn(0, 59),
+        seconds = second.coerceIn(0, 59),
         type = if (isDay) SolisTime.Type.Day else SolisTime.Type.Night
     )
 }

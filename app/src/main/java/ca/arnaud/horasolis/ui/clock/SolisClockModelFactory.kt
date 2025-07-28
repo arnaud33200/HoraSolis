@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.toSolisTime
-import ca.arnaud.horasolis.extension.format
+import ca.arnaud.horasolis.extension.formatWithSeconds
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
@@ -139,12 +139,12 @@ fun SolisClockModelFactoryLocalTimePreview() {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                var atTime by remember { mutableStateOf(LocalDateTime.of(2025, 7,26,18, 0)) }
+                var atTime by remember { mutableStateOf(LocalDateTime.of(2025, 7, 26, 18, 0)) }
 
                 LaunchedEffect(Unit) {
                     while (true) {
                         delay(50)
-                        atTime = atTime.plusMinutes(10)
+                        atTime = atTime.plusSeconds(10)
                     }
                 }
 
@@ -159,7 +159,7 @@ fun SolisClockModelFactoryLocalTimePreview() {
                     atTime = solisTime,
                 )
 
-                Text(text = solisTime.format())
+                Text(text = solisTime.formatWithSeconds())
                 SolisClock(
                     model = model,
                     modifier = Modifier.size(300.dp)
@@ -182,7 +182,7 @@ fun SolisClockModelFactoryPreview(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 var atTime by remember { mutableStateOf(preview.atTime) }
-                Text(text = atTime.format())
+                Text(text = atTime.formatWithSeconds())
 
                 LaunchedEffect(Unit) {
                     while (true) {
