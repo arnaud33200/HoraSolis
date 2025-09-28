@@ -65,7 +65,7 @@ class SolisClockModelFactory {
     }
 
     private fun Long.secondsToClockAngle(): Float {
-        return (this / SECONDS_IN_DAY.toFloat()) * 360f - 90f
+        return (this / SECONDS_IN_DAY.toFloat()) * 360f
     }
 }
 
