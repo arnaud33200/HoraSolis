@@ -28,6 +28,7 @@ class AlarmListModelFactory {
             id = id,
             title = formatted,
             civilTime = civilTime ?: "--:--",
+            isEnabled = enabled,
         )
     }
 

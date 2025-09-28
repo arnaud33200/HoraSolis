@@ -61,6 +61,7 @@ fun AlarmManagerScreen(
     onAddClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAlarmItemClick: (AlarmItemModel) -> Unit,
+    onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -120,6 +121,7 @@ fun AlarmManagerScreen(
                 model = model,
                 onAlarmDeleteClick = onAlarmDeleteClick,
                 onAlarmItemClick = onAlarmItemClick,
+                onAlarmToggleClick = onAlarmToggleClick,
             )
 
             is AlarmManagerScreenModel.MissingLocation -> MissingLocation(
@@ -178,6 +180,7 @@ private fun Content(
     modifier: Modifier = Modifier,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAlarmItemClick: (AlarmItemModel) -> Unit,
+    onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel.Content,
 ) {
     Column(
@@ -189,6 +192,7 @@ private fun Content(
             model = model.list,
             onDelete = onAlarmDeleteClick,
             onEdit = onAlarmItemClick,
+            onToggle = onAlarmToggleClick,
         )
     }
 }
@@ -232,6 +236,7 @@ private fun AlarmManagerScreenPreview() {
             onAddClick = {},
             onAlarmItemClick = {},
             onClockClick = {},
+            onAlarmToggleClick = { _, _ -> },
         )
     }
 }

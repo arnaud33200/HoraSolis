@@ -8,12 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ data class AlarmItemModel(
     val id: Int,
     val title: String,
     val civilTime: String,
+    val isEnabled: Boolean = true,
 )
 
 @Composable
@@ -39,37 +41,59 @@ fun AlarmList(
     modifier: Modifier = Modifier,
     onDelete: (AlarmItemModel) -> Unit,
     onEdit: (AlarmItemModel) -> Unit,
+    onToggle: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmListModel,
 ) {
     LazyColumn(modifier = modifier) {
         items(model.items, key = { it.id }) { item ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .clickable { onEdit(item) },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    text = item.civilTime,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                IconButton(onClick = { onDelete(item) }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        tint = LocalContentColor.current.copy(alpha = 0.6f),
-                        contentDescription = "Delete alarm",
-                    )
-                }
-            }
-            Divider()
+            AlarmListItem(
+                item = item,
+                onDelete = onDelete,
+                onEdit = onEdit,
+                onToggle = onToggle
+            )
+            HorizontalDivider()
         }
+    }
+}
+
+@Composable
+private fun AlarmListItem(
+    item: AlarmItemModel,
+    onDelete: (AlarmItemModel) -> Unit,
+    onEdit: (AlarmItemModel) -> Unit,
+    onToggle: (AlarmItemModel, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable { onEdit(item) },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = item.title,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = item.civilTime,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+        IconButton(onClick = { onDelete(item) }) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                tint = LocalContentColor.current.copy(alpha = 0.6f),
+                contentDescription = "Delete alarm",
+            )
+        }
+        Switch(
+            checked = item.isEnabled,
+            onCheckedChange = { onToggle(item, it) },
+            modifier = Modifier.padding(start = 8.dp)
+        )
     }
 }
 
@@ -88,7 +112,8 @@ private fun AlarmListPreview() {
             AlarmList(
                 model = sampleModel,
                 onDelete = {},
-                onEdit = {}
+                onEdit = {},
+                onToggle = { _, _ -> }
             )
         }
     }

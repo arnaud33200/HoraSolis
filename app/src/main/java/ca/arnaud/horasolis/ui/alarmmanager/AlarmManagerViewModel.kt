@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.NewAlarm
 import ca.arnaud.horasolis.domain.model.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
+import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
@@ -130,5 +131,23 @@ class AlarmManagerViewModel(
             alarm = alarm,
             solisDay = solisDay,
         )
+    }
+
+    fun onAlarmToggleClick(
+        item: AlarmItemModel,
+        isEnabled: Boolean,
+    ) {
+        val alarm = currentAlarms.firstOrNull { it.id == item.id } ?: return
+        viewModelScope.launch {
+            val updatedAlarm = SavedAlarm(
+                id = alarm.id,
+                label = alarm.label,
+                solisTime = alarm.solisTime,
+                enabled = isEnabled,
+            )
+            upsertAlarm(updatedAlarm).onFailure {
+                // TODO - show error
+            }
+        }
     }
 }

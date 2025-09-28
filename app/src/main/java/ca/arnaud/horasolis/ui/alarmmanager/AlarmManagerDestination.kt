@@ -25,7 +25,8 @@ fun AlarmManagerDestination(
         onClockClick = { showClockDialog = true },
         onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
         onAddClick = viewModel::onAddClick,
-        onAlarmItemClick = viewModel::onAlarmItemClick
+        onAlarmItemClick = viewModel::onAlarmItemClick,
+        onAlarmToggleClick = viewModel::onAlarmToggleClick
     )
 
     timePickerDialogModel?.let {
