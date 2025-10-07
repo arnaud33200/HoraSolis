@@ -33,6 +33,7 @@ class AlarmRingingService : Service() {
         private const val NOTIFICATION_ID = 1001
         private const val NOTIFICATION_CHANNEL_ID = "alarm_ringing_channel"
         private const val EXTRA_PARAMS = "alarm_ringing_params"
+        private const val ACTION_STOP_ALARM = "STOP_ALARM"
 
         fun startService(
             context: Context,
@@ -40,11 +41,7 @@ class AlarmRingingService : Service() {
         ) {
             val serviceIntent = Intent(context, AlarmRingingService::class.java)
             serviceIntent.putExtra(EXTRA_PARAMS, params)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(serviceIntent)
-            } else {
-                context.startService(serviceIntent)
-            }
+            context.startForegroundService(serviceIntent)
         }
 
         fun stopService(context: Context): Boolean {
@@ -65,16 +62,24 @@ class AlarmRingingService : Service() {
 
     private val scope = CoroutineScope(context = Dispatchers.Default + SupervisorJob())
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val params = intent?.getParcelableExtra<SolisTimeAlarmScheduleParam>(EXTRA_PARAMS)
-        startForeground(NOTIFICATION_ID, createNotification())
-
-        if (params == null) {
-            // If no params are provided, stop the service
+        if (intent?.action == ACTION_STOP_ALARM) {
             stopSelf()
             return START_NOT_STICKY
         }
+
+        val params = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent?.getParcelableExtra(EXTRA_PARAMS, SolisTimeAlarmScheduleParam::class.java)
+        } else {
+            intent?.getParcelableExtra(EXTRA_PARAMS)
+        }
+
+        if (params == null) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
+
+        startForeground(NOTIFICATION_ID, createNotification())
 
         if (mediaPlayer?.isPlaying != true) {
             playAlarmSound(params)
@@ -124,29 +129,21 @@ class AlarmRingingService : Service() {
 
     private fun requestAudioFocus(audioAttributes: AudioAttributes) {
         val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
-                .setAudioAttributes(audioAttributes)
-                .build()
-            audioManager.requestAudioFocus(request)
-        } else {
-            audioManager.requestAudioFocus(
-                null, AudioManager.STREAM_ALARM, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
-            )
-        }
+        val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+            .setAudioAttributes(audioAttributes)
+            .build()
+        audioManager.requestAudioFocus(request)
     }
 
     private fun createNotification(): Notification {
         val channelId = NOTIFICATION_CHANNEL_ID
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                getString(R.string.alarm_ringing_channel_name),
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            channelId,
+            getString(R.string.alarm_ringing_channel_name),
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        manager.createNotificationChannel(channel)
 
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle(getString(R.string.alarm_ringing_notification_title))
@@ -155,16 +152,27 @@ class AlarmRingingService : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setOngoing(true)
             .setContentIntent(getMainActivityIntent())
+            .addAction(
+                R.drawable.ic_launcher_foreground,
+                getString(R.string.ringing_alarm_dialog_button),
+                getStopAlarmIntent()
+            )
             .build()
+    }
+
+    private fun getStopAlarmIntent(): PendingIntent {
+        val intent = Intent(this, AlarmRingingService::class.java).apply {
+            action = ACTION_STOP_ALARM
+        }
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        return PendingIntent.getService(this, 1001, intent, flags)
     }
 
     private fun getMainActivityIntent(): PendingIntent {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val flags = PendingIntent.FLAG_UPDATE_CURRENT or (
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
-                )
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         return PendingIntent.getActivity(this, 0, intent, flags)
     }
 }
