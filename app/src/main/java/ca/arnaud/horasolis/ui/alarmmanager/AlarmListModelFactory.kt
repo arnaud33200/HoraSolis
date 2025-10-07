@@ -12,8 +12,12 @@ class AlarmListModelFactory {
         savedAlarms: List<SavedAlarm>,
         solisDay: SolisDay?,
     ): AlarmListModel {
+        val sortedAlarms = savedAlarms.sortedWith { alarm1, alarm2 ->
+            alarm1.compareTo(alarm2)
+        }
+
         return AlarmListModel(
-            items = savedAlarms.map {
+            items = sortedAlarms.map {
                 it.toAlarmItemModel(solisDay)
             }.toImmutableList(),
         )
