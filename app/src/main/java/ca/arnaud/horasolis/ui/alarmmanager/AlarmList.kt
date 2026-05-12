@@ -47,12 +47,17 @@ fun AlarmList(
     LazyColumn(modifier = modifier) {
         items(model.items, key = { it.id }) { item ->
             AlarmListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onEdit(item) }
+                    .padding(horizontal = 16.dp),
                 item = item,
                 onDelete = onDelete,
-                onEdit = onEdit,
                 onToggle = onToggle
             )
-            HorizontalDivider()
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
     }
 }
@@ -61,15 +66,13 @@ fun AlarmList(
 private fun AlarmListItem(
     item: AlarmItemModel,
     onDelete: (AlarmItemModel) -> Unit,
-    onEdit: (AlarmItemModel) -> Unit,
     onToggle: (AlarmItemModel, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { onEdit(item) },
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

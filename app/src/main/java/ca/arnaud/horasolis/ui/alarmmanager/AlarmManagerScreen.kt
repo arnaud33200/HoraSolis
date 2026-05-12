@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -31,6 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
+import ca.arnaud.horasolis.ui.clock.SolisClockModel
+import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
 
@@ -57,12 +60,12 @@ fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
     onSnackbarDismissed: () -> Unit,
     onLocationClick: () -> Unit,
-    onClockClick: () -> Unit,
     onAddClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAlarmItemClick: (AlarmItemModel) -> Unit,
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel,
+    clockModel: SolisClockDialogModel = SolisClockDialogModel.Loading,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
@@ -82,14 +85,6 @@ fun AlarmManagerScreen(
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(
-                    onClick = onClockClick,
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Schedule,
-                        contentDescription = stringResource(R.string.location_content_description)
-                    )
-                }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = onLocationClick,
@@ -116,12 +111,12 @@ fun AlarmManagerScreen(
         when (model) {
             is AlarmManagerScreenModel.Content -> Content(
                 modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(16.dp),
+                    .padding(innerPadding),
                 model = model,
                 onAlarmDeleteClick = onAlarmDeleteClick,
                 onAlarmItemClick = onAlarmItemClick,
                 onAlarmToggleClick = onAlarmToggleClick,
+                clockModel = clockModel,
             )
 
             is AlarmManagerScreenModel.MissingLocation -> MissingLocation(
@@ -182,10 +177,20 @@ private fun Content(
     onAlarmItemClick: (AlarmItemModel) -> Unit,
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel.Content,
+    clockModel: SolisClockDialogModel,
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        SolisClockWithTime(
+            model = clockModel,
+            clockSize = 175.dp,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        HorizontalDivider()
+
         AlarmList(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -230,12 +235,19 @@ private fun AlarmManagerScreenPreview() {
             model = AlarmManagerScreenModel.Content(
                 list = sampleList
             ),
+            clockModel = SolisClockDialogModel.Content(
+                solisTime = "12:00 Day",
+                clock = SolisClockModel(
+                    dayStartAngle = -90f,
+                    dayEndAngle = 200f,
+                    needleAngle = 30f,
+                ),
+            ),
             onSnackbarDismissed = {},
             onLocationClick = {},
             onAlarmDeleteClick = {},
             onAddClick = {},
             onAlarmItemClick = {},
-            onClockClick = {},
             onAlarmToggleClick = { _, _ -> },
         )
     }

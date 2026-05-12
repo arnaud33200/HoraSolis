@@ -7,6 +7,7 @@
 
     <string name="location_content_description">Location</string>
     <string name="clock_content_description">Solis Clock</string>
+    <string name="solis_clock_error_message">Failed to load Solis clock data</string>
 
     <string name="city_toronto">Toronto</string>
     <string name="city_thiviers">Thiviers</string>
