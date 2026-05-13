@@ -1,4 +1,6 @@
-package ca.arnaud.horasolis.domain.model
+package ca.arnaud.horasolis.domain.model.alarm
+
+import ca.arnaud.horasolis.domain.model.SolisTime
 
 sealed interface Alarm {
 

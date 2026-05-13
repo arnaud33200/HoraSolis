@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
-import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
+import ca.arnaud.horasolis.domain.model.SolisCivilTimes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 

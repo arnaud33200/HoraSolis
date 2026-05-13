@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.usecase.ObserveAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import kotlinx.coroutines.flow.MutableStateFlow

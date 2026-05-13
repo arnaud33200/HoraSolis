@@ -2,8 +2,8 @@ package ca.arnaud.horasolis.ui.alarmmanager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.model.NewAlarm
-import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.alarm.NewAlarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase

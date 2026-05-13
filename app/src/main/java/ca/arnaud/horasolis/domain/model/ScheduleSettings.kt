@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.domain.model
 
-import ca.arnaud.horasolis.domain.usecase.SolisCivilTime
+import ca.arnaud.horasolis.domain.model.SolisCivilTime
 
 data class ScheduleSettings(
     val location: UserLocation,

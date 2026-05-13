@@ -1,10 +1,10 @@
 package ca.arnaud.horasolis.ui.timelist
 
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.domain.usecase.SolisCivilTime
+import ca.arnaud.horasolis.domain.model.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
+import ca.arnaud.horasolis.domain.model.SolisCivilTimes
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

@@ -1,9 +1,7 @@
-package ca.arnaud.horasolis.domain.usecase
+package ca.arnaud.horasolis.domain.usecase.alarm
 
 import ca.arnaud.horasolis.data.AlarmRepository
-import ca.arnaud.horasolis.domain.model.SavedAlarm
-import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
-import ca.arnaud.horasolis.ui.common.StringProvider
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import kotlinx.coroutines.flow.Flow
 
 class ObserveAlarmRingingUseCase(

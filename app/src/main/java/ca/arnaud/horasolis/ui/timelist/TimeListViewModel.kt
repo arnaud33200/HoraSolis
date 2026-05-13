@@ -6,7 +6,7 @@ import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayParams
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
-import ca.arnaud.horasolis.domain.usecase.SolisCivilTimes
+import ca.arnaud.horasolis.domain.model.SolisCivilTimes
 import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

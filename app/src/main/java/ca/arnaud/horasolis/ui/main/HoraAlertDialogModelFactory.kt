@@ -1,7 +1,7 @@
 package ca.arnaud.horasolis.ui.main
 
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.extension.format
 import ca.arnaud.horasolis.ui.common.HoraAlertDialogModel
 import ca.arnaud.horasolis.ui.common.StringProvider

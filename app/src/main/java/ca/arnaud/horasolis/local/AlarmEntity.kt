@@ -2,9 +2,9 @@ package ca.arnaud.horasolis.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ca.arnaud.horasolis.domain.model.Alarm
-import ca.arnaud.horasolis.domain.model.NewAlarm
-import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.alarm.Alarm
+import ca.arnaud.horasolis.domain.model.alarm.NewAlarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisTime
 
 @Entity(tableName = "alarm")

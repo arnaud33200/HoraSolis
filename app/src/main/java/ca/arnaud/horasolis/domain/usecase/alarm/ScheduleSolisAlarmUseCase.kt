@@ -1,8 +1,9 @@
-package ca.arnaud.horasolis.domain.usecase
+package ca.arnaud.horasolis.domain.usecase.alarm
 
-import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.service.SolisTimeAlarmScheduleParam
 import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import java.time.LocalDate

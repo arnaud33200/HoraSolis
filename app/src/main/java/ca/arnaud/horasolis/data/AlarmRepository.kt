@@ -1,8 +1,8 @@
 package ca.arnaud.horasolis.data
 
 import ca.arnaud.horasolis.domain.Response
-import ca.arnaud.horasolis.domain.model.Alarm
-import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.alarm.Alarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmError
 import ca.arnaud.horasolis.local.AlarmDao

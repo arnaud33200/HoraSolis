@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
-import ca.arnaud.horasolis.domain.model.SavedAlarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
 import java.time.format.DateTimeFormatter

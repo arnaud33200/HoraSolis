@@ -1,6 +1,6 @@
 package ca.arnaud.horasolis.data
 
-import ca.arnaud.horasolis.domain.usecase.SolisCivilTime
+import ca.arnaud.horasolis.domain.model.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.local.HoraSolisDatabase
