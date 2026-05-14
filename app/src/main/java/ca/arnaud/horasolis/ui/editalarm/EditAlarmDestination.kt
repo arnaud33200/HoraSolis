@@ -8,11 +8,18 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun EditAlarmDestination(
-    alarmId: Long?,
+    alarmId: Int?,
     onBack: () -> Unit,
 ) {
     val viewModel: EditAlarmViewModel = koinViewModel(
-        parameters = { parametersOf(alarmId) }
+        parameters = {
+            val viewModelParams = if (alarmId != null) {
+                EditAlarmViewModelParams.Edit(alarmId)
+            } else {
+                EditAlarmViewModelParams.New
+            }
+            parametersOf(viewModelParams)
+        }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
 

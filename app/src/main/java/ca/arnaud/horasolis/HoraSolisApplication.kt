@@ -14,6 +14,7 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
@@ -32,11 +33,11 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
-import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
 import ca.arnaud.horasolis.ui.common.StringProvider
+import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
@@ -46,7 +47,7 @@ import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -78,7 +79,13 @@ class HoraSolisApplication : Application() {
         // Alarm Manager
         viewModelOf(::AlarmManagerViewModel)
         viewModelOf(::EditLocationViewModel)
-        viewModel { params -> EditAlarmViewModel(alarmId = params.getOrNull()) }
+        viewModel { params ->
+            EditAlarmViewModel(
+                params = params.get(),
+                getAlarm = get(),
+                upsertAlarm = get(),
+            )
+        }
         factoryOf(::AlarmListModelFactory)
         factoryOf(::EditSolisAlarmDialogModelFactory)
 
@@ -100,6 +107,8 @@ class HoraSolisApplication : Application() {
         factoryOf(::ObserveSavedAlarmsUseCase)
         factoryOf(::UpsertAlarmUseCase)
         factoryOf(::DeleteAlarmUseCase)
+
+        factoryOf(::GetAlarmUseCase)
 
         // location
         factoryOf(::GetCurrentLocationUseCase)

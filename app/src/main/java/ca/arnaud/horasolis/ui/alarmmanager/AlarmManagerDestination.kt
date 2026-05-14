@@ -13,7 +13,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AlarmManagerDestination(
     viewModel: AlarmManagerViewModel,
-    onNavigateToEditAlarm: (alarmId: Long?) -> Unit,
+    onNavigateToEditAlarm: (alarmId: Int?) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val timePickerDialogModel by viewModel.timePickerDialogModel.collectAsStateWithLifecycle()

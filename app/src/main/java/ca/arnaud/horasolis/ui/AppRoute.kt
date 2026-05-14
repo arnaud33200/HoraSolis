@@ -9,5 +9,5 @@ sealed interface AppRoute : NavKey {
     data object AlarmManager : AppRoute
 
     @Serializable
-    data class EditAlarm(val alarmId: Long?) : AppRoute
+    data class EditAlarm(val alarmId: Int?) : AppRoute
 }

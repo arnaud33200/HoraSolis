@@ -38,8 +38,8 @@ class AlarmManagerViewModel(
     private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmDialogModel?>(null)
     val timePickerDialogModel: StateFlow<EditSolisAlarmDialogModel?> = _timePickerDialogModel
 
-    private val _navigateToEditAlarm = MutableSharedFlow<Long?>()
-    val navigateToEditAlarm: SharedFlow<Long?> = _navigateToEditAlarm
+    private val _navigateToEditAlarm = MutableSharedFlow<Int?>()
+    val navigateToEditAlarm: SharedFlow<Int?> = _navigateToEditAlarm
 
     private var solisDay: SolisDay? = null
 
@@ -99,30 +99,6 @@ class AlarmManagerViewModel(
 
     fun onTimePicked(params: EditSolisAlarmDialogModel) {
         _timePickerDialogModel.value = null
-        viewModelScope.launch {
-            val solisTime = params.getSolisTime()
-            val label = "" // TODO - setup a text field
-            val onForWeekDays = params.dayOfWeeks.mapNotNull { item ->
-                item.data.takeIf { item.selected }
-            }.toSet()
-            val alarm = if (params.id != null) {
-                SavedAlarm(
-                    id = params.id,
-                    label = label,
-                    solisTime = params.getSolisTime(),
-                    enabled = true,
-                    onForWeekDays = onForWeekDays,
-                )
-            } else {
-                NewAlarm(
-                    label = label,
-                    solisTime = solisTime,
-                    enabled = true,
-                    onForWeekDays = onForWeekDays,
-                )
-            }
-            upsertAlarm(alarm)
-        }
     }
 
     fun onDialogDismiss() {
@@ -136,7 +112,7 @@ class AlarmManagerViewModel(
     }
 
     fun onAlarmItemClick(item: AlarmItemModel) {
-        viewModelScope.launch { _navigateToEditAlarm.emit(item.id.toLong()) }
+        viewModelScope.launch { _navigateToEditAlarm.emit(item.id) }
     }
 
     fun onAlarmToggleClick(

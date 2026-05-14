@@ -45,6 +45,38 @@ sealed interface Alarm {
 
         return this.solisTime.minute.compareTo(other.solisTime.minute)
     }
+
+    fun copy(
+        solisTime: SolisTime = this.solisTime,
+        onForWeekDays: Set<WeekDay> = this.onForWeekDays,
+    ): Alarm {
+        return when (this) {
+            is NewAlarm -> NewAlarm(
+                label = this.label,
+                solisTime = solisTime,
+                enabled = this.enabled,
+                onForWeekDays = onForWeekDays,
+            )
+
+            is SavedAlarm -> SavedAlarm(
+                id = this.id,
+                label = this.label,
+                solisTime = solisTime,
+                enabled = this.enabled,
+                onForWeekDays = onForWeekDays,
+            )
+        }
+    }
+
+    companion object {
+
+        val empty: Alarm = NewAlarm(
+            label = null,
+            solisTime = SolisTime(0, 0, 0, SolisTime.Type.Day),
+            enabled = false,
+            onForWeekDays = emptySet(),
+        )
+    }
 }
 
 data class NewAlarm(
