@@ -191,7 +191,6 @@ private fun Content(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider()
 
         AlarmList(
             modifier = Modifier

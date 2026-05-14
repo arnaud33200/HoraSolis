@@ -1,7 +1,8 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,7 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -48,19 +49,17 @@ fun AlarmList(
     onToggle: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmListModel,
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
         items(model.items, key = { it.id }) { item ->
             AlarmListItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onEdit(item) }
-                    .padding(horizontal = 16.dp),
                 item = item,
+                onEdit = onEdit,
                 onDelete = onDelete,
-                onToggle = onToggle
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp)
+                onToggle = onToggle,
             )
         }
     }
@@ -68,48 +67,52 @@ fun AlarmList(
 
 @Composable
 private fun AlarmListItem(
-    modifier: Modifier = Modifier,
+    item: AlarmItemModel,
+    onEdit: (AlarmItemModel) -> Unit,
     onDelete: (AlarmItemModel) -> Unit,
     onToggle: (AlarmItemModel, Boolean) -> Unit,
-    item: AlarmItemModel,
 ) {
-    Column(
-        modifier = modifier,
+    Card(
+        onClick = { onEdit(item) },
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp),
         ) {
-            Text(
-                text = item.title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = item.civilTime,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-            IconButton(onClick = { onDelete(item) }) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    tint = LocalContentColor.current.copy(alpha = 0.6f),
-                    contentDescription = "Delete alarm",
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = item.civilTime,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+                IconButton(onClick = { onDelete(item) }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        tint = LocalContentColor.current.copy(alpha = 0.6f),
+                        contentDescription = "Delete alarm",
+                    )
+                }
+                Switch(
+                    checked = item.isEnabled,
+                    onCheckedChange = { onToggle(item, it) },
+                    modifier = Modifier.padding(start = 8.dp),
                 )
             }
-            Switch(
-                checked = item.isEnabled,
-                onCheckedChange = { onToggle(item, it) },
-                modifier = Modifier.padding(start = 8.dp)
+            DayOfWeekList(
+                modifier = Modifier.padding(bottom = 8.dp),
+                items = item.dayOfWeeks,
             )
         }
-
-        DayOfWeekList(
-            modifier = Modifier.padding(bottom = 8.dp),
-            items = item.dayOfWeeks,
-        )
     }
 }
 
