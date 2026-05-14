@@ -16,6 +16,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
@@ -88,6 +89,16 @@ private fun EditAlarmContent(
         modifier = modifier.padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = model.label,
+            onValueChange = { onAction(EditAlarmUiAction.LabelChanged(it)) },
+            label = { Text(stringResource(R.string.alarm_label)) },
+            singleLine = true,
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTimePicker(
@@ -189,6 +200,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
 
     override val values = sequenceOf(
         EditAlarmScreenModel.Content(
+            label = "Morning",
             hour = 6,
             minute = 30,
             isDay = true,
@@ -196,6 +208,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             dayOfWeeks = sampleDayOfWeeks,
         ),
         EditAlarmScreenModel.Content(
+            label = "",
             hour = 9,
             minute = 0,
             isDay = false,

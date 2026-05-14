@@ -50,6 +50,8 @@
     <string name="back_content_description">Retour</string>
     <string name="clock_content_description">Heure Solis</string>
 
+    <string name="alarm_label">Nom</string>
+
     <string name="alarm_schedule_every_day">Tous les jours</string>
     <string name="alarm_schedule_weekend">Week-end</string>
     <string name="alarm_schedule_range">Du %1$s au %2$s</string>

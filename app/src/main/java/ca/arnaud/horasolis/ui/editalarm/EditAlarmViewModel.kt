@@ -72,10 +72,16 @@ internal class EditAlarmViewModel(
         viewModelScope.launch {
             when (action) {
                 is SolisTimeAction -> onSolisTimeChanged(action)
+                is EditAlarmUiAction.LabelChanged -> onLabelChanged(action)
                 is EditAlarmUiAction.DayOfWeekClicked -> onDayOfWeekClicked(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
             }
         }
+    }
+
+    private suspend fun onLabelChanged(action: EditAlarmUiAction.LabelChanged) {
+        updateParams = updateParams.copy(label = UpdateParam.Update(action.label.ifBlank { null }))
+        rebuildState()
     }
 
     private suspend fun onDayOfWeekClicked(action: EditAlarmUiAction.DayOfWeekClicked) {

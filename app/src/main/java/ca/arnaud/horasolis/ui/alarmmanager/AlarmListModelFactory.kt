@@ -29,6 +29,7 @@ class AlarmListModelFactory(
         return AlarmItemModel(
             id = id,
             title = solisTime.format(),
+            label = label,
             civilTime = solisDay?.let { dateFormatter.formatCivilTime(solisTime.toCivilTime(it)) } ?: "--:--",
             isEnabled = enabled,
             schedule = dateFormatter.formatWeekDaysOrNull(onForWeekDays),

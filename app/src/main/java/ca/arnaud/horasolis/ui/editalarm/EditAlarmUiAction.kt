@@ -12,6 +12,8 @@ sealed interface EditAlarmUiAction {
 
     data class DayNightToggled(val isDay: Boolean) : SolisTimeAction
 
+    data class LabelChanged(val label: String) : EditAlarmUiAction
+
     data class DayOfWeekClicked(val item: EditDayOfWeekItemModel) : EditAlarmUiAction
 
     data object SaveClicked : EditAlarmUiAction

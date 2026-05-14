@@ -34,6 +34,7 @@ data class AlarmListModel(
 data class AlarmItemModel(
     val id: Int,
     val title: String,
+    val label: String?,
     val civilTime: String,
     val isEnabled: Boolean = true,
     val schedule: String?,
@@ -83,11 +84,19 @@ private fun AlarmListItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = item.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.weight(1f),
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.title,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    item.label?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LocalContentColor.current.copy(alpha = 0.6f),
+                        )
+                    }
+                }
                 Text(
                     text = item.civilTime,
                     style = MaterialTheme.typography.bodyMedium,
@@ -125,9 +134,9 @@ private fun AlarmListPreview() {
         Surface {
             val sampleModel = AlarmListModel(
                 items = persistentListOf(
-                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
-                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
-                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
+                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", label = "Morning", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
+                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", label = null, civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
+                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", label = "Noon", civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
                 )
             )
             AlarmList(

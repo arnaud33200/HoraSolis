@@ -226,9 +226,9 @@ private fun AlarmManagerScreenPreview() {
     HoraSolisTheme {
         val sampleList = AlarmListModel(
             items = persistentListOf(
-                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
-                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
-                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
+                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", label = "Morning", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
+                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", label = null, civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
+                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", label = null, civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
             )
         )
         AlarmManagerScreen(
