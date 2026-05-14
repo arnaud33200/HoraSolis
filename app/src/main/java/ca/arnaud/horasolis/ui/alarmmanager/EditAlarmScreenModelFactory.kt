@@ -8,14 +8,15 @@ import ca.arnaud.horasolis.domain.model.alarm.applyUpdates
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
+import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmScreenModel
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.toImmutableList
-import java.time.format.DateTimeFormatter
 
 class EditAlarmScreenModelFactory(
     private val getSolisDay: GetSolisDayUseCase,
     private val timeProvider: TimeProvider,
+    private val dateFormatter: DateFormatter,
 ) {
 
     private var solisDay: SolisDay? = null
@@ -26,13 +27,11 @@ class EditAlarmScreenModelFactory(
     ): EditAlarmScreenModel {
         val updatedAlarm = alarm.applyUpdates(updateParams)
         val civilTime = getSolisDayOrNull()?.let { solisDay ->
-            DateTimeFormatter.ofPattern("HH:mm").format(
-                updatedAlarm.solisTime.toCivilTime(solisDay)
-            )
+            dateFormatter.formatCivilTime(updatedAlarm.solisTime.toCivilTime(solisDay))
         }
         val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
             EditDayOfWeekItemModel(
-                text = dayOfWeek.name.substring(0, 3), // TODO - needs to be localized
+                text = dateFormatter.formatWeekDay(dayOfWeek),
                 selected = updatedAlarm.onForWeekDays.contains(dayOfWeek),
                 data = dayOfWeek,
             )

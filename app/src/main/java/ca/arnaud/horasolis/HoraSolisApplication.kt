@@ -9,6 +9,8 @@ import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.ScheduleSettingsRepository
 import ca.arnaud.horasolis.data.SolisRepository
+import ca.arnaud.horasolis.domain.provider.LocaleProvider
+import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
@@ -31,11 +33,12 @@ import ca.arnaud.horasolis.service.LocationService
 import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
-import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
+import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
+import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
@@ -45,6 +48,7 @@ import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -62,6 +66,7 @@ class HoraSolisApplication : Application() {
 
         // General
         singleOf(::StringProvider)
+        singleOf(::DateFormatter)
 
         // Service & Worker
         singleOf(::SolisTimeAlarmService)
@@ -117,6 +122,7 @@ class HoraSolisApplication : Application() {
         factoryOf(::ObserveLocationUseCase)
 
         singleOf(::TimeProvider)
+        singleOf(::LocaleProviderImpl) { bind<LocaleProvider>() }
     }
 
     val dataModule = module {

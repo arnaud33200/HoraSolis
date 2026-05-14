@@ -5,16 +5,17 @@ import ca.arnaud.horasolis.domain.model.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.model.SolisCivilTimes
+import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import java.time.Duration
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 class TimeListScreenModelFactory(
     private val timeProvider: TimeProvider,
     private val stringProvider: StringProvider,
+    private val dateFormatter: DateFormatter,
 ) {
 
     fun createInitialLoading(): TimeListScreenModel {
@@ -163,15 +164,11 @@ class TimeListScreenModelFactory(
             TimeItem(
                 number = time.number,
                 label = label,
-                hour = time.startTime.formatTimeHHmm(),
+                hour = dateFormatter.formatCivilTime(time.startTime),
                 checked = selectedTimeNumbers.contains(time.number),
                 highlight = time.isNow(nowTime),
             )
         }.toImmutableList()
-    }
-
-    private fun LocalTime.formatTimeHHmm(): String {
-        return DateTimeFormatter.ofPattern("HH:mm").format(this)
     }
 
     private fun Duration.formatToHours(): String {
