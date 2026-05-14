@@ -32,6 +32,7 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
+import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
@@ -45,6 +46,7 @@ import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -76,6 +78,7 @@ class HoraSolisApplication : Application() {
         // Alarm Manager
         viewModelOf(::AlarmManagerViewModel)
         viewModelOf(::EditLocationViewModel)
+        viewModel { params -> EditAlarmViewModel(alarmId = params.getOrNull()) }
         factoryOf(::AlarmListModelFactory)
         factoryOf(::EditSolisAlarmDialogModelFactory)
 

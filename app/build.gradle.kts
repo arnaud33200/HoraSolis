@@ -13,7 +13,7 @@ plugins {
 
 android {
     namespace = "ca.arnaud.horasolis"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ca.arnaud.horasolis"
@@ -75,6 +75,9 @@ dependencies {
 
     // Ktor
     implementation(libs.bundles.ktor)
+
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

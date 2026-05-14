@@ -47,5 +47,6 @@
     <string name="select_time_title">Sélectionner l\'heure</string>
     <string name="hour_label">Heure : %1$d</string>
     <string name="minute_label">Minute : %1$d</string>
+    <string name="back_content_description">Retour</string>
     <string name="clock_content_description">Heure Solis</string>
 </resources>

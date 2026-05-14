@@ -6,6 +6,7 @@
     <string name="close_button">Close</string>
 
     <string name="location_content_description">Location</string>
+    <string name="back_content_description">Back</string>
     <string name="clock_content_description">Solis Clock</string>
     <string name="solis_clock_error_message">Failed to load Solis clock data</string>
 

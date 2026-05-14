@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.service.AlarmRingingService
-import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerDestination
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.common.HoraAlertDialog
 import ca.arnaud.horasolis.ui.main.MainViewModel
@@ -26,7 +25,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    //    val viewModel: TimeListViewModel by viewModel()
     val mainViewModel: MainViewModel by viewModel()
     val alarmManagerViewModel: AlarmManagerViewModel by viewModel()
 
@@ -39,9 +37,7 @@ class MainActivity : ComponentActivity() {
 
                 val ringingDialog by mainViewModel.ringingDialog.collectAsState()
 
-                AlarmManagerDestination(
-                    viewModel = alarmManagerViewModel,
-                )
+                AppNavigation(alarmManagerViewModel = alarmManagerViewModel)
 
                 ringingDialog?.let { dialogModel ->
                     val context = LocalContext.current
@@ -57,7 +53,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
     @Composable
     fun NotificationPermissionRequest() {

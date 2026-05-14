@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,6 +13,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AlarmManagerDestination(
     viewModel: AlarmManagerViewModel,
+    onNavigateToEditAlarm: (alarmId: Long?) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val timePickerDialogModel by viewModel.timePickerDialogModel.collectAsStateWithLifecycle()
@@ -20,6 +22,12 @@ fun AlarmManagerDestination(
     val clockModel by clockViewModel.state.collectAsStateWithLifecycle()
 
     var showLocationDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigateToEditAlarm.collect { alarmId ->
+            onNavigateToEditAlarm(alarmId)
+        }
+    }
 
     AlarmManagerScreen(
         model = state,
