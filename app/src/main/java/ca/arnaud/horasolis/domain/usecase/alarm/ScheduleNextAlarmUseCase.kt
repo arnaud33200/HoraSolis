@@ -14,18 +14,37 @@ import java.time.LocalTime
 
 enum class ScheduleSolisAlarmError {
 
+    /**
+     * Couldn't find the alarm with a specific id.
+     * May happen when alarm is removed after being scheduled.
+     */
     SavedAlarmNotFound,
+
+    /**
+     * Alarm is not enabled, alarm cannot be scheduled.
+     */
     NotEnabled,
+
+    /**
+     * Alarm is enabled but there is no day in the week to schedule for.
+     */
     EmptyWeekDays,
+
+    /**
+     * Couldn't get the solis day for a specific date.
+     * This is required to convert solis time to civil time.
+     */
     MissingSolisDay,
 }
 
 /**
  * Schedules the next alarm time for a given alarm.
+ * Used when add/edit an alarm, and used after an alarm is ringing to schedule the next one.
+ *
  * The next alarm can be either this week or next week, depending on the time and schedule.
  * Alarm is canceled if not enabled or if there is no more day in the week to schedule for.
  */
-class ScheduleSolisAlarmUseCase(
+class ScheduleNextAlarmUseCase(
     private val alarmRepository: AlarmRepository,
     private val alarmService: SolisTimeAlarmService,
     private val timeProvider: TimeProvider,

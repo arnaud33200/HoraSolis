@@ -10,7 +10,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import ca.arnaud.horasolis.domain.flatMap
-import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleSolisAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import org.koin.java.KoinJavaComponent
 
 data class ScheduleNextAlarmWorkerParam(
@@ -39,8 +39,8 @@ class ScheduleNextAlarmWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
-    private val scheduleNextDayAlarm: ScheduleSolisAlarmUseCase by lazy {
-        KoinJavaComponent.get(ScheduleSolisAlarmUseCase::class.java)
+    private val scheduleNextAlarm: ScheduleNextAlarmUseCase by lazy {
+        KoinJavaComponent.get(ScheduleNextAlarmUseCase::class.java)
     }
 
     companion object {
@@ -71,7 +71,7 @@ class ScheduleNextAlarmWorker(
         val param = ScheduleNextAlarmWorkerParam.fromDataOrNull(inputData)
             ?: return Result.failure()
 
-        return scheduleNextDayAlarm(alarmId = param.number).flatMap(
+        return scheduleNextAlarm(alarmId = param.number).flatMap(
             transform = { Result.success() },
             transformError = { Result.failure() },
         )
