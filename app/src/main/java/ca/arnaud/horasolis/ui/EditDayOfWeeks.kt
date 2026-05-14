@@ -55,7 +55,7 @@ fun EditDayOfWeeks(
                 } else {
                     LocalContentColor.current.copy(alpha = 0.6f)
                 },
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
     }

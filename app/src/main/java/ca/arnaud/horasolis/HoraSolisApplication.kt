@@ -32,7 +32,7 @@ import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
-import ca.arnaud.horasolis.ui.alarmmanager.EditSolisAlarmDialogModelFactory
+import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
@@ -83,11 +83,12 @@ class HoraSolisApplication : Application() {
             EditAlarmViewModel(
                 params = params.get(),
                 getAlarm = get(),
+                screenModelFactory = get(),
                 upsertAlarm = get(),
             )
         }
         factoryOf(::AlarmListModelFactory)
-        factoryOf(::EditSolisAlarmDialogModelFactory)
+        factoryOf(::EditAlarmScreenModelFactory)
 
         // Clock
         factoryOf(::SolisClockModelFactory)

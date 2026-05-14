@@ -3,7 +3,6 @@ package ca.arnaud.horasolis.ui.alarmmanager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.SolisDay
-import ca.arnaud.horasolis.domain.model.alarm.NewAlarm
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
@@ -20,6 +19,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+sealed interface AlarmManagerViewModelEvent {
+
+    data class NavigateToEditAlarm(val alarmId: Int?) : AlarmManagerViewModelEvent
+}
+
 class AlarmManagerViewModel(
     private val observeSavedAlarms: ObserveSavedAlarmsUseCase,
     private val upsertAlarm: UpsertAlarmUseCase,
@@ -31,15 +35,13 @@ class AlarmManagerViewModel(
 
     private var currentAlarms: List<SavedAlarm> = emptyList()
 
-    private val _state =
-        MutableStateFlow<AlarmManagerScreenModel>(AlarmManagerScreenModel.Loading())
+    private val _state = MutableStateFlow<AlarmManagerScreenModel>(
+        AlarmManagerScreenModel.Loading()
+    )
     val state: StateFlow<AlarmManagerScreenModel> = _state
 
-    private val _timePickerDialogModel = MutableStateFlow<EditSolisAlarmDialogModel?>(null)
-    val timePickerDialogModel: StateFlow<EditSolisAlarmDialogModel?> = _timePickerDialogModel
-
-    private val _navigateToEditAlarm = MutableSharedFlow<Int?>()
-    val navigateToEditAlarm: SharedFlow<Int?> = _navigateToEditAlarm
+    private val _event = MutableSharedFlow<AlarmManagerViewModelEvent>()
+    val event: SharedFlow<AlarmManagerViewModelEvent> = _event
 
     private var solisDay: SolisDay? = null
 
@@ -94,15 +96,7 @@ class AlarmManagerViewModel(
     }
 
     fun onAddClick() {
-        viewModelScope.launch { _navigateToEditAlarm.emit(null) }
-    }
-
-    fun onTimePicked(params: EditSolisAlarmDialogModel) {
-        _timePickerDialogModel.value = null
-    }
-
-    fun onDialogDismiss() {
-        _timePickerDialogModel.value = null
+        viewModelScope.launch { _event.emit(AlarmManagerViewModelEvent.NavigateToEditAlarm(null)) }
     }
 
     fun onAlarmDeleteClick(item: AlarmItemModel) {
@@ -112,7 +106,7 @@ class AlarmManagerViewModel(
     }
 
     fun onAlarmItemClick(item: AlarmItemModel) {
-        viewModelScope.launch { _navigateToEditAlarm.emit(item.id) }
+        viewModelScope.launch { _event.emit(AlarmManagerViewModelEvent.NavigateToEditAlarm(item.id)) }
     }
 
     fun onAlarmToggleClick(

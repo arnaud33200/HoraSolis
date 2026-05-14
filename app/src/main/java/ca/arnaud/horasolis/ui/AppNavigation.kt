@@ -1,6 +1,12 @@
 package ca.arnaud.horasolis.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -26,11 +32,27 @@ fun AppNavigation(alarmManagerViewModel: AlarmManagerViewModel) {
                 )
             }
             entry<AppRoute.EditAlarm> { route ->
-                EditAlarmDestination(
-                    alarmId = route.alarmId,
-                    onBack = { backStack.removeLastOrNull() },
-                )
+                val viewModelStoreOwner = rememberEntryViewModelStoreOwner()
+                CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+                    EditAlarmDestination(
+                        alarmId = route.alarmId,
+                        onBack = { backStack.removeLastOrNull() },
+                    )
+                }
             }
         },
     )
+}
+
+@Composable
+private fun rememberEntryViewModelStoreOwner(): ViewModelStoreOwner {
+    val store = remember { ViewModelStore() }
+    DisposableEffect(Unit) {
+        onDispose { store.clear() }
+    }
+    return remember(store) {
+        object : ViewModelStoreOwner {
+            override val viewModelStore = store
+        }
+    }
 }

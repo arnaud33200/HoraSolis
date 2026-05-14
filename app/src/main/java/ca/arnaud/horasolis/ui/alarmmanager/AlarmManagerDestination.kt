@@ -16,16 +16,17 @@ fun AlarmManagerDestination(
     onNavigateToEditAlarm: (alarmId: Int?) -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val timePickerDialogModel by viewModel.timePickerDialogModel.collectAsStateWithLifecycle()
 
     val clockViewModel = koinViewModel<SolisClockViewModel>()
     val clockModel by clockViewModel.state.collectAsStateWithLifecycle()
 
     var showLocationDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.navigateToEditAlarm.collect { alarmId ->
-            onNavigateToEditAlarm(alarmId)
+    LaunchedEffect(viewModel) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is AlarmManagerViewModelEvent.NavigateToEditAlarm -> onNavigateToEditAlarm(event.alarmId)
+            }
         }
     }
 
@@ -39,14 +40,6 @@ fun AlarmManagerDestination(
         onAlarmToggleClick = viewModel::onAlarmToggleClick,
         clockModel = clockModel,
     )
-
-    timePickerDialogModel?.let {
-        EditSolisAlarmDialog(
-            model = it,
-            onConfirm = viewModel::onTimePicked,
-            onDismiss = viewModel::onDialogDismiss
-        )
-    }
 
     if (showLocationDialog) {
         EditLocationDialog(
