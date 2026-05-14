@@ -20,7 +20,7 @@ class SetAlarmRingingUseCase(
     suspend operator fun invoke(
         params: SetAlarmRingingParams,
     ): Response<SavedAlarm, SetAlarmRingingError> {
-        val alarm = alarmRepository.getAlarm(params.alarmId)
+        val alarm = alarmRepository.getAlarmOrNull(params.alarmId)
             ?: return Response.Failure(SetAlarmRingingError.AlarmNotFound)
         alarmRepository.setAlarmRinging(params)
         return Response.Success(alarm)

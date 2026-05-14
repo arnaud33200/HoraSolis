@@ -97,18 +97,23 @@ class AlarmManagerViewModel(
         viewModelScope.launch {
             val solisTime = params.getSolisTime()
             val label = "" // TODO - setup a text field
+            val onForWeekDays = params.dayOfWeeks.mapNotNull { item ->
+                item.data.takeIf { item.selected }
+            }.toSet()
             val alarm = if (params.id != null) {
                 SavedAlarm(
                     id = params.id,
                     label = label,
                     solisTime = params.getSolisTime(),
                     enabled = true,
+                    onForWeekDays = onForWeekDays,
                 )
             } else {
                 NewAlarm(
                     label = label,
                     solisTime = solisTime,
                     enabled = true,
+                    onForWeekDays = onForWeekDays,
                 )
             }
             upsertAlarm(alarm)
@@ -144,6 +149,7 @@ class AlarmManagerViewModel(
                 label = alarm.label,
                 solisTime = alarm.solisTime,
                 enabled = isEnabled,
+                onForWeekDays = alarm.onForWeekDays,
             )
             upsertAlarm(updatedAlarm).onFailure {
                 // TODO - show error

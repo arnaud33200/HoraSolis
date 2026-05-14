@@ -1,8 +1,11 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
-import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
+import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
+import io.ktor.util.date.WeekDay
+import kotlinx.collections.immutable.toImmutableList
 import java.time.format.DateTimeFormatter
 
 class EditSolisAlarmDialogModelFactory {
@@ -10,8 +13,17 @@ class EditSolisAlarmDialogModelFactory {
     fun createNewAlarm(
         solisDay: SolisDay?,
     ): EditSolisAlarmDialogModel {
+        // TODO - move to a proper factory
+        val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
+            EditDayOfWeekItemModel(
+                text = dayOfWeek.name.substring(0, 3), // TODO - needs to be localized
+                selected = true,
+                data = dayOfWeek,
+            )
+        }
         return EditSolisAlarmDialogModel(
             toCivilTime = getCivilTimeFormatter(solisDay),
+            dayOfWeeks = dayOfWeeks.toImmutableList(),
         )
     }
 
@@ -19,12 +31,21 @@ class EditSolisAlarmDialogModelFactory {
         alarm: SavedAlarm,
         solisDay: SolisDay?,
     ): EditSolisAlarmDialogModel {
+        // TODO - move to a proper factory
+        val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
+            EditDayOfWeekItemModel(
+                text = dayOfWeek.name.substring(0, 3), // TODO - needs to be localized
+                selected = alarm.onForWeekDays.contains(dayOfWeek),
+                data = dayOfWeek,
+            )
+        }
         return EditSolisAlarmDialogModel(
             id = alarm.id,
             hour = alarm.solisTime.hour,
             minute = alarm.solisTime.minute,
             isDay = alarm.solisTime.type == SolisTime.Type.Day,
             toCivilTime = getCivilTimeFormatter(solisDay),
+            dayOfWeeks = dayOfWeeks.toImmutableList(),
         )
     }
 

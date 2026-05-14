@@ -2,10 +2,14 @@ package ca.arnaud.horasolis.ui.alarmmanager
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -18,10 +22,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
+import ca.arnaud.horasolis.ui.EditDayOfWeeks
+import io.ktor.util.date.WeekDay
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 /**
  * Parameters for the EditSolisAlarmDialog.
@@ -38,6 +47,7 @@ data class EditSolisAlarmDialogModel(
     val minute: Int = 45,
     val isDay: Boolean = true,
     val toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
+    val dayOfWeeks: ImmutableList<EditDayOfWeekItemModel>,
 ) {
 
     fun getSolisTime(): SolisTime {
@@ -58,12 +68,15 @@ fun EditSolisAlarmDialog(
     var hourState by remember { mutableIntStateOf(model.hour) }
     var minuteState by remember { mutableIntStateOf(model.minute) }
     var isDayState by remember { mutableStateOf(model.isDay) }
+    var dayOfWeeks by remember { mutableStateOf(model.dayOfWeeks) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(id = R.string.select_time_title)) },
         text = {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 CustomTimePicker(
                     hour = hourState,
                     minute = minuteState,
@@ -73,6 +86,23 @@ fun EditSolisAlarmDialog(
                     onMinuteChange = { minuteState = it },
                     onDayNightToggle = { isDayState = it },
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                HorizontalDivider(modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(16.dp))
+
+                EditDayOfWeeks(
+                    items = dayOfWeeks,
+                    onItemClick = {
+                        dayOfWeeks = dayOfWeeks.map { item ->
+                            if (item.text == it.text) {
+                                item.copy(selected = !item.selected)
+                            } else {
+                                item
+                            }
+                        }.toImmutableList()
+                    }
+                )
             }
         },
         confirmButton = {
@@ -81,6 +111,7 @@ fun EditSolisAlarmDialog(
                     hour = hourState,
                     minute = minuteState,
                     isDay = isDayState,
+                    dayOfWeeks = dayOfWeeks,
                 )
                 onConfirm(params)
             }) {
@@ -145,7 +176,7 @@ fun CustomTimePicker(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun TimePickerDialogPreview() {
     MaterialTheme {
@@ -153,12 +184,21 @@ private fun TimePickerDialogPreview() {
             hour = 8,
             minute = 30,
             isDay = true,
-            toCivilTime = { _, _, _ -> "08:40" }
+            toCivilTime = { _, _, _ -> "08:40" },
+            dayOfWeeks = WeekDay.entries.map {
+                EditDayOfWeekItemModel(
+                    text = it.name.substring(0, 3),
+                    selected = it == WeekDay.MONDAY || it == WeekDay.WEDNESDAY,
+                    data = it
+                )
+            }.toImmutableList()
         )
-        EditSolisAlarmDialog(
-            model = model,
-            onConfirm = {},
-            onDismiss = {}
-        )
+        Surface(modifier = Modifier.fillMaxSize()) {
+            EditSolisAlarmDialog(
+                model = model,
+                onConfirm = {},
+                onDismiss = {}
+            )
+        }
     }
 }

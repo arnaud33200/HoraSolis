@@ -12,12 +12,11 @@ data object UpsertAlarmError
 class UpsertAlarmUseCase(
     private val alarmRepository: AlarmRepository,
     private val scheduleSolisAlarm: ScheduleSolisAlarmUseCase,
-    private val timeProvider: TimeProvider,
 ) {
 
     suspend operator fun invoke(alarm: Alarm): Response<SavedAlarm, UpsertAlarmError> {
         return alarmRepository.upsertAlarm(alarm).onSuccess { savedAlarm ->
-            scheduleSolisAlarm(savedAlarm, timeProvider.getNowDate())
+            scheduleSolisAlarm(savedAlarm)
         }
     }
 }

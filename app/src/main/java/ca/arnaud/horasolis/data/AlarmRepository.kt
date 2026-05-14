@@ -50,7 +50,7 @@ class AlarmRepository(
         }
     }
 
-    suspend fun getAlarm(id: Int): SavedAlarm? {
+    suspend fun getAlarmOrNull(id: Int): SavedAlarm? {
         return alarmDao.getAlarm(id)?.toSavedAlarm()
     }
 

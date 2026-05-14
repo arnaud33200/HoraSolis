@@ -9,8 +9,8 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextDayAlarmParam
-import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextDayAlarmUseCase
+import ca.arnaud.horasolis.domain.flatMap
+import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleSolisAlarmUseCase
 import org.koin.java.KoinJavaComponent
 
 data class ScheduleNextAlarmWorkerParam(
@@ -32,10 +32,6 @@ data class ScheduleNextAlarmWorkerParam(
             .putInt(NUMBER_DATA_KEY, number)
             .build()
     }
-
-    fun toScheduleNextDayAlarmParam(): ScheduleNextDayAlarmParam {
-        return ScheduleNextDayAlarmParam(number)
-    }
 }
 
 class ScheduleNextAlarmWorker(
@@ -43,8 +39,8 @@ class ScheduleNextAlarmWorker(
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
 
-    private val scheduleNextDayAlarm: ScheduleNextDayAlarmUseCase by lazy {
-        KoinJavaComponent.get(ScheduleNextDayAlarmUseCase::class.java)
+    private val scheduleNextDayAlarm: ScheduleSolisAlarmUseCase by lazy {
+        KoinJavaComponent.get(ScheduleSolisAlarmUseCase::class.java)
     }
 
     companion object {
@@ -75,9 +71,9 @@ class ScheduleNextAlarmWorker(
         val param = ScheduleNextAlarmWorkerParam.fromDataOrNull(inputData)
             ?: return Result.failure()
 
-        scheduleNextDayAlarm(
-            param = param.toScheduleNextDayAlarmParam(),
+        return scheduleNextDayAlarm(alarmId = param.number).flatMap(
+            transform = { Result.success() },
+            transformError = { Result.failure() },
         )
-        return Result.success() // TODO - get response from use case
     }
 }

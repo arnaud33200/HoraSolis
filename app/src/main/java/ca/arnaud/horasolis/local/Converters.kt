@@ -3,6 +3,7 @@ package ca.arnaud.horasolis.local
 import androidx.room.TypeConverter
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.SolisTime.Type
+import io.ktor.util.date.WeekDay
 import java.time.LocalTime
 
 class Converters {
@@ -28,4 +29,12 @@ class Converters {
             )
         } else null
     }
+
+    @TypeConverter
+    fun fromWeekDaySet(value: Set<WeekDay>?): String? =
+        value?.joinToString(",") { it.name }
+
+    @TypeConverter
+    fun toWeekDaySet(value: String?): Set<WeekDay>? =
+        value?.split(",")?.mapNotNull { runCatching { WeekDay.valueOf(it) }.getOrNull() }?.toSet()
 }

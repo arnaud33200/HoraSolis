@@ -12,12 +12,11 @@ import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextDayAlarmUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleSolisAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleSolisAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.location.GetCurrentLocationUseCase
@@ -90,7 +89,6 @@ class HoraSolisApplication : Application() {
         factoryOf(::GetSolisDayUseCase)
         factoryOf(::GetSolisCivilTimeUseCase)
         factoryOf(::SavedTimeScheduleUseCase)
-        factoryOf(::ScheduleNextDayAlarmUseCase)
         factoryOf(::ScheduleSolisAlarmUseCase)
         factoryOf(::ObserveSelectedTimesUseCase)
         factoryOf(::SetAlarmRingingUseCase)

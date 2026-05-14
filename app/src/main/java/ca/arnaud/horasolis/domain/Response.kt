@@ -1,7 +1,5 @@
 package ca.arnaud.horasolis.domain
 
-import ca.arnaud.horasolis.domain.Response.Success
-
 sealed interface Response<out Data : Any?, Error> {
 
     data class Success<Data, Error>(
@@ -30,7 +28,7 @@ sealed interface Response<out Data : Any?, Error> {
 inline fun <Data, Error> Response<Data, Error>.onSuccess(
     action: (Data) -> Unit,
 ): Response<Data, Error> {
-    if (this is Success) {
+    if (this is Response.Success) {
         action(data)
     }
     return this
@@ -54,5 +52,25 @@ inline fun <FromData, ToData, Error> Response<FromData, Error>.map(
     return when (this) {
         is Response.Success -> Response.Success(transform(data))
         is Response.Failure -> this
+    }
+}
+
+inline fun <FromData, ToData, FromError, ToError> Response<FromData, FromError>.map(
+    transform: (FromData) -> ToData,
+    transformError: (FromError) -> ToError,
+): Response<ToData, ToError> {
+    return when (this) {
+        is Response.Success -> Response.Success(transform(data))
+        is Response.Failure -> Response.Failure(transformError(error))
+    }
+}
+
+inline fun <FromData, ToData, Error> Response<FromData, Error>.flatMap(
+    transform: (FromData) -> ToData,
+    transformError: (Error) -> ToData,
+): ToData {
+    return when (this) {
+        is Response.Success -> transform(data)
+        is Response.Failure -> transformError(error)
     }
 }

@@ -31,11 +31,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.ui.DayOfWeekItemModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
+import kotlinx.collections.immutable.persistentListOf
 
 sealed interface AlarmManagerScreenModel {
 
@@ -224,11 +226,20 @@ private fun BottomBar(
 @Composable
 private fun AlarmManagerScreenPreview() {
     HoraSolisTheme {
+        val sampleDayOfWeeks = persistentListOf(
+            DayOfWeekItemModel("Mon", selected = true),
+            DayOfWeekItemModel("Tue"),
+            DayOfWeekItemModel("Wed", selected = true),
+            DayOfWeekItemModel("Thu"),
+            DayOfWeekItemModel("Fri", selected = true),
+            DayOfWeekItemModel("Sat"),
+            DayOfWeekItemModel("Sun"),
+        )
         val sampleList = AlarmListModel(
-            items = kotlinx.collections.immutable.persistentListOf(
-                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", "12:45"), // 5 ☀️ 06
-                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", "12:45"), // 10 🌚 54
-                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", "12:45") // 12 ☀️ 00
+            items = persistentListOf(
+                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", "12:56", true, sampleDayOfWeeks), // 5 ☀️ 06
+                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", "12:56", false, sampleDayOfWeeks), // 10 🌚 54
+                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", "12:56", true, sampleDayOfWeeks) // 12 ☀️ 00
             )
         )
         AlarmManagerScreen(
