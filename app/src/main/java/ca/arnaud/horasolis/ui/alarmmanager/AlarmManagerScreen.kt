@@ -31,7 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.ui.DayOfWeekItemModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
@@ -225,20 +224,11 @@ private fun BottomBar(
 @Composable
 private fun AlarmManagerScreenPreview() {
     HoraSolisTheme {
-        val sampleDayOfWeeks = persistentListOf(
-            DayOfWeekItemModel("Mon", selected = true),
-            DayOfWeekItemModel("Tue"),
-            DayOfWeekItemModel("Wed", selected = true),
-            DayOfWeekItemModel("Thu"),
-            DayOfWeekItemModel("Fri", selected = true),
-            DayOfWeekItemModel("Sat"),
-            DayOfWeekItemModel("Sun"),
-        )
         val sampleList = AlarmListModel(
             items = persistentListOf(
-                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", "12:56", true, sampleDayOfWeeks), // 5 ☀️ 06
-                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", "12:56", false, sampleDayOfWeeks), // 10 🌚 54
-                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", "12:56", true, sampleDayOfWeeks) // 12 ☀️ 00
+                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
+                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
+                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
             )
         )
         AlarmManagerScreen(

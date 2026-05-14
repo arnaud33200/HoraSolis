@@ -3,9 +3,7 @@ package ca.arnaud.horasolis.ui.alarmmanager
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.extension.format
-import ca.arnaud.horasolis.ui.DayOfWeekItemModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
-import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.toImmutableList
 
 class AlarmListModelFactory(
@@ -28,22 +26,12 @@ class AlarmListModelFactory(
     }
 
     private fun SavedAlarm.toAlarmItemModel(solisDay: SolisDay?): AlarmItemModel {
-        val formatted = solisTime.format()
-        val civilTime = solisDay?.let {
-            dateFormatter.formatCivilTime(solisTime.toCivilTime(it))
-        }
-        val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
-            DayOfWeekItemModel(
-                text = dateFormatter.formatWeekDay(dayOfWeek),
-                selected = onForWeekDays.contains(dayOfWeek)
-            )
-        }
         return AlarmItemModel(
             id = id,
-            title = formatted,
-            civilTime = civilTime ?: "--:--",
+            title = solisTime.format(),
+            civilTime = solisDay?.let { dateFormatter.formatCivilTime(solisTime.toCivilTime(it)) } ?: "--:--",
             isEnabled = enabled,
-            dayOfWeeks = dayOfWeeks.toImmutableList(),
+            schedule = dateFormatter.formatWeekDaysOrNull(onForWeekDays),
         )
     }
 }

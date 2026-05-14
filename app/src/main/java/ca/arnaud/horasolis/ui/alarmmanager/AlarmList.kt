@@ -23,8 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import ca.arnaud.horasolis.ui.DayOfWeekItemModel
-import ca.arnaud.horasolis.ui.DayOfWeekList
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -38,7 +36,7 @@ data class AlarmItemModel(
     val title: String,
     val civilTime: String,
     val isEnabled: Boolean = true,
-    val dayOfWeeks: ImmutableList<DayOfWeekItemModel>,
+    val schedule: String?,
 )
 
 @Composable
@@ -77,12 +75,12 @@ private fun AlarmListItem(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(
+                horizontal = 16.dp, vertical = 4.dp,
+            ),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -108,10 +106,14 @@ private fun AlarmListItem(
                     modifier = Modifier.padding(start = 8.dp),
                 )
             }
-            DayOfWeekList(
-                modifier = Modifier.padding(bottom = 8.dp),
-                items = item.dayOfWeeks,
-            )
+
+            item.schedule?.let { schedule ->
+                Text(
+                    text = schedule,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+            }
         }
     }
 }
@@ -121,38 +123,11 @@ private fun AlarmListItem(
 private fun AlarmListPreview() {
     HoraSolisTheme {
         Surface {
-            val sampleDayOfWeeks = persistentListOf(
-                DayOfWeekItemModel("Mon", selected = true),
-                DayOfWeekItemModel("Tue"),
-                DayOfWeekItemModel("Wed", selected = true),
-                DayOfWeekItemModel("Thu"),
-                DayOfWeekItemModel("Fri", selected = true),
-                DayOfWeekItemModel("Sat"),
-                DayOfWeekItemModel("Sun"),
-            )
             val sampleModel = AlarmListModel(
                 items = persistentListOf(
-                    AlarmItemModel(
-                        id = 1,
-                        title = "5 \u2600\uFE0F 06",
-                        "12:56",
-                        true,
-                        sampleDayOfWeeks
-                    ), // 5 ☀️ 06
-                    AlarmItemModel(
-                        id = 2,
-                        title = "10 \uD83C\uDF1A 54",
-                        "12:56",
-                        false,
-                        sampleDayOfWeeks
-                    ), // 10 🌚 54
-                    AlarmItemModel(
-                        id = 3,
-                        title = "12 \u2600\uFE0F 00",
-                        "12:56",
-                        true,
-                        sampleDayOfWeeks
-                    ) // 12 ☀️ 00
+                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
+                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
+                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
                 )
             )
             AlarmList(

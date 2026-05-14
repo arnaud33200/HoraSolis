@@ -56,4 +56,8 @@
     <string name="select_time_title">Select Time</string>
     <string name="hour_label">Hour: %1$d</string>
     <string name="minute_label">Minute: %1$d</string>
+
+    <string name="alarm_schedule_every_day">Every day</string>
+    <string name="alarm_schedule_weekend">Week-end</string>
+    <string name="alarm_schedule_range">%1$s to %2$s</string>
 </resources>
