@@ -11,16 +11,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import ca.arnaud.horasolis.ui.common.HoraTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +42,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun EditAlarmScreen(
     modifier: Modifier = Modifier,
+    labelState: TextFieldState,
     onBackClick: () -> Unit,
     onAction: (EditAlarmUiAction) -> Unit,
     model: EditAlarmScreenModel,
@@ -66,6 +69,7 @@ fun EditAlarmScreen(
         when (model) {
             is EditAlarmScreenModel.Content -> EditAlarmContent(
                 modifier = Modifier.padding(innerPadding),
+                labelState = labelState,
                 model = model,
                 onAction = onAction,
             )
@@ -82,6 +86,7 @@ fun EditAlarmScreen(
 @Composable
 private fun EditAlarmContent(
     modifier: Modifier = Modifier,
+    labelState: TextFieldState,
     model: EditAlarmScreenModel.Content,
     onAction: (EditAlarmUiAction) -> Unit,
 ) {
@@ -91,12 +96,10 @@ private fun EditAlarmContent(
     ) {
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        HoraTextField(
+            state = labelState,
+            label = stringResource(R.string.alarm_label),
             modifier = Modifier.fillMaxWidth(),
-            value = model.label,
-            onValueChange = { onAction(EditAlarmUiAction.LabelChanged(it)) },
-            label = { Text(stringResource(R.string.alarm_label)) },
-            singleLine = true,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -200,7 +203,6 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
 
     override val values = sequenceOf(
         EditAlarmScreenModel.Content(
-            label = "Morning",
             hour = 6,
             minute = 30,
             isDay = true,
@@ -208,7 +210,6 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             dayOfWeeks = sampleDayOfWeeks,
         ),
         EditAlarmScreenModel.Content(
-            label = "",
             hour = 9,
             minute = 0,
             isDay = false,
@@ -227,6 +228,7 @@ private fun EditAlarmScreenPreview(
     HoraSolisTheme {
         EditAlarmScreen(
             model = model,
+            labelState = rememberTextFieldState("Morning"),
             onBackClick = {},
             onAction = {},
         )

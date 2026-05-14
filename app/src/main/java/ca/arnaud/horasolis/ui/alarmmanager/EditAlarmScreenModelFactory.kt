@@ -37,7 +37,6 @@ class EditAlarmScreenModelFactory(
             )
         }.toImmutableList()
         return EditAlarmScreenModel.Content(
-            label = updatedAlarm.label.orEmpty(),
             hour = updatedAlarm.solisTime.hour,
             minute = updatedAlarm.solisTime.minute,
             isDay = updatedAlarm.solisTime.type == SolisTime.Type.Day,

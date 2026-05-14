@@ -1,5 +1,7 @@
 package ca.arnaud.horasolis.ui.editalarm
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.Response
@@ -46,6 +48,12 @@ internal class EditAlarmViewModel(
     private val _event = MutableSharedFlow<EditAlarmViewModelEvent>()
     val event: SharedFlow<EditAlarmViewModelEvent> = _event
 
+    /**
+     * text field state for the alarm label.
+     * Shall be replaced with EditAlarmFieldState data class when more fields are added.
+     */
+    val labelState = TextFieldState()
+
     private var initialAlarm: Alarm = Alarm.empty
     private var updateParams: AlarmUpdateParams = AlarmUpdateParams()
 
@@ -58,7 +66,9 @@ internal class EditAlarmViewModel(
             when (val response = getAlarm(getParams)) {
                 is Response.Success -> {
                     initialAlarm = response.data
+                    labelState.edit { append(initialAlarm.label.orEmpty()) }
                     rebuildState()
+                    observeLabelChanges()
                 }
 
                 is Response.Failure -> {
@@ -68,20 +78,25 @@ internal class EditAlarmViewModel(
         }
     }
 
+    private suspend fun observeLabelChanges() {
+        snapshotFlow { labelState.text }.collect { text ->
+            val labelText = text.toString().takeIf { it.isNotBlank() }
+            updateParams = updateParams.copy(
+                label = UpdateParam.of(initialAlarm.label, labelText)
+            )
+            rebuildState()
+        }
+    }
+
+
     fun onAction(action: EditAlarmUiAction) {
         viewModelScope.launch {
             when (action) {
                 is SolisTimeAction -> onSolisTimeChanged(action)
-                is EditAlarmUiAction.LabelChanged -> onLabelChanged(action)
                 is EditAlarmUiAction.DayOfWeekClicked -> onDayOfWeekClicked(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
             }
         }
-    }
-
-    private suspend fun onLabelChanged(action: EditAlarmUiAction.LabelChanged) {
-        updateParams = updateParams.copy(label = UpdateParam.Update(action.label.ifBlank { null }))
-        rebuildState()
     }
 
     private suspend fun onDayOfWeekClicked(action: EditAlarmUiAction.DayOfWeekClicked) {
@@ -89,10 +104,9 @@ internal class EditAlarmViewModel(
         val updated = content.dayOfWeeks.map { item ->
             if (item.text == action.item.text) item.copy(selected = !item.selected) else item
         }.toImmutableList()
+        val updatedWeekDays = updated.mapNotNull { it.data.takeIf { _ -> it.selected } }.toSet()
         updateParams = updateParams.copy(
-            onForWeekDays = UpdateParam.Update(
-                updated.mapNotNull { it.data.takeIf { _ -> it.selected } }.toSet()
-            )
+            onForWeekDays = UpdateParam.of(initialAlarm.onForWeekDays, updatedWeekDays)
         )
         rebuildState()
     }
@@ -100,13 +114,14 @@ internal class EditAlarmViewModel(
     private suspend fun onSolisTimeChanged(action: SolisTimeAction) {
         val content = _state.value as? EditAlarmScreenModel.Content ?: return
         val isDay = (action as? EditAlarmUiAction.DayNightToggled)?.isDay ?: content.isDay
+        val updatedSolisTime = SolisTime(
+            hour = (action as? EditAlarmUiAction.HourChanged)?.hour ?: content.hour,
+            minute = (action as? EditAlarmUiAction.MinuteChanged)?.minute ?: content.minute,
+            type = if (isDay) SolisTime.Type.Day else SolisTime.Type.Night,
+        )
         updateParams = updateParams.copy(
-            solisTime = UpdateParam.Update(
-                SolisTime(
-                    hour = (action as? EditAlarmUiAction.HourChanged)?.hour ?: content.hour,
-                    minute = (action as? EditAlarmUiAction.MinuteChanged)?.minute ?: content.minute,
-                    type = if (isDay) SolisTime.Type.Day else SolisTime.Type.Night,
-                )
+            solisTime = UpdateParam.of(
+                initialAlarm.solisTime, updatedSolisTime
             )
         )
         rebuildState()

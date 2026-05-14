@@ -34,6 +34,7 @@ fun EditAlarmDestination(
 
     EditAlarmScreen(
         model = state,
+        labelState = viewModel.labelState,
         onBackClick = onBack,
         onAction = viewModel::onAction,
     )
