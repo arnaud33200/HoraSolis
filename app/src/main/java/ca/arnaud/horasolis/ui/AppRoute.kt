@@ -13,4 +13,7 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object LocationManager : AppRoute
+
+    @Serializable
+    data class EditLocation(val locationId: String?) : AppRoute
 }

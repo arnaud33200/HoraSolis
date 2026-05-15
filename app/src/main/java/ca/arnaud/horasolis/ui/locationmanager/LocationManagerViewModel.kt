@@ -23,9 +23,6 @@ class LocationManagerViewModel(
     private val _state = MutableStateFlow<LocationManagerScreenModel>(LocationManagerScreenModel.Empty)
     val state: StateFlow<LocationManagerScreenModel> = _state
 
-    private val _editLocationDialog = MutableStateFlow<EditLocationDialogModel?>(null)
-    val editLocationDialog: StateFlow<EditLocationDialogModel?> = _editLocationDialog
-
     private var currentLocations: List<SavedLocation> = emptyList()
 
     init {
@@ -40,18 +37,6 @@ class LocationManagerViewModel(
                 _state.value = model
             }
         }
-    }
-
-    fun onAddClick() {
-        _editLocationDialog.value = EditLocationDialogModel(locationId = null)
-    }
-
-    fun onEditLocation(item: LocationItemModel) {
-        _editLocationDialog.value = EditLocationDialogModel(locationId = item.id)
-    }
-
-    fun onDialogDismiss() {
-        _editLocationDialog.value = null
     }
 
     fun onSelectLocation(item: LocationItemModel) {

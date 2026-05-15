@@ -34,8 +34,6 @@ import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-data class EditLocationDialogModel(val locationId: String?)
-
 sealed interface LocationManagerScreenModel {
 
     data object Empty : LocationManagerScreenModel

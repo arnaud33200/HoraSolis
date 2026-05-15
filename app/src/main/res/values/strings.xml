@@ -44,6 +44,8 @@
     <string name="location_permission_required_toast_message">Location permission required to get accurate sun times</string>
 
 
+    <string name="edit_location_screen_title">Edit Location</string>
+    <string name="location_name_label">Name</string>
     <string name="latitude_label">Latitude</string>
     <string name="longitude_label">Longitude</string>
     <string name="current_location_button">Use Current Location</string>

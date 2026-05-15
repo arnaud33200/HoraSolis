@@ -38,8 +38,9 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
 import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
-import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
-import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModelParams
+import ca.arnaud.horasolis.domain.model.location.LocationValidator
+import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModel
+import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModelParams
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
@@ -91,6 +92,7 @@ class HoraSolisApplication : Application() {
         // Location Manager
         viewModelOf(::LocationManagerViewModel)
         factoryOf(::LocationManagerScreenModelFactory)
+        singleOf(::LocationValidator)
 
         // Alarm Manager
         viewModelOf(::AlarmManagerViewModel)
@@ -99,7 +101,8 @@ class HoraSolisApplication : Application() {
                 params = params.get<EditLocationViewModelParams>(),
                 locationService = get(),
                 saveLocation = get(),
-                getLocation = get(),
+                getLocationOrNull = get(),
+                locationValidator = get(),
             )
         }
         viewModel { params ->
