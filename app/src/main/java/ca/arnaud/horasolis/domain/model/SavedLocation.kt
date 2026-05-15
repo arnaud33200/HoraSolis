@@ -1,7 +1,9 @@
 package ca.arnaud.horasolis.domain.model
 
-// TODO - to remove and replace with SavedLocation
-data class UserLocation(
+// TODO - rename SolisLocation and add Kdoc.
+data class SavedLocation(
+    val id: String,
+    val name: String,
     val lat: Double,
     val lng: Double,
     val timZoneId: String,

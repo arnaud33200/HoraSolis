@@ -10,4 +10,7 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data class EditAlarm(val alarmId: Int?) : AppRoute
+
+    @Serializable
+    data object LocationManager : AppRoute
 }

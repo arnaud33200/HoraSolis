@@ -23,6 +23,7 @@ import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.location.GetCurrentLocationUseCase
+import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
@@ -42,6 +43,8 @@ import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
+import ca.arnaud.horasolis.ui.locationmanager.LocationManagerScreenModelFactory
+import ca.arnaud.horasolis.ui.locationmanager.LocationManagerViewModel
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
@@ -81,6 +84,10 @@ class HoraSolisApplication : Application() {
         // Time List
         viewModelOf(::TimeListViewModel)
         factoryOf(::TimeListScreenModelFactory)
+
+        // Location Manager
+        viewModelOf(::LocationManagerViewModel)
+        factoryOf(::LocationManagerScreenModelFactory)
 
         // Alarm Manager
         viewModelOf(::AlarmManagerViewModel)
@@ -123,6 +130,7 @@ class HoraSolisApplication : Application() {
         factoryOf(::GetCurrentLocationUseCase)
         factoryOf(::SetCurrentLocationUseCase)
         factoryOf(::ObserveLocationUseCase)
+        factoryOf(::ObserveAllLocationsUseCase)
 
         singleOf(::TimeProvider)
         singleOf(::LocaleProviderImpl) { bind<LocaleProvider>() }

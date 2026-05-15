@@ -42,6 +42,13 @@
     <string name="current_location_button">Location Actuel</string>
     <string name="alarm_manager_screen_add_button">Ajouter une alarme</string>
     <string name="edit_alarm_dialog_save_button">Sauvegarder</string>
+    <string name="location_manager_screen_title">Places</string>
+    <string name="location_manager_current_section_title">Actuelle</string>
+    <string name="location_manager_saved_section_title">Enregistrées</string>
+    <string name="location_manager_empty_message">Ajoutez votre première localisation pour voir les heures du jour et de la nuit. La localisation est utilisée pour obtenir les heures de lever et coucher de soleil.</string>
+    <string name="location_manager_empty_add_button">Ajouter une localisation</string>
+    <string name="location_manager_item_default_name">Emplacement #%1$s</string>
+    <string name="location_manager_select_location_hint">Sélectionnez un emplacement dans la liste ci-dessous.</string>
     <string name="alarm_manager_screen_missing_location_message">Avant d\'ajouter une alarme, vous devez définir la localisation, elle est nécessaire pour calculer les heures solis</string>
     <string name="alarm_manager_screen_missing_location_button">Ajouter la localisation</string>
     <string name="select_time_title">Sélectionner l\'heure</string>

@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.data
 
+import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.local.LocationEntity
@@ -15,7 +16,7 @@ class LocationRepository(
         private const val CURRENT_LOCATION_ID = "current_location"
     }
 
-    private val settingsDao = database.locationDao()
+    private val locationDao = database.locationDao()
 
     suspend fun setCurrentLocation(location: UserLocation) {
         val locationEntity = LocationEntity(
@@ -25,16 +26,22 @@ class LocationRepository(
             longitude = location.lng,
             zoneId = location.timZoneId,
         )
-        settingsDao.upsert(locationEntity)
+        locationDao.upsert(locationEntity)
     }
 
     suspend fun getCurrentLocation(): UserLocation? {
-        return settingsDao.get(CURRENT_LOCATION_ID)?.toUserLocation()
+        return locationDao.get(CURRENT_LOCATION_ID)?.toUserLocation()
     }
 
     fun observeLocation(): Flow<UserLocation?> {
-        return settingsDao.observe().map { locations ->
+        return locationDao.observe().map { locations ->
             locations.firstOrNull { it.id == CURRENT_LOCATION_ID }?.toUserLocation()
+        }
+    }
+
+    fun observeAllLocations(): Flow<List<SavedLocation>> {
+        return locationDao.observe().map { locations ->
+            locations.map { it.toSavedLocation() }
         }
     }
 }

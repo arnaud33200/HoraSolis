@@ -14,6 +14,7 @@ import androidx.navigation3.ui.NavDisplay
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerDestination
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmDestination
+import ca.arnaud.horasolis.ui.locationmanager.LocationManagerDestination
 
 @Composable
 fun AppNavigation(alarmManagerViewModel: AlarmManagerViewModel) {
@@ -29,6 +30,9 @@ fun AppNavigation(alarmManagerViewModel: AlarmManagerViewModel) {
                     onNavigateToEditAlarm = { alarmId ->
                         backStack.add(AppRoute.EditAlarm(alarmId))
                     },
+                    onNavigateToLocationManager = {
+                        backStack.add(AppRoute.LocationManager)
+                    },
                 )
             }
             entry<AppRoute.EditAlarm> { route ->
@@ -36,6 +40,14 @@ fun AppNavigation(alarmManagerViewModel: AlarmManagerViewModel) {
                 CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                     EditAlarmDestination(
                         alarmId = route.alarmId,
+                        onBack = { backStack.removeLastOrNull() },
+                    )
+                }
+            }
+            entry<AppRoute.LocationManager> {
+                val viewModelStoreOwner = rememberEntryViewModelStoreOwner()
+                CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+                    LocationManagerDestination(
                         onBack = { backStack.removeLastOrNull() },
                     )
                 }
