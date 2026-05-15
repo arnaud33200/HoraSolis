@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 /**
  * Alarms the user create and edit from the alarm manager screen
- * When [enabled], it will automatically schedule in [ScheduleSolisAlarmUseCase]
+ * When [enabled], it will automatically schedule in [ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase]
  *
  * @property label The label of the alarm, can be null.
  *  Used to personalize the alarm and show it when alarm is ringing.

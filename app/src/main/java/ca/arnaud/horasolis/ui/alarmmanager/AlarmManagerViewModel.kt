@@ -65,6 +65,7 @@ class AlarmManagerViewModel(
                 this.solisDay = it
             }
         if (solisDay == null) {
+            // TODO - setup a proper error enum instead of checking null
             _state.value = AlarmManagerScreenModel.MissingLocation()
             return
         }
@@ -72,7 +73,7 @@ class AlarmManagerViewModel(
         _state.update { model ->
             val list = alarmListFactory.create(
                 savedAlarms = currentAlarms,
-                solisDay = solisDay ?: getSolisDay(LocalDate.now()).getDataOrNull(),
+                solisDay = solisDay
             )
             (model as? AlarmManagerScreenModel.Content)?.copy(list = list)
                 ?: AlarmManagerScreenModel.Content(list = list)

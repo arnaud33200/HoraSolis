@@ -18,17 +18,17 @@ import java.time.ZoneOffset
 fun DatePickerDialog(
     onDateSelected: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
-    params: DatePickerModel,
+    model: DatePickerModel,
 ) {
-    val minDateMillis = remember(params.minDate) { params.minDate.toUtcMillis() }
+    val minDateMillis = remember(model.minDate) { model.minDate.toUtcMillis() }
     val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = remember(params.initialSelectedDate) {
-            params.initialSelectedDate?.toUtcMillis()
+        initialSelectedDateMillis = remember(model.initialSelectedDate) {
+            model.initialSelectedDate?.toUtcMillis()
         },
         selectableDates = remember(minDateMillis) {
             object : SelectableDates {
                 override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis >= minDateMillis
-                override fun isSelectableYear(year: Int) = year >= params.minDate.year
+                override fun isSelectableYear(year: Int) = year >= model.minDate.year
             }
         },
     )

@@ -36,7 +36,7 @@ fun EditAlarmDestination(
 
     datePickerParams?.let { params ->
         DatePickerDialog(
-            params = params,
+            model = params,
             onDateSelected = { date -> viewModel.onAction(EditAlarmUiAction.DateSelected(date)) },
             onDismiss = { viewModel.onAction(EditAlarmUiAction.DatePickerDismissed) },
         )
