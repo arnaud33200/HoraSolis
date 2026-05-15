@@ -9,21 +9,34 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import ca.arnaud.horasolis.ui.common.HoraTextField
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -34,10 +47,14 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.EditDayOfWeeks
+import ca.arnaud.horasolis.ui.common.HoraTextField
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun EditAlarmScreen(
@@ -120,9 +137,10 @@ private fun EditAlarmContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        EditDayOfWeeks(
-            items = model.dayOfWeeks,
-            onItemClick = { onAction(EditAlarmUiAction.DayOfWeekClicked(it)) },
+        ScheduleSection(
+            modifier = Modifier.fillMaxWidth(),
+            scheduleContent = model.scheduleContent,
+            onAction = onAction,
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -140,6 +158,120 @@ private fun EditAlarmContent(
 }
 
 @Composable
+private fun ScheduleSection(
+    modifier: Modifier = Modifier,
+    scheduleContent: ScheduleContent,
+    onAction: (EditAlarmUiAction) -> Unit,
+) {
+    var dropdownExpanded by remember { mutableStateOf(false) }
+
+    val selectedLabel = when (scheduleContent) {
+        is ScheduleContent.Repeating -> stringResource(R.string.alarm_schedule_type_repeating)
+        is ScheduleContent.OneTime -> stringResource(R.string.alarm_schedule_type_one_time)
+    }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ExposedDropdownMenuBox(
+            expanded = dropdownExpanded,
+            onExpandedChange = { dropdownExpanded = it },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            OutlinedTextField(
+                value = selectedLabel,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
+            )
+            ExposedDropdownMenu(
+                expanded = dropdownExpanded,
+                onDismissRequest = { dropdownExpanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.alarm_schedule_type_repeating)) },
+                    onClick = {
+                        onAction(EditAlarmUiAction.ScheduleTypeSelected(isRepeating = true))
+                        dropdownExpanded = false
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.alarm_schedule_type_one_time)) },
+                    onClick = {
+                        onAction(EditAlarmUiAction.ScheduleTypeSelected(isRepeating = false))
+                        dropdownExpanded = false
+                    },
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        when (scheduleContent) {
+            is ScheduleContent.Repeating -> EditDayOfWeeks(
+                items = scheduleContent.dayOfWeeks,
+                onItemClick = { onAction(EditAlarmUiAction.DayOfWeekClicked(it)) },
+            )
+            is ScheduleContent.OneTime -> OneTimeDatePicker(
+                selectedDateLabel = scheduleContent.selectedDate,
+                minDate = scheduleContent.minDate,
+                onAction = onAction,
+            )
+        }
+    }
+}
+
+@Composable
+private fun OneTimeDatePicker(
+    selectedDateLabel: String,
+    minDate: LocalDate,
+    onAction: (EditAlarmUiAction) -> Unit,
+) {
+    var showDialog by remember { mutableStateOf(false) }
+    val minDateMillis = remember(minDate) {
+        minDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    }
+    val datePickerState = rememberDatePickerState(
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis >= minDateMillis
+            override fun isSelectableYear(year: Int) = year >= minDate.year
+        }
+    )
+
+    TextButton(onClick = { showDialog = true }) {
+        Text(
+            text = selectedDateLabel,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+    }
+
+    if (showDialog) {
+        DatePickerDialog(
+            onDismissRequest = { showDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    val millis = datePickerState.selectedDateMillis ?: return@TextButton
+                    val date = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
+                    onAction(EditAlarmUiAction.DateSelected(date))
+                }) { Text(stringResource(R.string.ok_button)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.cancel_button))
+                }
+            },
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
+@Composable
 fun CustomTimePicker(
     modifier: Modifier = Modifier,
     onHourChange: (Int) -> Unit,
@@ -149,8 +281,7 @@ fun CustomTimePicker(
     hour: Int,
     minute: Int,
     isDay: Boolean,
-
-    ) {
+) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -159,10 +290,8 @@ fun CustomTimePicker(
             checked = isDay,
             onCheckedChange = onDayNightToggle,
             thumbContent = {
-                val text = if (isDay) "\u2600\uFE0F" else "\uD83C\uDF1A"
-                Text(
-                    text = text,
-                )
+                val text = if (isDay) "☀️" else "🌚"
+                Text(text = text)
             }
         )
 
@@ -207,14 +336,24 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             minute = 30,
             isDay = true,
             civilTime = "07:45",
-            dayOfWeeks = sampleDayOfWeeks,
+            scheduleContent = ScheduleContent.Repeating(sampleDayOfWeeks),
         ),
         EditAlarmScreenModel.Content(
             hour = 9,
             minute = 0,
             isDay = false,
             civilTime = "21:12",
-            dayOfWeeks = persistentListOf(),
+            scheduleContent = ScheduleContent.OneTime(
+                selectedDate = "May 20",
+                minDate = LocalDate.of(2026, 5, 14),
+            ),
+        ),
+        EditAlarmScreenModel.Content(
+            hour = 3,
+            minute = 0,
+            isDay = true,
+            civilTime = "06:00",
+            scheduleContent = ScheduleContent.Repeating(persistentListOf()),
         ),
         EditAlarmScreenModel.Loading,
     )

@@ -15,6 +15,8 @@ import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
+import io.ktor.util.date.WeekDay
+import java.time.LocalDate
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -95,6 +97,8 @@ internal class EditAlarmViewModel(
             when (action) {
                 is SolisTimeAction -> onSolisTimeChanged(action)
                 is EditAlarmUiAction.DayOfWeekClicked -> onDayOfWeekClicked(action)
+                is EditAlarmUiAction.ScheduleTypeSelected -> onScheduleTypeSelected(action)
+                is EditAlarmUiAction.DateSelected -> onDateSelected(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
             }
         }
@@ -102,12 +106,32 @@ internal class EditAlarmViewModel(
 
     private suspend fun onDayOfWeekClicked(action: EditAlarmUiAction.DayOfWeekClicked) {
         val content = _state.value as? EditAlarmScreenModel.Content ?: return
-        val updated = content.dayOfWeeks.map { item ->
+        val repeating = content.scheduleContent as? ScheduleContent.Repeating ?: return
+        val updated = repeating.dayOfWeeks.map { item ->
             if (item.text == action.item.text) item.copy(selected = !item.selected) else item
         }.toImmutableList()
         val updatedWeekDays = updated.mapNotNull { it.data.takeIf { _ -> it.selected } }.toSet()
         updateParams = updateParams.copy(
             schedule = UpdateParam.of(initialAlarm.schedule, Schedule.Repeating(updatedWeekDays))
+        )
+        rebuildState()
+    }
+
+    private suspend fun onScheduleTypeSelected(action: EditAlarmUiAction.ScheduleTypeSelected) {
+        val newSchedule = if (action.isRepeating) {
+            Schedule.Repeating(WeekDay.entries.toSet())
+        } else {
+            Schedule.OneTime(LocalDate.now())
+        }
+        updateParams = updateParams.copy(
+            schedule = UpdateParam.of(initialAlarm.schedule, newSchedule)
+        )
+        rebuildState()
+    }
+
+    private suspend fun onDateSelected(action: EditAlarmUiAction.DateSelected) {
+        updateParams = updateParams.copy(
+            schedule = UpdateParam.of(initialAlarm.schedule, Schedule.OneTime(action.date))
         )
         rebuildState()
     }

@@ -10,6 +10,7 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmScreenModel
+import ca.arnaud.horasolis.ui.editalarm.ScheduleContent
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.toImmutableList
 import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
@@ -30,19 +31,28 @@ class EditAlarmScreenModelFactory(
         val civilTime = getSolisDayOrNull()?.let { solisDay ->
             dateFormatter.formatCivilTime(updatedAlarm.solisTime.toCivilTime(solisDay))
         }
-        val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
-            EditDayOfWeekItemModel(
-                text = dateFormatter.formatWeekDay(dayOfWeek),
-                selected = (updatedAlarm.schedule as? Schedule.Repeating)?.weekDays?.contains(dayOfWeek) ?: false,
-                data = dayOfWeek,
+        val scheduleContent = when (val schedule = updatedAlarm.schedule) {
+            is Schedule.Repeating -> {
+                val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
+                    EditDayOfWeekItemModel(
+                        text = dateFormatter.formatWeekDay(dayOfWeek),
+                        selected = schedule.weekDays.contains(dayOfWeek),
+                        data = dayOfWeek,
+                    )
+                }.toImmutableList()
+                ScheduleContent.Repeating(dayOfWeeks)
+            }
+            is Schedule.OneTime -> ScheduleContent.OneTime(
+                selectedDate = dateFormatter.formatDate(schedule.date),
+                minDate = timeProvider.getNowDate(),
             )
-        }.toImmutableList()
+        }
         return EditAlarmScreenModel.Content(
             hour = updatedAlarm.solisTime.hour,
             minute = updatedAlarm.solisTime.minute,
             isDay = updatedAlarm.solisTime.type == SolisTime.Type.Day,
             civilTime = civilTime.orEmpty(),
-            dayOfWeeks = dayOfWeeks,
+            scheduleContent = scheduleContent,
         )
     }
 
