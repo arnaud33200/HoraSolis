@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
@@ -55,6 +57,7 @@ fun AlarmList(
     ) {
         items(model.items, key = { it.id }) { item ->
             AlarmListItem(
+                modifier = Modifier.fillMaxWidth(),
                 item = item,
                 onEdit = onEdit,
                 onDelete = onDelete,
@@ -66,14 +69,20 @@ fun AlarmList(
 
 @Composable
 private fun AlarmListItem(
-    item: AlarmItemModel,
+    modifier: Modifier = Modifier,
     onEdit: (AlarmItemModel) -> Unit,
     onDelete: (AlarmItemModel) -> Unit,
     onToggle: (AlarmItemModel, Boolean) -> Unit,
+    item: AlarmItemModel,
 ) {
+    val defaultColors = CardDefaults.cardColors()
+    val alpha = if (item.isEnabled) 1f else 0.4f
     Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors().copy(
+            containerColor = defaultColors.containerColor.copy(alpha = alpha)
+        ),
         onClick = { onEdit(item) },
-        modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier.padding(
@@ -84,7 +93,11 @@ private fun AlarmListItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(
+                    modifier = Modifier
+                        .alpha(alpha)
+                        .weight(1f)
+                ) {
                     Text(
                         text = item.title,
                         style = MaterialTheme.typography.titleLarge,
@@ -98,9 +111,11 @@ private fun AlarmListItem(
                     }
                 }
                 Text(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .alpha(alpha),
                     text = item.civilTime,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 8.dp),
                 )
                 IconButton(onClick = { onDelete(item) }) {
                     Icon(
@@ -110,17 +125,20 @@ private fun AlarmListItem(
                     )
                 }
                 Switch(
+                    modifier = Modifier
+                        .padding(start = 8.dp),
                     checked = item.isEnabled,
                     onCheckedChange = { onToggle(item, it) },
-                    modifier = Modifier.padding(start = 8.dp),
                 )
             }
 
             item.schedule?.let { schedule ->
                 Text(
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .alpha(alpha),
                     text = schedule,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
         }
@@ -134,9 +152,30 @@ private fun AlarmListPreview() {
         Surface {
             val sampleModel = AlarmListModel(
                 items = persistentListOf(
-                    AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", label = "Morning", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
-                    AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", label = null, civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
-                    AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", label = "Noon", civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
+                    AlarmItemModel(
+                        id = 1,
+                        title = "5 \u2600\uFE0F 06",
+                        label = "Morning",
+                        civilTime = "6:30 AM",
+                        isEnabled = true,
+                        schedule = "Monday to Friday"
+                    ),
+                    AlarmItemModel(
+                        id = 2,
+                        title = "10 \uD83C\uDF1A 54",
+                        label = null,
+                        civilTime = "11:00 PM",
+                        isEnabled = false,
+                        schedule = "Week-end"
+                    ),
+                    AlarmItemModel(
+                        id = 3,
+                        title = "12 \u2600\uFE0F 00",
+                        label = "Noon",
+                        civilTime = "12:00 PM",
+                        isEnabled = true,
+                        schedule = "Every day"
+                    ),
                 )
             )
             AlarmList(
