@@ -44,7 +44,6 @@ class EditAlarmScreenModelFactory(
             }
             is Schedule.OneTime -> ScheduleContent.OneTime(
                 selectedDate = dateFormatter.formatDate(schedule.date),
-                minDate = timeProvider.getNowDate(),
             )
         }
         return EditAlarmScreenModel.Content(

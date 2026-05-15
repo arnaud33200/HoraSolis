@@ -34,6 +34,7 @@ import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
+import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
@@ -90,10 +91,12 @@ class HoraSolisApplication : Application() {
                 getAlarm = get(),
                 screenModelFactory = get(),
                 upsertAlarm = get(),
+                datePickerModelFactory = get(),
             )
         }
         factoryOf(::AlarmListModelFactory)
         factoryOf(::EditAlarmScreenModelFactory)
+        factoryOf(::DatePickerModelFactory)
 
         // Clock
         factoryOf(::SolisClockModelFactory)

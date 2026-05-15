@@ -15,14 +15,16 @@ import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
+import ca.arnaud.horasolis.ui.common.DatePickerModel
+import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
 import io.ktor.util.date.WeekDay
-import java.time.LocalDate
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 internal sealed interface EditAlarmViewModelParams {
 
@@ -33,9 +35,9 @@ internal sealed interface EditAlarmViewModelParams {
     ) : EditAlarmViewModelParams
 }
 
-enum class EditAlarmViewModelEvent {
+sealed interface EditAlarmViewModelEvent {
 
-    SaveSuccess,
+    data object SaveSuccess : EditAlarmViewModelEvent
 }
 
 internal class EditAlarmViewModel(
@@ -43,6 +45,7 @@ internal class EditAlarmViewModel(
     private val getAlarm: GetAlarmUseCase,
     private val screenModelFactory: EditAlarmScreenModelFactory,
     private val upsertAlarm: UpsertAlarmUseCase,
+    private val datePickerModelFactory: DatePickerModelFactory,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<EditAlarmScreenModel>(EditAlarmScreenModel.Loading)
@@ -50,6 +53,9 @@ internal class EditAlarmViewModel(
 
     private val _event = MutableSharedFlow<EditAlarmViewModelEvent>()
     val event: SharedFlow<EditAlarmViewModelEvent> = _event
+
+    private val _datePickerModel = MutableStateFlow<DatePickerModel?>(null)
+    val datePickerModel: StateFlow<DatePickerModel?> = _datePickerModel
 
     /**
      * text field state for the alarm label.
@@ -98,6 +104,8 @@ internal class EditAlarmViewModel(
                 is SolisTimeAction -> onSolisTimeChanged(action)
                 is EditAlarmUiAction.DayOfWeekClicked -> onDayOfWeekClicked(action)
                 is EditAlarmUiAction.ScheduleTypeSelected -> onScheduleTypeSelected(action)
+                EditAlarmUiAction.DatePickerClicked -> onDatePickerClicked()
+                EditAlarmUiAction.DatePickerDismissed -> _datePickerModel.value = null
                 is EditAlarmUiAction.DateSelected -> onDateSelected(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
             }
@@ -129,7 +137,16 @@ internal class EditAlarmViewModel(
         rebuildState()
     }
 
+    private fun onDatePickerClicked() {
+        val selectedDate =
+            (initialAlarm.applyUpdates(updateParams).schedule as? Schedule.OneTime)?.date
+        _datePickerModel.value = datePickerModelFactory.create(
+            selectedDate = selectedDate,
+        )
+    }
+
     private suspend fun onDateSelected(action: EditAlarmUiAction.DateSelected) {
+        _datePickerModel.value = null
         updateParams = updateParams.copy(
             schedule = UpdateParam.of(initialAlarm.schedule, Schedule.OneTime(action.date))
         )

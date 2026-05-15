@@ -14,24 +14,20 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.SelectableDates
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,9 +48,6 @@ import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 
 @Composable
 fun EditAlarmScreen(
@@ -218,7 +211,6 @@ private fun ScheduleSection(
             )
             is ScheduleContent.OneTime -> OneTimeDatePicker(
                 selectedDateLabel = scheduleContent.selectedDate,
-                minDate = scheduleContent.minDate,
                 onAction = onAction,
             )
         }
@@ -228,46 +220,13 @@ private fun ScheduleSection(
 @Composable
 private fun OneTimeDatePicker(
     selectedDateLabel: String,
-    minDate: LocalDate,
     onAction: (EditAlarmUiAction) -> Unit,
 ) {
-    var showDialog by remember { mutableStateOf(false) }
-    val minDateMillis = remember(minDate) {
-        minDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
-    }
-    val datePickerState = rememberDatePickerState(
-        selectableDates = object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis >= minDateMillis
-            override fun isSelectableYear(year: Int) = year >= minDate.year
-        }
-    )
-
-    TextButton(onClick = { showDialog = true }) {
+    TextButton(onClick = { onAction(EditAlarmUiAction.DatePickerClicked) }) {
         Text(
             text = selectedDateLabel,
             style = MaterialTheme.typography.bodyLarge,
         )
-    }
-
-    if (showDialog) {
-        DatePickerDialog(
-            onDismissRequest = { showDialog = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    showDialog = false
-                    val millis = datePickerState.selectedDateMillis ?: return@TextButton
-                    val date = Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()
-                    onAction(EditAlarmUiAction.DateSelected(date))
-                }) { Text(stringResource(R.string.ok_button)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text(stringResource(R.string.cancel_button))
-                }
-            },
-        ) {
-            DatePicker(state = datePickerState)
-        }
     }
 }
 
@@ -343,10 +302,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             minute = 0,
             isDay = false,
             civilTime = "21:12",
-            scheduleContent = ScheduleContent.OneTime(
-                selectedDate = "May 20",
-                minDate = LocalDate.of(2026, 5, 14),
-            ),
+            scheduleContent = ScheduleContent.OneTime(selectedDate = "May 20"),
         ),
         EditAlarmScreenModel.Content(
             hour = 3,

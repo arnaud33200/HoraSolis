@@ -17,6 +17,10 @@ sealed interface EditAlarmUiAction {
 
     data class ScheduleTypeSelected(val isRepeating: Boolean) : EditAlarmUiAction
 
+    data object DatePickerClicked : EditAlarmUiAction
+
+    data object DatePickerDismissed : EditAlarmUiAction
+
     data class DateSelected(val date: LocalDate) : EditAlarmUiAction
 
     data object SaveClicked : EditAlarmUiAction
