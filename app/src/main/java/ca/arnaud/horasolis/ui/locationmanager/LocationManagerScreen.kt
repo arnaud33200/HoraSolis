@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -32,6 +33,8 @@ import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+
+data class EditLocationDialogModel(val locationId: String?)
 
 sealed interface LocationManagerScreenModel {
 
@@ -59,6 +62,7 @@ sealed interface CurrentLocationState {
 fun LocationManagerScreen(
     modifier: Modifier = Modifier,
     onSelectLocation: (LocationItemModel) -> Unit,
+    onEditLocation: (LocationItemModel) -> Unit,
     onBack: () -> Unit,
     onAddClick: () -> Unit,
     model: LocationManagerScreenModel,
@@ -95,6 +99,7 @@ fun LocationManagerScreen(
                     .padding(innerPadding)
                     .navigationBarsPadding(),
                 onSelectLocation = onSelectLocation,
+                onEditLocation = onEditLocation,
                 model = model,
             )
         }
@@ -128,6 +133,7 @@ private fun EmptyState(
 private fun LocationContent(
     modifier: Modifier = Modifier,
     onSelectLocation: (LocationItemModel) -> Unit,
+    onEditLocation: (LocationItemModel) -> Unit,
     model: LocationManagerScreenModel.Content,
 ) {
     LazyColumn(modifier = modifier) {
@@ -136,7 +142,10 @@ private fun LocationContent(
         }
         item {
             when (val state = model.currentLocationState) {
-                is CurrentLocationState.Location -> LocationItem(item = state.item)
+                is CurrentLocationState.Location -> LocationItem(
+                    onEditClick = onEditLocation,
+                    item = state.item,
+                )
                 CurrentLocationState.SelectLocation -> Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                     text = stringResource(R.string.location_manager_select_location_hint),
@@ -152,6 +161,7 @@ private fun LocationContent(
         items(items = model.savedLocations) { item ->
             LocationItem(
                 onSelectLocation = onSelectLocation,
+                onEditClick = onEditLocation,
                 item = item,
             )
         }
@@ -176,6 +186,7 @@ private fun SectionTitle(
 private fun LocationItem(
     modifier: Modifier = Modifier,
     onSelectLocation: ((LocationItemModel) -> Unit)? = null,
+    onEditClick: ((LocationItemModel) -> Unit)? = null,
     item: LocationItemModel,
 ) {
     val cardModifier = modifier
@@ -184,11 +195,11 @@ private fun LocationItem(
 
     if (onSelectLocation != null) {
         Card(modifier = cardModifier, onClick = { onSelectLocation(item) }) {
-            LocationItemContent(item = item)
+            LocationItemContent(onEditClick = onEditClick?.let { { it(item) } }, item = item)
         }
     } else {
         Card(modifier = cardModifier) {
-            LocationItemContent(item = item)
+            LocationItemContent(onEditClick = onEditClick?.let { { it(item) } }, item = item)
         }
     }
 }
@@ -196,6 +207,7 @@ private fun LocationItem(
 @Composable
 private fun LocationItemContent(
     modifier: Modifier = Modifier,
+    onEditClick: (() -> Unit)? = null,
     item: LocationItemModel,
 ) {
     Row(
@@ -213,6 +225,14 @@ private fun LocationItemContent(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        if (onEditClick != null) {
+            IconButton(onClick = onEditClick) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = null,
+                )
+            }
+        }
     }
 }
 
@@ -252,6 +272,7 @@ private fun LocationManagerScreenPreview(
         LocationManagerScreen(
             model = model,
             onSelectLocation = {},
+            onEditLocation = {},
             onBack = {},
             onAddClick = {},
         )

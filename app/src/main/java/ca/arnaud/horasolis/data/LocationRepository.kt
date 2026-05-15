@@ -33,6 +33,21 @@ class LocationRepository(
         return locationDao.get(CURRENT_LOCATION_ID)?.toUserLocation()
     }
 
+    suspend fun getLocationOrNull(id: String): SavedLocation? {
+        return locationDao.get(id)?.toSavedLocation()
+    }
+
+    suspend fun saveLocation(location: SavedLocation) {
+        val entity = LocationEntity(
+            id = location.id,
+            name = location.name,
+            latitude = location.lat,
+            longitude = location.lng,
+            zoneId = location.timZoneId,
+        )
+        locationDao.upsert(entity)
+    }
+
     fun observeLocation(): Flow<UserLocation?> {
         return locationDao.observe().map { locations ->
             locations.firstOrNull { it.id == CURRENT_LOCATION_ID }?.toUserLocation()

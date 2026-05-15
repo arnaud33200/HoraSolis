@@ -2,9 +2,6 @@ package ca.arnaud.horasolis.ui.locationmanager
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationDialog
 import org.koin.androidx.compose.koinViewModel
@@ -15,19 +12,20 @@ fun LocationManagerDestination(
 ) {
     val viewModel: LocationManagerViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    var showAddDialog by remember { mutableStateOf(false) }
+    val editLocationDialog by viewModel.editLocationDialog.collectAsStateWithLifecycle()
 
     LocationManagerScreen(
         model = state,
         onSelectLocation = viewModel::onSelectLocation,
+        onEditLocation = viewModel::onEditLocation,
         onBack = onBack,
-        onAddClick = { showAddDialog = true },
+        onAddClick = viewModel::onAddClick,
     )
 
-    if (showAddDialog) {
+    editLocationDialog?.let { dialog ->
         EditLocationDialog(
-            onDismissRequest = { showAddDialog = false },
+            locationId = dialog.locationId,
+            onDismissRequest = viewModel::onDialogDismiss,
         )
     }
 }

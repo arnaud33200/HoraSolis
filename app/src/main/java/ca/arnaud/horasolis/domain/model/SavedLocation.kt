@@ -7,4 +7,16 @@ data class SavedLocation(
     val lat: Double,
     val lng: Double,
     val timZoneId: String,
-)
+) {
+
+    companion object {
+
+        val empty = SavedLocation(
+            id = "",
+            name = "",
+            lat = 0.0,
+            lng = 0.0,
+            timZoneId = "",
+        )
+    }
+}

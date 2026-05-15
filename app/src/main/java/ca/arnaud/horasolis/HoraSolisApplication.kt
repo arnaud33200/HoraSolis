@@ -23,8 +23,10 @@ import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.location.GetCurrentLocationUseCase
+import ca.arnaud.horasolis.domain.usecase.location.GetLocationOrNullUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveLocationUseCase
+import ca.arnaud.horasolis.domain.usecase.location.SaveLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
 import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
@@ -37,6 +39,7 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
 import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModel
+import ca.arnaud.horasolis.ui.alarmmanager.EditLocationViewModelParams
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
@@ -91,7 +94,14 @@ class HoraSolisApplication : Application() {
 
         // Alarm Manager
         viewModelOf(::AlarmManagerViewModel)
-        viewModelOf(::EditLocationViewModel)
+        viewModel { params ->
+            EditLocationViewModel(
+                params = params.get<EditLocationViewModelParams>(),
+                locationService = get(),
+                saveLocation = get(),
+                getLocation = get(),
+            )
+        }
         viewModel { params ->
             EditAlarmViewModel(
                 params = params.get(),
@@ -128,7 +138,9 @@ class HoraSolisApplication : Application() {
 
         // location
         factoryOf(::GetCurrentLocationUseCase)
+        factoryOf(::GetLocationOrNullUseCase)
         factoryOf(::SetCurrentLocationUseCase)
+        factoryOf(::SaveLocationUseCase)
         factoryOf(::ObserveLocationUseCase)
         factoryOf(::ObserveAllLocationsUseCase)
 

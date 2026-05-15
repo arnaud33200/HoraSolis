@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
@@ -25,10 +24,10 @@ import ca.arnaud.horasolis.ui.common.HoraTextField
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import com.google.accompanist.permissions.rememberPermissionState
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 data class EditLocationDialogModel(
-    val latitude: TextFieldState = TextFieldState(),
-    val longitude: TextFieldState = TextFieldState(),
+    val fieldStates: EditLocationFieldStates = EditLocationFieldStates(),
     val saveEnabled: Boolean = false,
     val requestDismiss: Boolean = false,
 )
@@ -36,9 +35,19 @@ data class EditLocationDialogModel(
 @Composable
 fun EditLocationDialog(
     modifier: Modifier = Modifier,
+    locationId: String?,
     onDismissRequest: () -> Unit,
 ) {
-    val viewModel: EditLocationViewModel = koinViewModel()
+    val viewModel: EditLocationViewModel = koinViewModel(
+        parameters = {
+                val params = if (locationId == null) {
+                    EditLocationViewModelParams.New
+                } else {
+                    EditLocationViewModelParams.Edit(locationId)
+                }
+            parametersOf(params)
+        }
+    )
     val model by viewModel.state.collectAsState()
 
     val currentLocationPermissionState = rememberPermissionState(
@@ -84,7 +93,7 @@ fun EditLocationDialog(
             Column {
                 HoraTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    state = model.latitude,
+                    state = model.fieldStates.latitude,
                     label = stringResource(id = R.string.latitude_label),
                 )
 
@@ -92,7 +101,7 @@ fun EditLocationDialog(
 
                 HoraTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    state = model.longitude,
+                    state = model.fieldStates.longitude,
                     label = stringResource(id = R.string.longitude_label),
                 )
 
@@ -115,6 +124,7 @@ fun EditLocationDialogPreview() {
     HoraSolisTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             EditLocationDialog(
+                locationId = null,
                 onDismissRequest = {},
             )
         }
