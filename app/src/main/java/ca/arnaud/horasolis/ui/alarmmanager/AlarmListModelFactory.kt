@@ -1,13 +1,17 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
+import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.SolisDay
+import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.extension.format
 import ca.arnaud.horasolis.ui.common.DateFormatter
+import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.toImmutableList
 
 class AlarmListModelFactory(
     private val dateFormatter: DateFormatter,
+    private val stringProvider: StringProvider,
 ) {
 
     fun create(
@@ -32,7 +36,13 @@ class AlarmListModelFactory(
             label = label,
             civilTime = solisDay?.let { dateFormatter.formatCivilTime(solisTime.toCivilTime(it)) } ?: "--:--",
             isEnabled = enabled,
-            schedule = dateFormatter.formatWeekDaysOrNull(onForWeekDays),
+            schedule = when (schedule) {
+                is Schedule.Repeating -> dateFormatter.formatWeekDaysOrNull(schedule.weekDays)
+                is Schedule.OneTime -> stringProvider.getString(
+                    R.string.alarm_schedule_one_time_date,
+                    dateFormatter.formatDate(schedule.date),
+                )
+            },
         )
     }
 }

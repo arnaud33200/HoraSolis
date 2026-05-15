@@ -4,9 +4,16 @@ import androidx.room.TypeConverter
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.SolisTime.Type
 import io.ktor.util.date.WeekDay
+import java.time.LocalDate
 import java.time.LocalTime
 
 class Converters {
+
+    @TypeConverter
+    fun fromLocalDate(value: LocalDate?): String? = value?.toString()
+
+    @TypeConverter
+    fun toLocalDate(value: String?): LocalDate? = value?.let { LocalDate.parse(it) }
 
     @TypeConverter
     fun fromLocalTime(value: LocalTime?): String? = value?.toString()

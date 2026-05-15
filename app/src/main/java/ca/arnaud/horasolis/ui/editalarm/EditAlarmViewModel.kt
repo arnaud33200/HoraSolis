@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
+import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
 import ca.arnaud.horasolis.domain.model.alarm.AlarmUpdateParams
 import ca.arnaud.horasolis.domain.model.alarm.applyUpdates
 import ca.arnaud.horasolis.domain.model.common.UpdateParam
@@ -106,7 +107,7 @@ internal class EditAlarmViewModel(
         }.toImmutableList()
         val updatedWeekDays = updated.mapNotNull { it.data.takeIf { _ -> it.selected } }.toSet()
         updateParams = updateParams.copy(
-            onForWeekDays = UpdateParam.of(initialAlarm.onForWeekDays, updatedWeekDays)
+            schedule = UpdateParam.of(initialAlarm.schedule, Schedule.Repeating(updatedWeekDays))
         )
         rebuildState()
     }

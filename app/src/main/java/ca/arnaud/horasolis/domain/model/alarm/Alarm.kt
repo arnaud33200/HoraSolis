@@ -2,6 +2,7 @@ package ca.arnaud.horasolis.domain.model.alarm
 
 import ca.arnaud.horasolis.domain.model.SolisTime
 import io.ktor.util.date.WeekDay
+import java.time.LocalDate
 
 /**
  * Alarms the user create and edit from the alarm manager screen
@@ -13,17 +14,21 @@ import io.ktor.util.date.WeekDay
  *  Used to determine when the alarm should ring, and to show the time in the alarm manager screen.
  * @property enabled Whether the alarm is enabled or not.
  *  When enabled, it will automatically schedule
- * @property onForWeekDays The days of the week the alarm should ring on.
- *  When empty, the alarm would not ring on any day, must at least have one day to ring.
- *  By default, the alarm is set to ring on all days of the week (every day).
+ * @property schedule The schedule of the alarm, either a one-time date or repeating week days.
+ *  When [Alarm.Schedule.Repeating] with empty week days, the alarm would not ring on any day.
  */
 sealed interface Alarm {
 
     val label: String?
     val solisTime: SolisTime
     val enabled: Boolean
+    val schedule: Schedule
 
-    val onForWeekDays: Set<WeekDay>
+    sealed interface Schedule {
+
+        data class OneTime(val date: LocalDate): Schedule
+        data class Repeating(val weekDays: Set<WeekDay>): Schedule
+    }
 
     /**
      * Compares two alarms for ordering, used to sort alarms in a list.
@@ -48,14 +53,14 @@ sealed interface Alarm {
 
     fun copy(
         solisTime: SolisTime = this.solisTime,
-        onForWeekDays: Set<WeekDay> = this.onForWeekDays,
+        schedule: Schedule = this.schedule,
     ): Alarm {
         return when (this) {
             is NewAlarm -> NewAlarm(
                 label = this.label,
                 solisTime = solisTime,
                 enabled = this.enabled,
-                onForWeekDays = onForWeekDays,
+                schedule = schedule,
             )
 
             is SavedAlarm -> SavedAlarm(
@@ -63,7 +68,7 @@ sealed interface Alarm {
                 label = this.label,
                 solisTime = solisTime,
                 enabled = this.enabled,
-                onForWeekDays = onForWeekDays,
+                schedule = schedule,
             )
         }
     }
@@ -74,7 +79,7 @@ sealed interface Alarm {
             label = null,
             solisTime = SolisTime(0, 0, 0, SolisTime.Type.Day),
             enabled = false,
-            onForWeekDays = emptySet(),
+            schedule = Schedule.Repeating(emptySet()),
         )
     }
 }
@@ -83,7 +88,7 @@ data class NewAlarm(
     override val label: String?,
     override val solisTime: SolisTime,
     override val enabled: Boolean,
-    override val onForWeekDays: Set<WeekDay>,
+    override val schedule: Alarm.Schedule,
 ) : Alarm
 
 data class SavedAlarm(
@@ -91,5 +96,5 @@ data class SavedAlarm(
     override val label: String?,
     override val solisTime: SolisTime,
     override val enabled: Boolean,
-    override val onForWeekDays: Set<WeekDay>,
+    override val schedule: Alarm.Schedule,
 ) : Alarm

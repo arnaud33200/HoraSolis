@@ -120,7 +120,7 @@ class AlarmManagerViewModel(
                 label = alarm.label,
                 solisTime = alarm.solisTime,
                 enabled = isEnabled,
-                onForWeekDays = alarm.onForWeekDays,
+                schedule = alarm.schedule,
             )
             upsertAlarm(updatedAlarm).onFailure {
                 // TODO - show error

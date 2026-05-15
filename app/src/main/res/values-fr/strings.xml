@@ -55,4 +55,6 @@
     <string name="alarm_schedule_every_day">Tous les jours</string>
     <string name="alarm_schedule_weekend">Week-end</string>
     <string name="alarm_schedule_range">Du %1$s au %2$s</string>
+    <string name="alarm_schedule_date_pattern">d MMM</string>
+    <string name="alarm_schedule_one_time_date">le %1$s</string>
 </resources>

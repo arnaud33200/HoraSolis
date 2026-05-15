@@ -30,7 +30,7 @@ class GetAlarmUseCase(
                     solisTime = SolisTime(
                         3, 30, 0, SolisTime.Type.Day
                     ),
-                    onForWeekDays = WeekDay.entries.toSet(),
+                    schedule = Alarm.Schedule.Repeating(WeekDay.entries.toSet()),
                 )
             )
 

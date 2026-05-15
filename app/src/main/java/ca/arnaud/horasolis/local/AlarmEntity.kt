@@ -7,6 +7,7 @@ import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.model.alarm.NewAlarm
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import io.ktor.util.date.WeekDay
+import java.time.LocalDate
 
 @Entity(tableName = "alarm")
 data class AlarmEntity(
@@ -15,36 +16,45 @@ data class AlarmEntity(
     val time: SolisTime,
     val enabled: Boolean = true,
     val onForWeekDays: Set<WeekDay>? = null,
+    val onTimeDate: LocalDate? = null,
 ) {
 
     fun toSavedAlarm(
         id: Long = this.id,
     ): SavedAlarm {
+        val schedule = when {
+            onTimeDate != null -> Alarm.Schedule.OneTime(onTimeDate)
+            else -> Alarm.Schedule.Repeating(onForWeekDays ?: WeekDay.entries.toSet())
+        }
         return SavedAlarm(
             id = id.toInt(),
             label = label,
             solisTime = time,
             enabled = enabled,
-            onForWeekDays = onForWeekDays ?: WeekDay.entries.toSet(),
+            schedule = schedule,
         )
     }
 }
 
 fun Alarm.toEntity(): AlarmEntity {
+    val weekDays = (schedule as? Alarm.Schedule.Repeating)?.weekDays
+    val oneTimeDate = (schedule as? Alarm.Schedule.OneTime)?.date
     return when (this) {
         is SavedAlarm -> AlarmEntity(
             id = id.toLong(),
             label = label,
             time = solisTime,
             enabled = enabled,
-            onForWeekDays = onForWeekDays,
+            onForWeekDays = weekDays,
+            onTimeDate = oneTimeDate,
         )
 
         is NewAlarm -> AlarmEntity(
             label = label,
             time = solisTime,
             enabled = enabled,
-            onForWeekDays = onForWeekDays,
+            onForWeekDays = weekDays,
+            onTimeDate = oneTimeDate,
         )
     }
 }

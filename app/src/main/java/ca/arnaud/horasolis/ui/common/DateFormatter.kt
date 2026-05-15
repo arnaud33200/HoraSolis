@@ -4,6 +4,7 @@ import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.provider.LocaleProvider
 import io.ktor.util.date.WeekDay
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -18,6 +19,11 @@ class DateFormatter(
         return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
             .withLocale(localeProvider.getLocale())
             .format(time)
+    }
+
+    fun formatDate(date: LocalDate): String {
+        val pattern = stringProvider.getString(R.string.alarm_schedule_date_pattern)
+        return DateTimeFormatter.ofPattern(pattern, localeProvider.getLocale()).format(date)
     }
 
     fun formatWeekDay(weekDay: WeekDay): String {

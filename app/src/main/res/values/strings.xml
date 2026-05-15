@@ -62,4 +62,6 @@
     <string name="alarm_schedule_every_day">Every day</string>
     <string name="alarm_schedule_weekend">Week-end</string>
     <string name="alarm_schedule_range">%1$s to %2$s</string>
+    <string name="alarm_schedule_date_pattern">MMM d</string>
+    <string name="alarm_schedule_one_time_date">on %1$s</string>
 </resources>

@@ -14,7 +14,7 @@ import androidx.room.TypeConverters
         LocationEntity::class,
         AlarmEntity::class,
     ],
-    version = 4, // onForWeekDays in AlarmEntity
+    version = 5, // onTimeDate in AlarmEntity
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
