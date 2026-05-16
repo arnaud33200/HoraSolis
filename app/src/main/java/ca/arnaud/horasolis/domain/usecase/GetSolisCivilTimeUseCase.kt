@@ -29,6 +29,11 @@ class GetSolisCivilTimeUseCase(
         )
     }
 
+    /**
+     * TODO - handle edge case for when sunset and sunrise times are the same (ex: polar day/night).
+     *  In this case, we need to have the `astronomicalTwilight` (end & start) in [solisDay]
+     *  as May 16, 2026, it would always default to be night all the time.
+     */
     private fun calculateSolisCivilTimes(
         solisDay: SolisDay,
         params: GetSolisDayParams,
