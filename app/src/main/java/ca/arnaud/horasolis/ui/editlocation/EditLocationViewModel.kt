@@ -94,7 +94,10 @@ class EditLocationViewModel(
     }
 
     private suspend fun updateCurrentLocation() {
-        when (val response = locationService.getCurrentLocation()) {
+        setCurrentLocationLoading(true)
+        val response = locationService.getCurrentLocation()
+        setCurrentLocationLoading(false)
+        when (response) {
             is Response.Success -> {
                 state.value.fieldStates.latitude.setText(response.data.latitude.toString())
                 state.value.fieldStates.longitude.setText(response.data.longitude.toString())
@@ -102,6 +105,16 @@ class EditLocationViewModel(
             is Response.Failure -> {
                 // TODO - show error
             }
+        }
+    }
+
+    private fun setCurrentLocationLoading(isLoading: Boolean) {
+        _state.update { model ->
+            model.copy(
+                currentLocationLoading = isLoading,
+                latTextFieldEnabled = !isLoading,
+                longTextFieldEnabled = !isLoading,
+            )
         }
     }
 

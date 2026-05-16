@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -26,6 +27,9 @@ import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 data class EditLocationScreenModel(
     val fieldStates: EditLocationFieldStates = EditLocationFieldStates(),
     val saveEnabled: Boolean = false,
+    val latTextFieldEnabled: Boolean = true,
+    val longTextFieldEnabled: Boolean = true,
+    val currentLocationLoading: Boolean = false,
 )
 
 @Composable
@@ -72,6 +76,7 @@ fun EditLocationScreen(
 
             HoraTextField(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = model.latTextFieldEnabled,
                 state = model.fieldStates.latitude,
                 label = stringResource(R.string.latitude_label),
             )
@@ -80,6 +85,7 @@ fun EditLocationScreen(
 
             HoraTextField(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = model.longTextFieldEnabled,
                 state = model.fieldStates.longitude,
                 label = stringResource(R.string.longitude_label),
             )
@@ -88,9 +94,14 @@ fun EditLocationScreen(
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = !model.currentLocationLoading,
                 onClick = onCurrentLocationClick,
             ) {
-                Text(stringResource(R.string.current_location_button))
+                if (model.currentLocationLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text(stringResource(R.string.current_location_button))
+                }
             }
         }
     }
