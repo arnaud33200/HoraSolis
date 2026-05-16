@@ -2,7 +2,6 @@ package ca.arnaud.horasolis.ui.locationmanager
 
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.SavedLocation
-import ca.arnaud.horasolis.domain.model.UserLocation
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.toImmutableList
 
@@ -12,7 +11,7 @@ class LocationManagerScreenModelFactory(
 
     fun create(
         allLocations: List<SavedLocation>,
-        currentLocation: UserLocation?,
+        currentLocation: SavedLocation?,
     ): LocationManagerScreenModel {
         if (allLocations.isEmpty()) return LocationManagerScreenModel.Empty
 
@@ -21,7 +20,7 @@ class LocationManagerScreenModelFactory(
                 .firstOrNull { it.isCurrentLocation(currentLocation) }
                 ?.toItemModel()
                 ?: LocationItemModel(
-                    id = "current",
+                    id = currentLocation.id,
                     name = stringProvider.getString(
                         R.string.location_manager_item_default_name,
                         "?"
@@ -36,7 +35,7 @@ class LocationManagerScreenModelFactory(
         val savedLocations = allLocations.filter { savedLocation ->
             savedLocation.isCurrentLocation(currentLocation).not()
         }.map { savedLocation ->
-        savedLocation.toItemModel()
+            savedLocation.toItemModel()
         }.toImmutableList()
 
         return LocationManagerScreenModel.Content(
@@ -45,9 +44,8 @@ class LocationManagerScreenModelFactory(
         )
     }
 
-    fun SavedLocation.isCurrentLocation(currentLocation: UserLocation?): Boolean {
-        if (currentLocation == null) return false
-        return lat == currentLocation.lat && lng == currentLocation.lng
+    private fun SavedLocation.isCurrentLocation(currentLocation: SavedLocation?): Boolean {
+        return id == currentLocation?.id
     }
 
     private fun SavedLocation.toItemModel() = LocationItemModel(

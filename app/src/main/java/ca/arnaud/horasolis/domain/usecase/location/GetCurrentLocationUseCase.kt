@@ -1,13 +1,12 @@
 package ca.arnaud.horasolis.domain.usecase.location
 
 import ca.arnaud.horasolis.data.LocationRepository
-import ca.arnaud.horasolis.domain.model.UserLocation
+import ca.arnaud.horasolis.domain.model.SavedLocation
 
 class GetCurrentLocationUseCase(
     private val locationRepository: LocationRepository,
 ) {
-    suspend operator fun invoke(): UserLocation? {
+    suspend operator fun invoke(): SavedLocation? {
         return locationRepository.getCurrentLocation()
     }
 }
-

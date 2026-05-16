@@ -1,8 +1,0 @@
-package ca.arnaud.horasolis.domain.model
-
-// TODO - to remove and replace with SavedLocation
-data class UserLocation(
-    val lat: Double,
-    val lng: Double,
-    val timZoneId: String,
-)

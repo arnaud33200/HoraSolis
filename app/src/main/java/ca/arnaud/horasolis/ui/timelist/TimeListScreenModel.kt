@@ -3,7 +3,7 @@ package ca.arnaud.horasolis.ui.timelist
 import androidx.annotation.StringRes
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.model.UserLocation
+import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisCivilTimes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -30,7 +30,7 @@ data class TimeListScreenModel(
             .mapNotNull { timeItem ->
                 solisTimes.times.find { it.number == timeItem.number }
             }
-        val location = selectedCity.toUserLocation()
+        val location = selectedCity.toSavedLocation()
         return ScheduleSettings(
             location = location,
             selectedTime = selectedTimes,
@@ -73,7 +73,7 @@ enum class City(
     Beijing(R.string.city_beijing, 39.9042, 116.407396, "Asia/Shanghai"),
     RioDeJaneiro(R.string.city_rio_de_janeiro, -22.906847, -43.172896, "America/Sao_Paulo");
 
-    fun toUserLocation() = UserLocation(
+    fun toSavedLocation() = SavedLocation.empty.copy(
         lat = latitude,
         lng = longitude,
         timZoneId = timeZone,
@@ -81,7 +81,7 @@ enum class City(
 
     companion object {
 
-        fun firstOrNull(location: UserLocation?): City? {
+        fun firstOrNull(location: SavedLocation?): City? {
             if (location == null) return null
             return values().firstOrNull { city ->
                 city.latitude == location.lat &&

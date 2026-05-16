@@ -4,11 +4,11 @@ import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SolisDay
-import ca.arnaud.horasolis.domain.model.UserLocation
+import ca.arnaud.horasolis.domain.model.SavedLocation
 import java.time.LocalDate
 
 data class GetSolisDayParams(
-    val location: UserLocation,
+    val location: SavedLocation,
     val date: LocalDate,
 )
 

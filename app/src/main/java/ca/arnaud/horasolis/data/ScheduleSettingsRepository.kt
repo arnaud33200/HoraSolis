@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.data
 
 import ca.arnaud.horasolis.domain.model.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.ScheduleSettings
-import ca.arnaud.horasolis.domain.model.UserLocation
+import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.local.ScheduleSettingsEntity
 import ca.arnaud.horasolis.local.SelectedTimeEntity
@@ -56,7 +56,7 @@ class ScheduleSettingsRepository(
         selectedTimes: List<SelectedTimeEntity>,
     ): ScheduleSettings {
         return ScheduleSettings(
-            location = UserLocation(
+            location = SavedLocation.empty.copy(
                 lat = lat,
                 lng = lng,
                 timZoneId = timZoneId,

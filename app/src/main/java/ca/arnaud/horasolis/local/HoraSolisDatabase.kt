@@ -13,8 +13,9 @@ import androidx.room.TypeConverters
         AlarmRingingEntity::class,
         LocationEntity::class,
         AlarmEntity::class,
+        CurrentLocationEntity::class,
     ],
-    version = 5, // onTimeDate in AlarmEntity
+    version = 6, // current_location table
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {

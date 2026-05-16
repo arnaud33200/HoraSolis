@@ -3,7 +3,6 @@ package ca.arnaud.horasolis.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ca.arnaud.horasolis.domain.model.SavedLocation
-import ca.arnaud.horasolis.domain.model.UserLocation
 
 @Entity(tableName = "location")
 data class LocationEntity(
@@ -13,14 +12,6 @@ data class LocationEntity(
     val longitude: Double,
     val zoneId: String,
 ) {
-
-    fun toUserLocation(): UserLocation {
-        return UserLocation(
-            lat = latitude,
-            lng = longitude,
-            timZoneId = zoneId
-        )
-    }
 
     fun toSavedLocation(): SavedLocation {
         return SavedLocation(
@@ -32,4 +23,3 @@ data class LocationEntity(
         )
     }
 }
-

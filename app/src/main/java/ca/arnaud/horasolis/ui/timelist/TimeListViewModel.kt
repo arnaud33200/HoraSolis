@@ -58,7 +58,7 @@ class TimeListViewModel(
     }
 
     private suspend fun refreshTimes(selectedCity: City) {
-        val location = selectedCity.toUserLocation()
+        val location = selectedCity.toSavedLocation()
         val params = GetSolisDayParams(
             location = location,
             date = LocalDate.now(),

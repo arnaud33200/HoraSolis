@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface LocationDao {
 
     @Query("SELECT * FROM location WHERE id = :id LIMIT 1")
-    suspend fun get(id : String): LocationEntity?
+    suspend fun get(id: String): LocationEntity?
 
     @Query("SELECT * FROM location")
     suspend fun getAll(): List<LocationEntity>
@@ -23,5 +23,14 @@ interface LocationDao {
 
     @Delete
     suspend fun delete(location: LocationEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertCurrentLocation(entity: CurrentLocationEntity)
+
+    @Query("SELECT * FROM current_location WHERE id = 1 LIMIT 1")
+    suspend fun getCurrentLocation(): CurrentLocationEntity?
+
+    @Query("SELECT * FROM current_location WHERE id = 1 LIMIT 1")
+    fun observeCurrentLocation(): Flow<CurrentLocationEntity?>
 }
 

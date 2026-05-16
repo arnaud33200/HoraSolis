@@ -4,7 +4,7 @@ import java.time.Duration
 import java.time.LocalDate
 
 data class SolisCivilTimes(
-    val location: UserLocation,
+    val location: SavedLocation,
     val date: LocalDate,
     val times: List<SolisCivilTime>,
     val dayDuration: Duration,
