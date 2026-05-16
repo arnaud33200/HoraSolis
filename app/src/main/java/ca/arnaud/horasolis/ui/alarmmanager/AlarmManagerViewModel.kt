@@ -9,7 +9,7 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
-import ca.arnaud.horasolis.domain.usecase.location.ObserveLocationUseCase
+import ca.arnaud.horasolis.domain.usecase.location.ObserveCurrentLocationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -30,7 +30,7 @@ class AlarmManagerViewModel(
     private val deleteAlarm: DeleteAlarmUseCase,
     private val getSolisDay: GetSolisDayUseCase,
     private val alarmListFactory: AlarmListModelFactory,
-    private val observeLocation: ObserveLocationUseCase,
+    private val observeLocation: ObserveCurrentLocationUseCase,
 ) : ViewModel() {
 
     private var currentAlarms: List<SavedAlarm> = emptyList()

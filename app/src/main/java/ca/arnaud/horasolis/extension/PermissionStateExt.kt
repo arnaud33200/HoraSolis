@@ -5,6 +5,3 @@ enum class PermissionResult {
     Denied,
     PermanentlyDenied,
 }
-
-class PermissionStateExt {
-}

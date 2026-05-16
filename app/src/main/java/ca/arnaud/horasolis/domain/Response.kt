@@ -74,3 +74,12 @@ inline fun <FromData, ToData, Error> Response<FromData, Error>.flatMap(
         is Response.Failure -> transformError(error)
     }
 }
+
+inline fun <Data, FromError, ToError> Response<Data, FromError>.mapError(
+    transform: (FromError) -> ToError,
+): Response<Data, ToError> {
+    return when (this) {
+        is Response.Success -> Response.Success(data)
+        is Response.Failure -> Response.Failure(transform(error))
+    }
+}

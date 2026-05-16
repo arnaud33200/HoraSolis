@@ -3,14 +3,20 @@ package ca.arnaud.horasolis.domain.usecase
 import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.Response
-import ca.arnaud.horasolis.domain.model.SolisDay
+import ca.arnaud.horasolis.domain.mapError
 import ca.arnaud.horasolis.domain.model.SavedLocation
+import ca.arnaud.horasolis.domain.model.SolisDay
 import java.time.LocalDate
 
 data class GetSolisDayParams(
     val location: SavedLocation,
     val date: LocalDate,
 )
+
+enum class GetSolisDayError {
+    NoLocation,
+    Unknown,
+}
 
 class GetSolisDayUseCase(
     private val locationRepository: LocationRepository,
@@ -19,13 +25,15 @@ class GetSolisDayUseCase(
 
     suspend operator fun invoke(
         atDate: LocalDate,
-    ): Response<SolisDay, Throwable> {
+    ): Response<SolisDay, GetSolisDayError> {
         val location = locationRepository.getCurrentLocation()
-            ?: return Response.Failure(Throwable("No location available"))
+            ?: return Response.Failure(GetSolisDayError.NoLocation)
         val params = GetSolisDayParams(
             location = location,
             date = atDate,
         )
-        return solisRepository.getSolisDay(params)
+        return solisRepository.getSolisDay(params).mapError {
+            GetSolisDayError.Unknown
+        }
     }
 }

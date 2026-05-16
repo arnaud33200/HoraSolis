@@ -3,6 +3,7 @@ package ca.arnaud.horasolis.ui.clock
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
 import ca.arnaud.horasolis.extension.formatWithSeconds
 
 class SolisClockDialogModelFactory(
@@ -10,7 +11,7 @@ class SolisClockDialogModelFactory(
     private val clockModelFactory: SolisClockModelFactory,
 ) {
 
-    fun create(response: Response<SolisDay, Throwable>): SolisClockDialogModel {
+    fun create(response: Response<SolisDay, GetSolisDayError>): SolisClockDialogModel {
         return when (response) {
             is Response.Success -> {
                 val solisDay = response.data

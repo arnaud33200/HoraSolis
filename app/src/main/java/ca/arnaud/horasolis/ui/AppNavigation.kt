@@ -15,15 +15,30 @@ import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerDestination
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmDestination
 import ca.arnaud.horasolis.ui.editlocation.EditLocationDestination
 import ca.arnaud.horasolis.ui.locationmanager.LocationManagerDestination
+import ca.arnaud.horasolis.ui.onboarding.OnboardingDestination
 
 @Composable
 fun AppNavigation() {
-    val backStack = rememberNavBackStack(AppRoute.AlarmManager)
+    val backStack = rememberNavBackStack(AppRoute.Onboarding)
 
     NavDisplay(
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
         entryProvider = entryProvider {
+            entry<AppRoute.Onboarding> {
+                val viewModelStoreOwner = rememberEntryViewModelStoreOwner()
+                CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+                    OnboardingDestination(
+                        onNavigateToAlarmManager = {
+                            backStack.removeLastOrNull()
+                            backStack.add(AppRoute.AlarmManager)
+                        },
+                        onNavigateToEditLocation = {
+                            backStack.add(AppRoute.EditLocation(null))
+                        },
+                    )
+                }
+            }
             entry<AppRoute.AlarmManager> {
                 val viewModelStoreOwner = rememberEntryViewModelStoreOwner()
                 CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {

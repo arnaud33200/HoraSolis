@@ -76,4 +76,11 @@
     <string name="alarm_schedule_type_repeating">Repeat</string>
     <string name="alarm_schedule_type_one_time">One time</string>
     <string name="alarm_schedule_select_date">Select date</string>
+
+    <string name="onboarding_error_message">Something went wrong. Please try again.</string>
+    <string name="onboarding_retry_button">Retry</string>
+    <string name="onboarding_missing_location_message">A location is required to calculate your Solis sunrise and sunset times.</string>
+    <string name="onboarding_current_location_button">Current Location</string>
+    <string name="onboarding_add_location_button">Add Location</string>
+    <string name="default_current_location_name">Current location</string>
 </resources>

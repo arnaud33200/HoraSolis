@@ -4,7 +4,7 @@ import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.domain.model.SavedLocation
 import kotlinx.coroutines.flow.Flow
 
-class ObserveLocationUseCase(
+class ObserveCurrentLocationUseCase(
     private val locationRepository: LocationRepository,
 ) {
 

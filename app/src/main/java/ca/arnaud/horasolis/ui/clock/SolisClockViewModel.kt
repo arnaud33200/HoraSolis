@@ -6,6 +6,7 @@ import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,7 @@ class SolisClockViewModel(
         }
     }
 
-    private fun Response<SolisDay, Throwable>.solisSecondDelayMs(): Long {
+    private fun Response<SolisDay, GetSolisDayError>.solisSecondDelayMs(): Long {
         val data = getDataOrNull() ?: return 250L
         val solisTime = timeProvider.getNowSolisTime(data)
         val secondDuration = when (solisTime.type) {

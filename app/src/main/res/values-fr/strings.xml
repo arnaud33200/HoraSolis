@@ -69,4 +69,11 @@
     <string name="alarm_schedule_type_repeating">Répéter</string>
     <string name="alarm_schedule_type_one_time">Une fois</string>
     <string name="alarm_schedule_select_date">Choisir une date</string>
+
+    <string name="onboarding_error_message">Une erreur s\'est produite. Veuillez réessayer.</string>
+    <string name="onboarding_retry_button">Réessayer</string>
+    <string name="onboarding_missing_location_message">Une localisation est nécessaire pour calculer vos heures Solis de lever et coucher de soleil.</string>
+    <string name="onboarding_current_location_button">Position Actuelle</string>
+    <string name="onboarding_add_location_button">Ajouter une adresse</string>
+    <string name="default_current_location_name">Adresse Actuel</string>
 </resources>
