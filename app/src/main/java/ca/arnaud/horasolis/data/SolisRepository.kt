@@ -24,10 +24,11 @@ class SolisRepository(
             return Response.Success(cachedSolisDay)
         }
 
+        val location = params.location
         val resource = GetSunTime(
-            lat = params.location.lat,
-            lng = params.location.lng,
-            tzid = params.location.timZoneId,
+            lat = location.lat,
+            lng = location.lng,
+            tzid = location.timZoneId,
             date = params.date.toIsoString(),
         )
         return ktorClient.getResponse<GetSunTime, RemoteSunTimeResponse>(resource).map(
@@ -36,6 +37,7 @@ class SolisRepository(
                     atDate = params.date,
                     civilSunriseTime = remoteSunTimeResponse.results.sunrise,
                     civilSunsetTime = remoteSunTimeResponse.results.sunset,
+                    location = location,
                 )
             }
         ).onSuccess { solisDay ->

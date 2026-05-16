@@ -229,6 +229,7 @@ private fun AlarmManagerScreenPreview() {
             clockModel = SolisClockDialogModel.Content(
                 solisHours = "05 \u2600\uFE0F 06",
                 solisSeconds = "35",
+                location = "Toronto, Canada",
                 clock = SolisClockModel(
                     dayStartAngle = -90f,
                     dayEndAngle = 200f,

@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.toSolisTime
@@ -82,7 +83,8 @@ class SolisClockModelFactoryPreviewProvider :
             solisDay = SolisDay(
                 atDate = LocalDateTime.now().toLocalDate(),
                 civilSunriseTime = LocalTime.of(6, 0),
-                civilSunsetTime = LocalTime.of(18, 0)
+                civilSunsetTime = LocalTime.of(18, 0),
+                location = SavedLocation.empty,
             ),
             atTime = SolisTime(
                 hour = 10,
@@ -94,7 +96,8 @@ class SolisClockModelFactoryPreviewProvider :
             solisDay = SolisDay(
                 atDate = LocalDateTime.now().toLocalDate(),
                 civilSunriseTime = LocalTime.of(6, 0),
-                civilSunsetTime = LocalTime.of(18, 0)
+                civilSunsetTime = LocalTime.of(18, 0),
+                location = SavedLocation.empty,
             ),
             atTime = SolisTime(
                 hour = 3,
@@ -106,7 +109,8 @@ class SolisClockModelFactoryPreviewProvider :
             solisDay = SolisDay(
                 atDate = LocalDateTime.now().toLocalDate(),
                 civilSunriseTime = LocalTime.of(5, 0),
-                civilSunsetTime = LocalTime.of(19, 0)
+                civilSunsetTime = LocalTime.of(19, 0),
+                location = SavedLocation.empty,
             ),
             atTime = SolisTime(
                 hour = 1,
@@ -118,7 +122,8 @@ class SolisClockModelFactoryPreviewProvider :
             solisDay = SolisDay(
                 atDate = LocalDateTime.now().toLocalDate(),
                 civilSunriseTime = LocalTime.of(8, 0),
-                civilSunsetTime = LocalTime.of(17, 0)
+                civilSunsetTime = LocalTime.of(17, 0),
+                location = SavedLocation.empty,
             ),
             atTime = SolisTime(
                 hour = 6,
@@ -151,7 +156,8 @@ fun SolisClockModelFactoryLocalTimePreview() {
                 val solisDay = SolisDay(
                     atDate = LocalDateTime.now().toLocalDate(),
                     civilSunriseTime = LocalTime.of(8, 0),
-                    civilSunsetTime = LocalTime.of(17, 0)
+                    civilSunsetTime = LocalTime.of(17, 0),
+                    location = SavedLocation.empty,
                 )
                 val solisTime = atTime.toSolisTime(solisDay)
                 val model = factory.create(

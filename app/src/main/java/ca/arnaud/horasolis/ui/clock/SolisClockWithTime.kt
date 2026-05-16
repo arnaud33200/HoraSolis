@@ -33,6 +33,7 @@ sealed interface SolisClockDialogModel {
     data class Content(
         val solisHours: String,
         val solisSeconds: String,
+        val location: String,
         val clock: SolisClockModel,
     ) : SolisClockDialogModel
 }
@@ -72,6 +73,14 @@ fun SolisClockWithTime(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = model.location,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 SolisClock(
@@ -92,6 +101,7 @@ class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClock
         SolisClockDialogModel.Content(
             solisHours = "12 🌞 00",
             solisSeconds = "30",
+            location = "Toronto, Canada",
             clock = SolisClockModel(
                 dayStartAngle = -90f,
                 dayEndAngle = 200f,

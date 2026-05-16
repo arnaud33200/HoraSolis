@@ -17,10 +17,12 @@ class SolisClockDialogModelFactory(
                 val solisDay = response.data
                 val solisTime = timeProvider.getNowSolisTime(solisDay)
                 val clockModel = clockModelFactory.create(solisDay, solisTime)
+                val location = solisDay.location.name.ifBlank { solisDay.location.timZoneId }
                 SolisClockDialogModel.Content(
                     solisHours = solisTime.format(),
                     solisSeconds = "%02d".format(solisTime.seconds),
                     clock = clockModel,
+                    location = location,
                 )
             }
 
