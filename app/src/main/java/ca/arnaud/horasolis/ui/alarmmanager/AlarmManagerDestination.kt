@@ -9,10 +9,10 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AlarmManagerDestination(
-    viewModel: AlarmManagerViewModel,
     onNavigateToEditAlarm: (alarmId: Int?) -> Unit,
     onNavigateToLocationManager: () -> Unit,
 ) {
+    val viewModel: AlarmManagerViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val clockViewModel = koinViewModel<SolisClockViewModel>()

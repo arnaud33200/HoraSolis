@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.service.AlarmRingingService
-import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.common.HoraAlertDialog
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
@@ -26,7 +25,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class MainActivity : ComponentActivity() {
 
     val mainViewModel: MainViewModel by viewModel()
-    val alarmManagerViewModel: AlarmManagerViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +35,7 @@ class MainActivity : ComponentActivity() {
 
                 val ringingDialog by mainViewModel.ringingDialog.collectAsState()
 
-                AppNavigation(alarmManagerViewModel = alarmManagerViewModel)
+                AppNavigation()
 
                 ringingDialog?.let { dialogModel ->
                     val context = LocalContext.current
