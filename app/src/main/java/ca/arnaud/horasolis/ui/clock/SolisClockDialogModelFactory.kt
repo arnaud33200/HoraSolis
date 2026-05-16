@@ -4,7 +4,7 @@ import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
-import ca.arnaud.horasolis.extension.formatWithSeconds
+import ca.arnaud.horasolis.extension.format
 
 class SolisClockDialogModelFactory(
     private val timeProvider: TimeProvider,
@@ -18,7 +18,8 @@ class SolisClockDialogModelFactory(
                 val solisTime = timeProvider.getNowSolisTime(solisDay)
                 val clockModel = clockModelFactory.create(solisDay, solisTime)
                 SolisClockDialogModel.Content(
-                    solisTime = solisTime.formatWithSeconds(),
+                    solisHours = solisTime.format(),
+                    solisSeconds = "%02d".format(solisTime.seconds),
                     clock = clockModel,
                 )
             }

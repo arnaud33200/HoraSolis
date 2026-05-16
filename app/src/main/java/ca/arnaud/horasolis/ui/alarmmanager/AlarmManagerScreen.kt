@@ -227,7 +227,8 @@ private fun AlarmManagerScreenPreview() {
                 list = sampleList
             ),
             clockModel = SolisClockDialogModel.Content(
-                solisTime = "12:00 Day",
+                solisHours = "05 \u2600\uFE0F 06",
+                solisSeconds = "35",
                 clock = SolisClockModel(
                     dayStartAngle = -90f,
                     dayEndAngle = 200f,
