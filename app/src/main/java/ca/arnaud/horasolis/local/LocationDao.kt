@@ -24,6 +24,9 @@ interface LocationDao {
     @Delete
     suspend fun delete(location: LocationEntity)
 
+    @Query("DELETE FROM location WHERE id = :id")
+    suspend fun deleteById(id: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCurrentLocation(entity: CurrentLocationEntity)
 

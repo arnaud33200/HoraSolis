@@ -26,6 +26,14 @@ class LocationRepository(
         return locationDao.get(id)?.toSavedLocation()
     }
 
+    suspend fun getAllLocations(): List<SavedLocation> {
+        return locationDao.getAll().map { it.toSavedLocation() }
+    }
+
+    suspend fun deleteLocation(id: String) {
+        locationDao.deleteById(id)
+    }
+
     suspend fun saveLocation(location: SavedLocation) {
         val entity = LocationEntity(
             id = location.id,

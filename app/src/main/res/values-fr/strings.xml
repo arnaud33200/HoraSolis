@@ -51,6 +51,9 @@
     <string name="location_manager_empty_add_button">Ajouter une localisation</string>
     <string name="location_manager_item_default_name">Emplacement #%1$s</string>
     <string name="location_manager_select_location_hint">Sélectionnez un emplacement dans la liste ci-dessous.</string>
+    <string name="location_manager_delete_confirm_title">Supprimer la localisation ?</string>
+    <string name="location_manager_delete_confirm_message">Êtes-vous sûr de vouloir supprimer \"%1$s\" ?</string>
+    <string name="location_manager_delete_last_location_error">Impossible de supprimer la dernière localisation, elle est requise</string>
     <string name="alarm_manager_screen_missing_location_message">Avant d\'ajouter une alarme, vous devez définir la localisation, elle est nécessaire pour calculer les heures solis</string>
     <string name="alarm_manager_screen_missing_location_button">Ajouter la localisation</string>
     <string name="select_time_title">Sélectionner l\'heure</string>

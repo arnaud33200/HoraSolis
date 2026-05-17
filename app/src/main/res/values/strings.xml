@@ -58,6 +58,9 @@
     <string name="location_manager_empty_add_button">Add Location</string>
     <string name="location_manager_item_default_name">Location #%1$s</string>
     <string name="location_manager_select_location_hint">Select a location from the list below.</string>
+    <string name="location_manager_delete_confirm_title">Delete location?</string>
+    <string name="location_manager_delete_confirm_message">Are you sure you want to delete \"%1$s\"?</string>
+    <string name="location_manager_delete_last_location_error">Cannot remove the last location, it\'s required</string>
     <string name="alarm_manager_screen_missing_location_message">Before adding any alarms, you need to set the location, it\'s required to calculate solis times</string>
     <string name="alarm_manager_screen_missing_location_button">Set Location</string>
     <string name="alarm_manager_screen_add_button">Add Alarm</string>
