@@ -86,4 +86,7 @@
     <string name="onboarding_current_location_button">Current Location</string>
     <string name="onboarding_add_location_button">Add Location</string>
     <string name="default_current_location_name">Current location</string>
+
+    <string name="solis_viewer_screen_title">Solis Viewer</string>
+    <string name="generic_now">Now Date</string>
 </resources>

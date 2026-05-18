@@ -79,4 +79,7 @@
     <string name="onboarding_current_location_button">Position Actuelle</string>
     <string name="onboarding_add_location_button">Ajouter une adresse</string>
     <string name="default_current_location_name">Adresse Actuel</string>
+
+    <string name="solis_viewer_screen_title">Explorateur Solis</string>
+    <string name="generic_now">Maintenant</string>
 </resources>

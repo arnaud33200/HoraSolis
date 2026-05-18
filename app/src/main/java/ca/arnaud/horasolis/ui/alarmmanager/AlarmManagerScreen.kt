@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -58,6 +59,7 @@ sealed interface AlarmManagerScreenModel {
 fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
     onSnackbarDismissed: () -> Unit,
+    onSolisViewerClick: () -> Unit,
     onLocationClick: () -> Unit,
     onAddClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
@@ -78,6 +80,14 @@ fun AlarmManagerScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             HoraTopBar(
+                navigationIcon = {
+                    IconButton(onClick = onSolisViewerClick) {
+                        Icon(
+                            imageVector = Icons.Default.AccessTime,
+                            contentDescription = null,
+                        )
+                    }
+                },
                 actions = {
                     IconButton(onClick = onLocationClick) {
                         Icon(
@@ -237,6 +247,7 @@ private fun AlarmManagerScreenPreview() {
                 ),
             ),
             onSnackbarDismissed = {},
+            onSolisViewerClick = {},
             onLocationClick = {},
             onAlarmDeleteClick = {},
             onAddClick = {},

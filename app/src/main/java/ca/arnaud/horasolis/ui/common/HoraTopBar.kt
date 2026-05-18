@@ -28,6 +28,7 @@ fun HoraTopBar(
     modifier: Modifier = Modifier,
     onBack: (() -> Unit)? = null,
     title: String? = null,
+    navigationIcon: (@Composable () -> Unit)? = null,
     actions: (@Composable () -> Unit)? = null,
 ) {
     Row(
@@ -46,6 +47,7 @@ fun HoraTopBar(
                 )
             }
         }
+        navigationIcon?.invoke()
 
         if (title != null) {
             Text(

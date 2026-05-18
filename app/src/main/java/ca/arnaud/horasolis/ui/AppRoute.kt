@@ -19,4 +19,7 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data class EditLocation(val locationId: String?) : AppRoute
+
+    @Serializable
+    data object SolisViewer : AppRoute
 }

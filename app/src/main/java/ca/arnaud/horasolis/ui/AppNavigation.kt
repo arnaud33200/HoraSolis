@@ -16,6 +16,7 @@ import ca.arnaud.horasolis.ui.editalarm.EditAlarmDestination
 import ca.arnaud.horasolis.ui.editlocation.EditLocationDestination
 import ca.arnaud.horasolis.ui.locationmanager.LocationManagerDestination
 import ca.arnaud.horasolis.ui.onboarding.OnboardingDestination
+import ca.arnaud.horasolis.ui.solisviewer.SolisViewerDestination
 
 @Composable
 fun AppNavigation() {
@@ -49,6 +50,9 @@ fun AppNavigation() {
                         onNavigateToLocationManager = {
                             backStack.add(AppRoute.LocationManager)
                         },
+                        onNavigateToSolisViewer = {
+                            backStack.add(AppRoute.SolisViewer)
+                        },
                     )
                 }
             }
@@ -77,6 +81,14 @@ fun AppNavigation() {
                 CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
                     EditLocationDestination(
                         locationId = route.locationId,
+                        onBack = { backStack.removeLastOrNull() },
+                    )
+                }
+            }
+            entry<AppRoute.SolisViewer> {
+                val viewModelStoreOwner = rememberEntryViewModelStoreOwner()
+                CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+                    SolisViewerDestination(
                         onBack = { backStack.removeLastOrNull() },
                     )
                 }

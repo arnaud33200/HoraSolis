@@ -20,6 +20,7 @@ import org.koin.androidx.compose.koinViewModel
 fun AlarmManagerDestination(
     onNavigateToEditAlarm: (alarmId: Int?) -> Unit,
     onNavigateToLocationManager: () -> Unit,
+    onNavigateToSolisViewer: () -> Unit,
 ) {
     NotificationPermissionRequest()
 
@@ -40,6 +41,7 @@ fun AlarmManagerDestination(
     AlarmManagerScreen(
         model = state,
         onSnackbarDismissed = {},
+        onSolisViewerClick = onNavigateToSolisViewer,
         onLocationClick = onNavigateToLocationManager,
         onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
         onAddClick = viewModel::onAddClick,

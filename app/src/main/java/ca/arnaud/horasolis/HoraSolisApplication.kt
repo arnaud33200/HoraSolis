@@ -53,6 +53,8 @@ import ca.arnaud.horasolis.ui.locationmanager.LocationManagerViewModel
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.onboarding.OnboardingViewModel
+import ca.arnaud.horasolis.ui.solisviewer.SolisViewerScreenModelFactory
+import ca.arnaud.horasolis.ui.solisviewer.SolisViewerViewModel
 import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
 import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
@@ -127,6 +129,10 @@ class HoraSolisApplication : Application() {
         factoryOf(::SolisClockModelFactory)
         factoryOf(::SolisClockDialogModelFactory)
         viewModelOf(::SolisClockViewModel)
+
+        // Solis Viewer
+        factoryOf(::SolisViewerScreenModelFactory)
+        viewModelOf(::SolisViewerViewModel)
     }
 
     val domainModule = module {
