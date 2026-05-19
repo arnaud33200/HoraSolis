@@ -51,7 +51,7 @@ class SolisTimeTest {
 
             // GIVEN first hour of day VERIFY sunrise time
             ToCivilTimeTestParam(
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(6, 0),
                     civilSunsetTime = LocalTime.of(18, 0),
@@ -65,7 +65,7 @@ class SolisTimeTest {
             ),
 
             ToCivilTimeTestParam(
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
@@ -79,7 +79,7 @@ class SolisTimeTest {
             ),
 
             ToCivilTimeTestParam(
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
@@ -94,7 +94,7 @@ class SolisTimeTest {
 
             // GIVEN minutes VERIFY sunrise time + solis minutes
             ToCivilTimeTestParam(
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
@@ -109,7 +109,7 @@ class SolisTimeTest {
 
             // GIVEN first hour of night VERIFY sunset time
             ToCivilTimeTestParam(
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(6, 0),
                     civilSunsetTime = LocalTime.of(18, 0),
@@ -127,7 +127,7 @@ class SolisTimeTest {
         fun getToSolisTimeTestParam() = listOf(
             ToSolisTimeTestParam(
                 givenLocalTime = LocalTime.of(6, 0),
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(6, 0),
                     civilSunsetTime = LocalTime.of(18, 0),
@@ -140,7 +140,7 @@ class SolisTimeTest {
             ),
             ToSolisTimeTestParam(
                 givenLocalTime = LocalTime.of(5, 20),
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
@@ -153,7 +153,7 @@ class SolisTimeTest {
             ),
             ToSolisTimeTestParam(
                 givenLocalTime = LocalTime.of(20, 0),
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
@@ -166,7 +166,7 @@ class SolisTimeTest {
             ),
             ToSolisTimeTestParam(
                 givenLocalTime = LocalTime.of(22, 30),
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
@@ -179,7 +179,7 @@ class SolisTimeTest {
             ),
             ToSolisTimeTestParam(
                 givenLocalTime = LocalTime.of(3, 59),
-                givenSolisDay = SolisDay(
+                givenSolisDay = SolisDayTestData.empty.copy(
                     atDate = LocalDate.of(2023, 10, 1),
                     civilSunriseTime = LocalTime.of(4, 0),
                     civilSunsetTime = LocalTime.of(20, 0),
