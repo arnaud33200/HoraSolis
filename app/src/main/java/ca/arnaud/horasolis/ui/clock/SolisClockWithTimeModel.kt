@@ -22,22 +22,22 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 
-sealed interface SolisClockDialogModel {
+sealed interface SolisClockWithTimeModel {
 
-    data object Loading : SolisClockDialogModel
-    data object Error : SolisClockDialogModel
+    data object Loading : SolisClockWithTimeModel
+    data object Error : SolisClockWithTimeModel
 
     data class Content(
         val time: SolisTimeModel,
         val location: String,
         val clock: SolisClockModel,
-    ) : SolisClockDialogModel
+    ) : SolisClockWithTimeModel
 }
 
 @Composable
 fun SolisClockWithTime(
     modifier: Modifier = Modifier,
-    model: SolisClockDialogModel,
+    model: SolisClockWithTimeModel,
     clockSize: Dp = 200.dp,
 ) {
     Column(
@@ -46,11 +46,11 @@ fun SolisClockWithTime(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         when (model) {
-            is SolisClockDialogModel.Loading -> {
+            is SolisClockWithTimeModel.Loading -> {
                 CircularProgressIndicator()
             }
 
-            is SolisClockDialogModel.Content -> {
+            is SolisClockWithTimeModel.Content -> {
                 SolisTime(model = model.time)
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -69,16 +69,16 @@ fun SolisClockWithTime(
                 )
             }
 
-            SolisClockDialogModel.Error -> {
+            SolisClockWithTimeModel.Error -> {
                 Text(text = stringResource(id = R.string.solis_clock_error_message))
             }
         }
     }
 }
 
-class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClockDialogModel> {
+class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClockWithTimeModel> {
     override val values = sequenceOf(
-        SolisClockDialogModel.Content(
+        SolisClockWithTimeModel.Content(
             time = SolisTimeModel(hours = "12 🌞 00", seconds = "30"),
             location = "Toronto, Canada",
             clock = SolisClockModel(
@@ -87,15 +87,15 @@ class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClock
                 needleAngle = 30f,
             )
         ),
-        SolisClockDialogModel.Loading,
-        SolisClockDialogModel.Error
+        SolisClockWithTimeModel.Loading,
+        SolisClockWithTimeModel.Error
     )
 }
 
 @PreviewLightDark
 @Composable
 private fun SolisClockWithTimePreview(
-    @PreviewParameter(SolisClockDialogModelPreviewProvider::class) model: SolisClockDialogModel,
+    @PreviewParameter(SolisClockDialogModelPreviewProvider::class) model: SolisClockWithTimeModel,
 ) {
     HoraSolisTheme {
         Surface(

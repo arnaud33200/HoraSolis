@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
-import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
+import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,7 @@ class SolisViewerViewModel(
     val selectedDate: StateFlow<LocalDate> = _selectedDate
 
     private val _state = MutableStateFlow(
-        screenModelFactory.create(_selectedDate.value, SolisClockDialogModel.Loading)
+        screenModelFactory.create(_selectedDate.value, SolisClockWithTimeModel.Loading)
     )
     val state: StateFlow<SolisViewerScreenModel> = _state
 

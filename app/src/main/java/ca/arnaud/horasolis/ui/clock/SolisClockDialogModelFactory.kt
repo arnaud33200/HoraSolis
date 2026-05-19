@@ -11,14 +11,14 @@ class SolisClockDialogModelFactory(
     private val clockModelFactory: SolisClockModelFactory,
 ) {
 
-    fun create(response: Response<SolisDay, GetSolisDayError>): SolisClockDialogModel {
+    fun create(response: Response<SolisDay, GetSolisDayError>): SolisClockWithTimeModel {
         return when (response) {
             is Response.Success -> {
                 val solisDay = response.data
                 val solisTime = timeProvider.getNowSolisTime(solisDay)
                 val clockModel = clockModelFactory.create(solisDay, solisTime)
                 val location = solisDay.location.name.ifBlank { solisDay.location.timZoneId }
-                SolisClockDialogModel.Content(
+                SolisClockWithTimeModel.Content(
                     time = SolisTimeModel(
                         hours = solisTime.format(),
                         seconds = "%02d".format(solisTime.seconds),
@@ -28,7 +28,7 @@ class SolisClockDialogModelFactory(
                 )
             }
 
-            is Response.Failure -> SolisClockDialogModel.Error
+            is Response.Failure -> SolisClockWithTimeModel.Error
         }
     }
 }

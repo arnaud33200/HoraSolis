@@ -29,9 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
-import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
+import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
+import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisTimeModel
 import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
@@ -67,7 +67,7 @@ fun AlarmManagerScreen(
     onAlarmItemClick: (AlarmItemModel) -> Unit,
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel,
-    clockModel: SolisClockDialogModel = SolisClockDialogModel.Loading,
+    clockModel: SolisClockWithTimeModel = SolisClockWithTimeModel.Loading,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
@@ -180,7 +180,7 @@ private fun Content(
     onAlarmItemClick: (AlarmItemModel) -> Unit,
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel.Content,
-    clockModel: SolisClockDialogModel,
+    clockModel: SolisClockWithTimeModel,
 ) {
     Column(
         modifier = modifier,
@@ -258,7 +258,7 @@ private fun AlarmManagerScreenPreview() {
             model = AlarmManagerScreenModel.Content(
                 list = sampleList
             ),
-            clockModel = SolisClockDialogModel.Content(
+            clockModel = SolisClockWithTimeModel.Content(
                 time = SolisTimeModel(
                     hours = "05 \u2600\uFE0F 06",
                     seconds = "35",

@@ -19,10 +19,10 @@ class SolisClockViewModel(
     private val modelFactory: SolisClockDialogModelFactory,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<SolisClockDialogModel>(
-        SolisClockDialogModel.Loading,
+    private val _state = MutableStateFlow<SolisClockWithTimeModel>(
+        SolisClockWithTimeModel.Loading,
     )
-    val state: StateFlow<SolisClockDialogModel> = _state
+    val state: StateFlow<SolisClockWithTimeModel> = _state
 
     init {
         viewModelScope.launch {

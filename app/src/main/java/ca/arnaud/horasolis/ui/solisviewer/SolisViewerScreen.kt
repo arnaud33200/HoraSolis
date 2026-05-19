@@ -31,16 +31,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
-import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
+import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
+import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisTimeModel
 import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 
 data class SolisViewerScreenModel(
     val dateLabel: String,
-    val clockModel: SolisClockDialogModel,
+    val clockModel: SolisClockWithTimeModel,
     val isLoading: Boolean = false,
 )
 
@@ -160,7 +160,7 @@ private class SolisViewerScreenPreviewProvider :
     override val values = sequenceOf(
         SolisViewerScreenModel(
             dateLabel = "Thursday May 15",
-            clockModel = SolisClockDialogModel.Content(
+            clockModel = SolisClockWithTimeModel.Content(
                 time = SolisTimeModel(
                     hours = "12 🌞 00",
                     seconds = "30",
@@ -175,7 +175,7 @@ private class SolisViewerScreenPreviewProvider :
         ),
         SolisViewerScreenModel(
             dateLabel = "Thursday May 15",
-            clockModel = SolisClockDialogModel.Content(
+            clockModel = SolisClockWithTimeModel.Content(
                 time = SolisTimeModel(
                     hours = "12 🌞 00",
                     seconds = "30",
@@ -191,7 +191,7 @@ private class SolisViewerScreenPreviewProvider :
         ),
         SolisViewerScreenModel(
             dateLabel = "Thursday May 15",
-            clockModel = SolisClockDialogModel.Loading,
+            clockModel = SolisClockWithTimeModel.Loading,
         ),
     )
 }
