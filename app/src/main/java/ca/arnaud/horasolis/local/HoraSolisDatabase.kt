@@ -14,8 +14,9 @@ import androidx.room.TypeConverters
         LocationEntity::class,
         AlarmEntity::class,
         CurrentLocationEntity::class,
+        SolisDayEntity::class,
     ],
-    version = 6, // current_location table
+    version = 7, // solis_day cache table
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
@@ -27,11 +28,12 @@ abstract class HoraSolisDatabase : RoomDatabase() {
                 context = context,
                 klass = HoraSolisDatabase::class.java,
                 name = "hora_solis.db",
-            ).fallbackToDestructiveMigration().build()
+            ).addMigrations(MIGRATION_6_7).build()
         }
     }
 
     abstract fun settingsWithTimesDao(): SettingsWithTimesDao
     abstract fun alarmDao(): AlarmDao
     abstract fun locationDao(): LocationDao
+    abstract fun solisDayDao(): SolisDayDao
 }
