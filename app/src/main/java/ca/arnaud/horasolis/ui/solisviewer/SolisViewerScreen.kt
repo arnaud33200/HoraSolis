@@ -1,7 +1,6 @@
 package ca.arnaud.horasolis.ui.solisviewer
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -31,17 +28,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.ui.clock.LocationDropdownItem
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisTimeModel
 import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
+import kotlinx.collections.immutable.persistentListOf
 
 data class SolisViewerScreenModel(
     val dateLabel: String,
-    val clockModel: SolisClockWithTimeModel,
-    val isLoading: Boolean = false,
 )
 
 sealed interface SolisViewerUserAction {
@@ -58,7 +55,9 @@ fun SolisViewerScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onAction: (SolisViewerUserAction) -> Unit,
+    onLocationSelected: (String) -> Unit = {},
     model: SolisViewerScreenModel,
+    clockModel: SolisClockWithTimeModel = SolisClockWithTimeModel.Loading,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -79,7 +78,8 @@ fun SolisViewerScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             SolisClockWithTime(
-                model = model.clockModel,
+                model = clockModel,
+                onLocationSelected = onLocationSelected,
                 clockSize = 250.dp,
             )
 
@@ -98,15 +98,7 @@ fun SolisViewerScreen(
                 Text(text = stringResource(R.string.generic_now))
             }
 
-            Box(
-                modifier = Modifier.weight(1f)
-            ) {
-                if (model.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -158,41 +150,7 @@ private class SolisViewerScreenPreviewProvider :
     PreviewParameterProvider<SolisViewerScreenModel> {
 
     override val values = sequenceOf(
-        SolisViewerScreenModel(
-            dateLabel = "Thursday May 15",
-            clockModel = SolisClockWithTimeModel.Content(
-                time = SolisTimeModel(
-                    hours = "12 🌞 00",
-                    seconds = "30",
-                ),
-                location = "Toronto, Canada",
-                clock = SolisClockModel(
-                    dayStartAngle = -90f,
-                    dayEndAngle = 200f,
-                    needleAngle = 30f,
-                ),
-            ),
-        ),
-        SolisViewerScreenModel(
-            dateLabel = "Thursday May 15",
-            clockModel = SolisClockWithTimeModel.Content(
-                time = SolisTimeModel(
-                    hours = "12 🌞 00",
-                    seconds = "30",
-                ),
-                location = "Toronto, Canada",
-                clock = SolisClockModel(
-                    dayStartAngle = -90f,
-                    dayEndAngle = 200f,
-                    needleAngle = 30f,
-                ),
-            ),
-            isLoading = true,
-        ),
-        SolisViewerScreenModel(
-            dateLabel = "Thursday May 15",
-            clockModel = SolisClockWithTimeModel.Loading,
-        ),
+        SolisViewerScreenModel(dateLabel = "Thursday May 15"),
     )
 }
 
@@ -204,6 +162,19 @@ private fun SolisViewerScreenPreview(
     HoraSolisTheme {
         SolisViewerScreen(
             model = model,
+            clockModel = SolisClockWithTimeModel.Content(
+                time = SolisTimeModel(hours = "12 🌞 00", seconds = "30"),
+                location = "Toronto, Canada",
+                locations = persistentListOf(
+                    LocationDropdownItem(id = "1", name = "Toronto, Canada"),
+                    LocationDropdownItem(id = "2", name = "Montreal"),
+                ),
+                clock = SolisClockModel(
+                    dayStartAngle = -90f,
+                    dayEndAngle = 200f,
+                    needleAngle = 30f,
+                ),
+            ),
             onBackClick = {},
             onAction = {},
         )

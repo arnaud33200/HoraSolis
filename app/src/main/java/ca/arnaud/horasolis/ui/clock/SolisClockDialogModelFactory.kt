@@ -1,17 +1,22 @@
 package ca.arnaud.horasolis.ui.clock
 
 import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
 import ca.arnaud.horasolis.extension.format
+import kotlinx.collections.immutable.toImmutableList
 
 class SolisClockDialogModelFactory(
     private val timeProvider: TimeProvider,
     private val clockModelFactory: SolisClockModelFactory,
 ) {
 
-    fun create(response: Response<SolisDay, GetSolisDayError>): SolisClockWithTimeModel {
+    fun create(
+        response: Response<SolisDay, GetSolisDayError>,
+        allLocations: List<SavedLocation> = emptyList(),
+    ): SolisClockWithTimeModel {
         return when (response) {
             is Response.Success -> {
                 val solisDay = response.data
@@ -25,6 +30,9 @@ class SolisClockDialogModelFactory(
                     ),
                     clock = clockModel,
                     location = location,
+                    locations = allLocations.map {
+                        LocationDropdownItem(id = it.id, name = it.name.ifBlank { it.id })
+                    }.toImmutableList(),
                 )
             }
 

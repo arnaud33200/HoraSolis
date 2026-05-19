@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.ui.clock.LocationDropdownItem
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
@@ -68,6 +69,7 @@ fun AlarmManagerScreen(
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel,
     clockModel: SolisClockWithTimeModel = SolisClockWithTimeModel.Loading,
+    onLocationSelected: (String) -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
@@ -120,6 +122,7 @@ fun AlarmManagerScreen(
                 onAlarmItemClick = onAlarmItemClick,
                 onAlarmToggleClick = onAlarmToggleClick,
                 clockModel = clockModel,
+                onLocationSelected = onLocationSelected,
             )
 
             is AlarmManagerScreenModel.MissingLocation -> MissingLocation(
@@ -181,6 +184,7 @@ private fun Content(
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
     model: AlarmManagerScreenModel.Content,
     clockModel: SolisClockWithTimeModel,
+    onLocationSelected: (String) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -188,6 +192,7 @@ private fun Content(
     ) {
         SolisClockWithTime(
             model = clockModel,
+            onLocationSelected = onLocationSelected,
             clockSize = 175.dp,
         )
 
@@ -264,6 +269,10 @@ private fun AlarmManagerScreenPreview() {
                     seconds = "35",
                 ),
                 location = "Toronto, Canada",
+                locations = persistentListOf(
+                    LocationDropdownItem(id = "1", name = "Toronto, Canada"),
+                    LocationDropdownItem(id = "2", name = "Montreal"),
+                ),
                 clock = SolisClockModel(
                     dayStartAngle = -90f,
                     dayEndAngle = 200f,

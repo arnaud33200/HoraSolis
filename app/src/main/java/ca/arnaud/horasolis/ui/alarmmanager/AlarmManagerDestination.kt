@@ -48,6 +48,7 @@ fun AlarmManagerDestination(
         onAlarmItemClick = viewModel::onAlarmItemClick,
         onAlarmToggleClick = viewModel::onAlarmToggleClick,
         clockModel = clockModel,
+        onLocationSelected = clockViewModel::onLocationSelected,
     )
 }
 

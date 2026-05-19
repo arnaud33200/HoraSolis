@@ -1,8 +1,11 @@
 package ca.arnaud.horasolis.ui.solisviewer
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.drop
+import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
 import ca.arnaud.horasolis.ui.common.DatePickerModel
 import ca.arnaud.horasolis.ui.common.DatePickerDialog
 import org.koin.androidx.compose.koinViewModel
@@ -17,6 +20,15 @@ fun SolisViewerDestination(
     val showDatePicker by viewModel.showDatePicker.collectAsStateWithLifecycle()
     val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
 
+    val clockViewModel: SolisClockViewModel = koinViewModel()
+    val clockModel by clockViewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.selectedDate.drop(1).collect { date ->
+            clockViewModel.onDateChanged(date)
+        }
+    }
+
     if (showDatePicker) {
         DatePickerDialog(
             onDateSelected = viewModel::onDateSelected,
@@ -30,7 +42,9 @@ fun SolisViewerDestination(
 
     SolisViewerScreen(
         model = state,
+        clockModel = clockModel,
         onBackClick = onBack,
         onAction = viewModel::onAction,
+        onLocationSelected = clockViewModel::onLocationSelected,
     )
 }
