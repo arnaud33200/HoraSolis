@@ -16,7 +16,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import ca.arnaud.horasolis.ui.common.HoraTopBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -33,6 +32,8 @@ import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
+import ca.arnaud.horasolis.ui.clock.SolisTimeModel
+import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
 import kotlinx.collections.immutable.persistentListOf
@@ -227,9 +228,30 @@ private fun AlarmManagerScreenPreview() {
     HoraSolisTheme {
         val sampleList = AlarmListModel(
             items = persistentListOf(
-                AlarmItemModel(id = 1, title = "5 \u2600\uFE0F 06", label = "Morning", civilTime = "6:30 AM", isEnabled = true, schedule = "Monday to Friday"),
-                AlarmItemModel(id = 2, title = "10 \uD83C\uDF1A 54", label = null, civilTime = "11:00 PM", isEnabled = false, schedule = "Week-end"),
-                AlarmItemModel(id = 3, title = "12 \u2600\uFE0F 00", label = null, civilTime = "12:00 PM", isEnabled = true, schedule = "Every day"),
+                AlarmItemModel(
+                    id = 1,
+                    title = "5 \u2600\uFE0F 06",
+                    label = "Morning",
+                    civilTime = "6:30 AM",
+                    isEnabled = true,
+                    schedule = "Monday to Friday"
+                ),
+                AlarmItemModel(
+                    id = 2,
+                    title = "10 \uD83C\uDF1A 54",
+                    label = null,
+                    civilTime = "11:00 PM",
+                    isEnabled = false,
+                    schedule = "Week-end"
+                ),
+                AlarmItemModel(
+                    id = 3,
+                    title = "12 \u2600\uFE0F 00",
+                    label = null,
+                    civilTime = "12:00 PM",
+                    isEnabled = true,
+                    schedule = "Every day"
+                ),
             )
         )
         AlarmManagerScreen(
@@ -237,8 +259,10 @@ private fun AlarmManagerScreenPreview() {
                 list = sampleList
             ),
             clockModel = SolisClockDialogModel.Content(
-                solisHours = "05 \u2600\uFE0F 06",
-                solisSeconds = "35",
+                time = SolisTimeModel(
+                    hours = "05 \u2600\uFE0F 06",
+                    seconds = "35",
+                ),
                 location = "Toronto, Canada",
                 clock = SolisClockModel(
                     dayStartAngle = -90f,

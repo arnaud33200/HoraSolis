@@ -1,13 +1,10 @@
 package ca.arnaud.horasolis.ui.clock
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +28,7 @@ sealed interface SolisClockDialogModel {
     data object Error : SolisClockDialogModel
 
     data class Content(
-        val solisHours: String,
-        val solisSeconds: String,
+        val time: SolisTimeModel,
         val location: String,
         val clock: SolisClockModel,
     ) : SolisClockDialogModel
@@ -55,23 +51,7 @@ fun SolisClockWithTime(
             }
 
             is SolisClockDialogModel.Content -> {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Spacer(modifier.weight(1f))
-                    Text(
-                        text = model.solisHours,
-                        style = MaterialTheme.typography.headlineLarge,
-                    )
-                    Box(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(
-                            modifier = Modifier.padding(8.dp),
-                            text = model.solisSeconds,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
+                SolisTime(model = model.time)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -99,8 +79,7 @@ fun SolisClockWithTime(
 class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClockDialogModel> {
     override val values = sequenceOf(
         SolisClockDialogModel.Content(
-            solisHours = "12 🌞 00",
-            solisSeconds = "30",
+            time = SolisTimeModel(hours = "12 🌞 00", seconds = "30"),
             location = "Toronto, Canada",
             clock = SolisClockModel(
                 dayStartAngle = -90f,

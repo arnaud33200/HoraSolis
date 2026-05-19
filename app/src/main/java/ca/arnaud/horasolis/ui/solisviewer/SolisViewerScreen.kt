@@ -34,6 +34,7 @@ import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.clock.SolisClockDialogModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
+import ca.arnaud.horasolis.ui.clock.SolisTimeModel
 import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 
@@ -160,8 +161,10 @@ private class SolisViewerScreenPreviewProvider :
         SolisViewerScreenModel(
             dateLabel = "Thursday May 15",
             clockModel = SolisClockDialogModel.Content(
-                solisHours = "12 🌞 00",
-                solisSeconds = "30",
+                time = SolisTimeModel(
+                    hours = "12 🌞 00",
+                    seconds = "30",
+                ),
                 location = "Toronto, Canada",
                 clock = SolisClockModel(
                     dayStartAngle = -90f,
@@ -173,8 +176,10 @@ private class SolisViewerScreenPreviewProvider :
         SolisViewerScreenModel(
             dateLabel = "Thursday May 15",
             clockModel = SolisClockDialogModel.Content(
-                solisHours = "12 🌞 00",
-                solisSeconds = "30",
+                time = SolisTimeModel(
+                    hours = "12 🌞 00",
+                    seconds = "30",
+                ),
                 location = "Toronto, Canada",
                 clock = SolisClockModel(
                     dayStartAngle = -90f,
