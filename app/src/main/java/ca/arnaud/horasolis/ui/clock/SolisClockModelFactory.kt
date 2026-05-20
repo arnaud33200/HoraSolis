@@ -44,11 +44,10 @@ class SolisClockModelFactory {
         val sunsetSeconds = solisDay.civilSunsetTime.toSecondOfDay().toLong()
         val dayDuration =
             if (sunsetSeconds >= sunriseSeconds) sunsetSeconds - sunriseSeconds else SECONDS_IN_DAY - sunriseSeconds + sunsetSeconds
-        val dayStartAngle = sunriseSeconds.secondsToClockAngle()
         val daySweepAngle = (dayDuration / SECONDS_IN_DAY.toFloat()) * 360f
-        val nightStartAngle = (sunriseSeconds + dayDuration) % SECONDS_IN_DAY
-        val nightStartAngleClock = nightStartAngle.secondsToClockAngle()
         val nightSweepAngle = 360f - daySweepAngle
+        val nightStartAngleClock = -90f
+        val dayStartAngle = nightStartAngleClock + nightSweepAngle
 
         val needleAngle = when (atTime.type) {
             SolisTime.Type.Day -> {
@@ -78,9 +77,7 @@ class SolisClockModelFactory {
         )
     }
 
-    private fun Long.secondsToClockAngle(): Float {
-        return (this / SECONDS_IN_DAY.toFloat()) * 360f
-    }
+
 }
 
 class SolisClockModelFactoryPreviewProvider :
@@ -162,7 +159,7 @@ fun SolisClockModelFactoryLocalTimePreview() {
                 LaunchedEffect(Unit) {
                     while (true) {
                         delay(50)
-                        atTime = atTime.plusSeconds(10)
+                        atTime = atTime.plusSeconds(60)
                     }
                 }
 
