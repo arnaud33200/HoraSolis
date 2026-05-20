@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -29,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
@@ -59,9 +60,8 @@ data class LocationDropdownItem(
 @Composable
 fun SolisClockWithTime(
     modifier: Modifier = Modifier,
-    model: SolisClockWithTimeModel,
     onLocationSelected: (String) -> Unit,
-    clockSize: Dp = 200.dp,
+    model: SolisClockWithTimeModel,
 ) {
     Column(
         modifier = modifier,
@@ -96,9 +96,12 @@ fun SolisClockWithTime(
 
                 Box(contentAlignment = Alignment.Center) {
                     SolisClock(
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .fillMaxWidth(),
                         model = model.clock,
-                        modifier = Modifier.size(clockSize)
                     )
+
                     if (model.isDateLoading) {
                         CircularProgressIndicator(modifier = Modifier.size(40.dp))
                     }
@@ -184,10 +187,9 @@ private fun SolisClockWithTimePreview(
     @PreviewParameter(SolisClockDialogModelPreviewProvider::class) model: SolisClockWithTimeModel,
 ) {
     HoraSolisTheme {
-        Surface(
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        Surface {
             SolisClockWithTime(
+                modifier = Modifier.padding(16.dp),
                 model = model,
                 onLocationSelected = {},
             )

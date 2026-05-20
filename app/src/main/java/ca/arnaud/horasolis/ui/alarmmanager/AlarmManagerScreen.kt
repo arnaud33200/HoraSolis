@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.LocationOn
@@ -191,9 +192,9 @@ private fun Content(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SolisClockWithTime(
+            modifier = Modifier.width(200.dp),
             model = clockModel,
             onLocationSelected = onLocationSelected,
-            clockSize = 175.dp,
         )
 
         Spacer(modifier = Modifier.height(16.dp))

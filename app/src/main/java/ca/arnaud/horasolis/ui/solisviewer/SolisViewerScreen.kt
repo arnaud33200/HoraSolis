@@ -29,9 +29,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.clock.LocationDropdownItem
+import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTime
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
-import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisTimeModel
 import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
@@ -78,9 +78,9 @@ fun SolisViewerScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             SolisClockWithTime(
+                modifier = Modifier.padding(32.dp),
                 model = clockModel,
                 onLocationSelected = onLocationSelected,
-                clockSize = 250.dp,
             )
 
             Spacer(modifier = Modifier.height(16.dp))

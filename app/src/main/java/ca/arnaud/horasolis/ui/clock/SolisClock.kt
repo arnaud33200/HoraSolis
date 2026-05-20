@@ -1,8 +1,6 @@
 package ca.arnaud.horasolis.ui.clock
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -46,36 +44,36 @@ fun SolisClock(
     modifier: Modifier = Modifier,
     model: SolisClockModel,
 ) {
-    Box(modifier = modifier) {
-        val daySurfaceColor = HoraSolisTheme.colors.daySurface
-        val onDaySurfaceColor = HoraSolisTheme.colors.onDaySurface
-        val nightSurfaceColor = HoraSolisTheme.colors.nightSurface
-        val onNightSurfaceColor = HoraSolisTheme.colors.onNightSurface
-        val needleColor = HoraSolisTheme.colors.onDayNightSurface
-        val clockBorderColor = HoraSolisTheme.colors.materialColorScheme
-            .onSurface.copy(alpha = 0.5f)
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val radius = size.minDimension / 2 * 0.98f
-            val arcSize = Size(radius * 2, radius * 2)
-            val center = Offset(size.width / 2, size.height / 2)
-            val topLeft = Offset(center.x - radius, center.y - radius)
+    val daySurfaceColor = HoraSolisTheme.colors.daySurface
+    val onDaySurfaceColor = HoraSolisTheme.colors.onDaySurface
+    val nightSurfaceColor = HoraSolisTheme.colors.nightSurface
+    val onNightSurfaceColor = HoraSolisTheme.colors.onNightSurface
+    val needleColor = HoraSolisTheme.colors.onDayNightSurface
+    val clockBorderColor = HoraSolisTheme.colors.materialColorScheme
+        .onSurface.copy(alpha = 0.5f)
+    Canvas(
+        modifier = modifier,
+    ) {
+        val radius = size.minDimension / 2 * 0.98f
+        val arcSize = Size(radius * 2, radius * 2)
+        val center = Offset(size.width / 2, size.height / 2)
+        val topLeft = Offset(center.x - radius, center.y - radius)
 
-            // Night
-            drawNightCircle(center, radius, nightSurfaceColor)
-            drawLighterNightSections(
-                model, topLeft, arcSize, onNightSurfaceColor.copy(alpha = 0.2f)
-            )
+        // Night
+        drawNightCircle(center, radius, nightSurfaceColor)
+        drawLighterNightSections(
+            model, topLeft, arcSize, onNightSurfaceColor.copy(alpha = 0.2f)
+        )
 
-            // Day
-            drawDayArc(model, topLeft, arcSize, daySurfaceColor)
-            drawLighterDaySections(
-                model, topLeft, arcSize, onDaySurfaceColor.copy(alpha = 0.2f),
-            )
+        // Day
+        drawDayArc(model, topLeft, arcSize, daySurfaceColor)
+        drawLighterDaySections(
+            model, topLeft, arcSize, onDaySurfaceColor.copy(alpha = 0.2f),
+        )
 
-            drawClockBorder(center, radius, clockBorderColor)
-            drawAlarmMarkers(model, center, radius, onDaySurfaceColor, onNightSurfaceColor)
-            drawNeedle(model, center, radius, needleColor)
-        }
+        drawClockBorder(center, radius, clockBorderColor)
+        drawAlarmMarkers(model, center, radius, onDaySurfaceColor, onNightSurfaceColor)
+        drawNeedle(model, center, radius, needleColor)
     }
 }
 
@@ -152,27 +150,6 @@ private fun DrawScope.drawClockBorder(center: Offset, radius: Float, color: Colo
         radius = radius,
         style = Stroke(width = 4.dp.toPx())
     )
-}
-
-private fun DrawScope.drawDayHourMarkers(
-    model: SolisClockModel,
-    center: Offset,
-    radius: Float,
-    color: Color
-) {
-    val dayHourSweep = model.dayEndAngle / 12f
-    for (i in 0 until 12) {
-        val angle = model.dayStartAngle + dayHourSweep * i + dayHourSweep / 2f
-        val rad = Math.toRadians(angle.toDouble())
-        val markerRadius = radius * 0.95f
-        val x = center.x + markerRadius * cos(rad).toFloat()
-        val y = center.y + markerRadius * sin(rad).toFloat()
-        drawCircle(
-            color = color,
-            center = Offset(x, y),
-            radius = 2.dp.toPx()
-        )
-    }
 }
 
 private fun DrawScope.drawAlarmMarkers(
