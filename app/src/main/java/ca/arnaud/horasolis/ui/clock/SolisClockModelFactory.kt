@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.model.toSolisTime
+import kotlinx.collections.immutable.toImmutableList
 import ca.arnaud.horasolis.extension.formatWithSeconds
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.coroutines.delay
@@ -36,6 +38,7 @@ class SolisClockModelFactory {
     fun create(
         solisDay: SolisDay,
         atTime: SolisTime,
+        alarms: List<SavedAlarm> = emptyList(),
     ): SolisClockModel {
         val sunriseSeconds = solisDay.civilSunriseTime.toSecondOfDay().toLong()
         val sunsetSeconds = solisDay.civilSunsetTime.toSecondOfDay().toLong()
@@ -58,10 +61,20 @@ class SolisClockModelFactory {
                 nightStartAngleClock + ((atTime.hour - 1) + atTime.minute / 60f) * (nightSweepAngle / 12f)
             }
         }
+        val alarmAngles = alarms.filter { it.enabled }.map { alarm ->
+            when (alarm.solisTime.type) {
+                SolisTime.Type.Day ->
+                    dayStartAngle + ((alarm.solisTime.hour - 1) + alarm.solisTime.minute / 60f) * (daySweepAngle / 12f)
+                SolisTime.Type.Night ->
+                    nightStartAngleClock + ((alarm.solisTime.hour - 1) + alarm.solisTime.minute / 60f) * (nightSweepAngle / 12f)
+            }
+        }.toImmutableList()
+
         return SolisClockModel(
             dayStartAngle = dayStartAngle,
             dayEndAngle = daySweepAngle,
             needleAngle = needleAngle,
+            alarmAngles = alarmAngles,
         )
     }
 

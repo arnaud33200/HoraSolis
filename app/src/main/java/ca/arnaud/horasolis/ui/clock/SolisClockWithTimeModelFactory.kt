@@ -3,12 +3,13 @@ package ca.arnaud.horasolis.ui.clock
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisDay
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
 import ca.arnaud.horasolis.extension.format
 import kotlinx.collections.immutable.toImmutableList
 
-class SolisClockDialogModelFactory(
+class SolisClockWithTimeModelFactory(
     private val timeProvider: TimeProvider,
     private val clockModelFactory: SolisClockModelFactory,
 ) {
@@ -16,12 +17,13 @@ class SolisClockDialogModelFactory(
     fun create(
         response: Response<SolisDay, GetSolisDayError>,
         allLocations: List<SavedLocation> = emptyList(),
+        alarms: List<SavedAlarm> = emptyList(),
     ): SolisClockWithTimeModel {
         return when (response) {
             is Response.Success -> {
                 val solisDay = response.data
                 val solisTime = timeProvider.getNowSolisTime(solisDay)
-                val clockModel = clockModelFactory.create(solisDay, solisTime)
+                val clockModel = clockModelFactory.create(solisDay, solisTime, alarms)
                 val location = solisDay.location.name.ifBlank { solisDay.location.timZoneId }
                 SolisClockWithTimeModel.Content(
                     time = SolisTimeModel(

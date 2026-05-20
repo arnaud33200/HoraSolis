@@ -42,7 +42,7 @@ import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
 import ca.arnaud.horasolis.domain.model.location.LocationValidator
 import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModel
 import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModelParams
-import ca.arnaud.horasolis.ui.clock.SolisClockDialogModelFactory
+import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
@@ -127,7 +127,7 @@ class HoraSolisApplication : Application() {
 
         // Clock
         factoryOf(::SolisClockModelFactory)
-        factoryOf(::SolisClockDialogModelFactory)
+        factoryOf(::SolisClockWithTimeModelFactory)
         viewModelOf(::SolisClockViewModel)
 
         // Solis Viewer

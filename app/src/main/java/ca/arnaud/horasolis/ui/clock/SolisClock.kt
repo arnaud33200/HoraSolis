@@ -17,6 +17,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -30,11 +32,13 @@ import kotlin.math.sin
  * @property dayEndAngle The sweep angle (in degrees) for the day arc, representing the duration of daylight.
  *   Range: 0f to 360f. For example, 180f means half the circle is day.
  * @property needleAngle The angle (in degrees) for the needle, where 0 is at 3 o'clock and angles increase clockwise.
+ * @property alarmAngles Angles (in degrees) for alarm markers on the clock rim.
  */
 data class SolisClockModel(
     val dayStartAngle: Float,
     val dayEndAngle: Float,
     val needleAngle: Float,
+    val alarmAngles: ImmutableList<Float> = persistentListOf(),
 )
 
 @Composable
@@ -61,16 +65,15 @@ fun SolisClock(
             drawLighterNightSections(
                 model, topLeft, arcSize, onNightSurfaceColor.copy(alpha = 0.2f)
             )
-            drawNightHourMarkers(model, center, radius, onNightSurfaceColor)
 
             // Day
             drawDayArc(model, topLeft, arcSize, daySurfaceColor)
             drawLighterDaySections(
                 model, topLeft, arcSize, onDaySurfaceColor.copy(alpha = 0.2f),
             )
-            drawDayHourMarkers(model, center, radius, onDaySurfaceColor)
 
             drawClockBorder(center, radius, clockBorderColor)
+            drawAlarmMarkers(model, center, radius, onDaySurfaceColor, onNightSurfaceColor)
             drawNeedle(model, center, radius, needleColor)
         }
     }
@@ -172,32 +175,39 @@ private fun DrawScope.drawDayHourMarkers(
     }
 }
 
-private fun DrawScope.drawNightHourMarkers(
+private fun DrawScope.drawAlarmMarkers(
+    model: SolisClockModel,
+    center: Offset,
+    radius: Float,
+    onDayColor: Color,
+    onNightColor: Color,
+) {
+    val markerRadius = 4.dp.toPx()
+    val markerCenterRadius = radius * 0.90f
+    model.alarmAngles.forEach { angle ->
+        val normalizedAngle = ((angle - model.dayStartAngle) % 360f + 360f) % 360f
+        val color = if (normalizedAngle < model.dayEndAngle) onDayColor else onNightColor
+        val rad = Math.toRadians(angle.toDouble())
+        val markerCenter = Offset(
+            x = center.x + markerCenterRadius * cos(rad).toFloat(),
+            y = center.y + markerCenterRadius * sin(rad).toFloat(),
+        )
+        drawCircle(
+            color = color,
+            center = markerCenter,
+            radius = markerRadius,
+        )
+    }
+}
+
+private fun DrawScope.drawNeedle(
     model: SolisClockModel,
     center: Offset,
     radius: Float,
     color: Color
 ) {
-    val nightSweep = 360f - model.dayEndAngle
-    val nightHourSweep = nightSweep / 12f
-    val nightStartAngle = (model.dayStartAngle + model.dayEndAngle) % 360f
-    for (i in 0 until 12) {
-        val angle = nightStartAngle + nightHourSweep * i + nightHourSweep / 2f
-        val rad = Math.toRadians(angle.toDouble())
-        val markerRadius = radius * 0.95f
-        val x = center.x + markerRadius * cos(rad).toFloat()
-        val y = center.y + markerRadius * sin(rad).toFloat()
-        drawCircle(
-            color = color,
-            center = Offset(x, y),
-            radius = 2.dp.toPx()
-        )
-    }
-}
-
-private fun DrawScope.drawNeedle(model: SolisClockModel, center: Offset, radius: Float, color: Color) {
     val rad = Math.toRadians(model.needleAngle.toDouble())
-    val needleLength = radius * 0.95f
+    val needleLength = radius * 0.85f
     val needleEnd = Offset(
         center.x + needleLength * cos(rad).toFloat(),
         center.y + needleLength * sin(rad).toFloat()
@@ -232,6 +242,7 @@ class SolisClockModelPreviewProvider : PreviewParameterProvider<SolisClockModel>
             dayStartAngle = -90f,
             dayEndAngle = 200f,
             needleAngle = 30f,
+            alarmAngles = persistentListOf(60f, 150f, 300f)
         ),
         SolisClockModel(
             dayStartAngle = 0f,
@@ -255,7 +266,7 @@ fun SolisClockPreview(
         Surface {
             SolisClock(
                 model = model,
-                modifier = Modifier.size(300.dp)
+                modifier = Modifier.size(200.dp)
             )
         }
     }
