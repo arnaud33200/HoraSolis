@@ -38,7 +38,10 @@ class CheckAlarmScheduleUseCase(
 
         val alreadyScheduled = scheduleRepository.getScheduledAlarmOrNull(alarm.id) != null
         if (!alreadyScheduled) {
-            Log.w("CheckAlarmSchedule", "Alarm ${alarm.id} (${alarm.label}) had no schedule — rescheduling")
+            Log.w(
+                "CheckAlarmSchedule",
+                "Alarm ${alarm.id} (${alarm.label}) had no schedule — rescheduling"
+            )
             scheduleRepository.cancelAlarm(alarm.id)
             scheduleNextAlarm(alarm)
         }
@@ -52,12 +55,12 @@ class CheckAlarmScheduleUseCase(
      *   [ScheduleNextAlarmUseCase] handle the exact expiry check).
      */
     private suspend fun SavedAlarm.isExpired(): Boolean {
+
         return when (val schedule = this.schedule) {
             is Alarm.Schedule.Repeating -> schedule.weekDays.isEmpty()
             is Alarm.Schedule.OneTime -> {
                 val solisDay = getSolisDay(schedule.date).getDataOrNull() ?: return false
-                val civilTime = solisTime.toCivilTime(solisDay)
-                schedule.date.atTime(civilTime).isBefore(timeProvider.getNowDateTime())
+                isExpired(solisDay, timeProvider.getNowDateTime())
             }
         }
     }

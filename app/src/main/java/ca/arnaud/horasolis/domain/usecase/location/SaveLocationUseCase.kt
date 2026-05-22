@@ -42,7 +42,7 @@ class SaveLocationUseCase(
                 timZoneId = location.timZoneId.ifBlank { localeProvider.getTimezoneId() },
             )
         )
-        if (locationRepository.getCurrentLocation() == null) {
+        if (locationRepository.getCurrentLocationOrNull() == null) {
             locationRepository.setCurrentLocation(location.id)
         }
     }

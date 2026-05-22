@@ -17,7 +17,7 @@ class LocationRepository(
         locationDao.upsertCurrentLocation(CurrentLocationEntity(locationId = id))
     }
 
-    suspend fun getCurrentLocation(): SavedLocation? {
+    suspend fun getCurrentLocationOrNull(): SavedLocation? {
         val locationId = locationDao.getCurrentLocation()?.locationId ?: return null
         return locationDao.get(locationId)?.toSavedLocation()
     }

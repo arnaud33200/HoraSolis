@@ -12,6 +12,7 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase
+import ca.arnaud.horasolis.domain.usecase.location.ObserveCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -30,12 +31,13 @@ private data class SolisClockData(
 )
 
 class SolisClockViewModel(
+    observeAllLocations: ObserveAllLocationsUseCase,
+    observeSavedAlarms: ObserveSavedAlarmsUseCase,
+    observeCurrentLocation: ObserveCurrentLocationUseCase,
     private val getSolisDay: GetSolisDayUseCase,
     private val timeProvider: TimeProvider,
     private val modelFactory: SolisClockWithTimeModelFactory,
-    observeAllLocations: ObserveAllLocationsUseCase,
     private val setCurrentLocation: SetCurrentLocationUseCase,
-    observeSavedAlarms: ObserveSavedAlarmsUseCase,
 ) : ViewModel() {
 
     private var locations: List<SavedLocation> = emptyList()
@@ -51,9 +53,10 @@ class SolisClockViewModel(
     init {
         combine(
             _selectedDate,
+            observeCurrentLocation(),
             observeAllLocations(),
             observeSavedAlarms(),
-        ) { _, locations, alarms ->
+        ) { _, _, locations, alarms ->
             SolisClockData(
                 locations = locations,
                 alarms = alarms,

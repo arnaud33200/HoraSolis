@@ -38,7 +38,7 @@ data class AlarmItemModel(
     val title: String,
     val label: String?,
     val civilTime: String,
-    val isEnabled: Boolean = true,
+    val isEnabled: Boolean? = true,
     val schedule: String?,
 )
 
@@ -76,7 +76,7 @@ private fun AlarmListItem(
     item: AlarmItemModel,
 ) {
     val defaultColors = CardDefaults.cardColors()
-    val alpha = if (item.isEnabled) 1f else 0.4f
+    val alpha = if (item.isEnabled == true) 1f else 0.4f
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors().copy(
@@ -119,13 +119,15 @@ private fun AlarmListItem(
                 Switch(
                     modifier = Modifier
                         .padding(start = 8.dp),
-                    checked = item.isEnabled,
+                    enabled = item.isEnabled != null,
+                    checked = item.isEnabled == true,
                     onCheckedChange = { onToggle(item, it) },
                 )
             }
 
             item.label?.let { label ->
                 Text(
+                    modifier = Modifier.alpha(alpha),
                     text = label,
                     style = MaterialTheme.typography.titleMedium,
                 )

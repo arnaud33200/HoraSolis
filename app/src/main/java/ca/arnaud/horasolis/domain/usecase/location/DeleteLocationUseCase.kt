@@ -17,7 +17,7 @@ class DeleteLocationUseCase(
             return Response.Failure(DeleteLocationError.LastLocation)
         }
 
-        val currentLocation = locationRepository.getCurrentLocation()
+        val currentLocation = locationRepository.getCurrentLocationOrNull()
         locationRepository.deleteLocation(id)
 
         if (currentLocation?.id == id) {

@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -80,18 +81,23 @@ fun SolisClockWithTime(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (model.isLocationLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(12.dp),
-                        strokeWidth = 1.5.dp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                } else {
+                Box(
+                    contentAlignment = Alignment.Center,
+                ) {
                     LocationDropdown(
+                        modifier = Modifier.alpha(if (model.isLocationLoading) 0.3f else 1f),
                         location = model.location,
                         locations = model.locations,
                         onLocationSelected = onLocationSelected,
                     )
+
+                    if (model.isLocationLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(12.dp),
+                            strokeWidth = 1.5.dp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -176,6 +182,20 @@ class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClock
         SolisClockWithTimeModel.Content(
             time = SolisTimeModel(hours = "12 🌞 00", seconds = "30"),
             location = "ABBA - BAAB",
+            locations = persistentListOf(
+                LocationDropdownItem(id = "1", name = "ABBA - BAAB"),
+                LocationDropdownItem(id = "2", name = "Montreal"),
+            ),
+            clock = SolisClockModel(
+                dayStartAngle = -90f,
+                dayEndAngle = 200f,
+                needleAngle = 30f,
+            )
+        ),
+        SolisClockWithTimeModel.Content(
+            time = SolisTimeModel(hours = "12 🌞 00", seconds = "30"),
+            location = "ABBA - BAAB",
+            isLocationLoading = true,
             locations = persistentListOf(
                 LocationDropdownItem(id = "1", name = "ABBA - BAAB"),
                 LocationDropdownItem(id = "2", name = "Montreal"),

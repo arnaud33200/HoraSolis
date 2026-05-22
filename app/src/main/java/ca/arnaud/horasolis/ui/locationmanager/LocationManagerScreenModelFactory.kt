@@ -25,7 +25,7 @@ class LocationManagerScreenModelFactory(
                         R.string.location_manager_item_default_name,
                         "?"
                     ),
-                    locationInfo = "${currentLocation.lng} / ${currentLocation.lat}",
+                    locationInfo = "${currentLocation.lat} / ${currentLocation.lng}",
                 )
             CurrentLocationState.Location(item)
         } else {
@@ -55,6 +55,6 @@ class LocationManagerScreenModelFactory(
                 R.string.location_manager_item_default_name, id,
             )
         },
-        locationInfo = "$lng / $lat",
+        locationInfo = "$lat / $lng",
     )
 }

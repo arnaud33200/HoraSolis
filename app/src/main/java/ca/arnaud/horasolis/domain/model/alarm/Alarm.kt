@@ -1,8 +1,11 @@
 package ca.arnaud.horasolis.domain.model.alarm
 
+import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
+import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import io.ktor.util.date.WeekDay
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * Alarms the user create and edit from the alarm manager screen
@@ -26,8 +29,8 @@ sealed interface Alarm {
 
     sealed interface Schedule {
 
-        data class OneTime(val date: LocalDate): Schedule
-        data class Repeating(val weekDays: Set<WeekDay>): Schedule
+        data class OneTime(val date: LocalDate) : Schedule
+        data class Repeating(val weekDays: Set<WeekDay>) : Schedule
     }
 
     /**
@@ -97,4 +100,25 @@ data class SavedAlarm(
     override val solisTime: SolisTime,
     override val enabled: Boolean,
     override val schedule: Alarm.Schedule,
-) : Alarm
+) : Alarm {
+
+    /**
+     * Returns true if the alarm has no remaining occurrences to schedule.
+     * - [Alarm.Schedule.Repeating]: no week days selected.
+     * - [Alarm.Schedule.OneTime]: the date+civil time is in the past.
+     *   If the solis day cannot be resolved, returns false (conservative — let
+     *   [ScheduleNextAlarmUseCase] handle the exact expiry check).
+     */
+    fun SavedAlarm.isExpired(
+        solisDay: SolisDay,
+        nowDateTime: LocalDateTime,
+    ): Boolean {
+        return when (val schedule = this.schedule) {
+            is Alarm.Schedule.Repeating -> schedule.weekDays.isEmpty()
+            is Alarm.Schedule.OneTime -> {
+                val civilTime = solisTime.toCivilTime(solisDay)
+                schedule.date.atTime(civilTime).isBefore(nowDateTime)
+            }
+        }
+    }
+}

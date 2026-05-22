@@ -7,6 +7,6 @@ class GetCurrentLocationUseCase(
     private val locationRepository: LocationRepository,
 ) {
     suspend operator fun invoke(): SavedLocation? {
-        return locationRepository.getCurrentLocation()
+        return locationRepository.getCurrentLocationOrNull()
     }
 }
