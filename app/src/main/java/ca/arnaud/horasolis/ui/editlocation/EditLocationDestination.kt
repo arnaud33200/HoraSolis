@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.arnaud.horasolis.extension.PermissionResult
+import ca.arnaud.horasolis.ui.common.UnsavedChangesDialog
 import com.google.accompanist.permissions.rememberPermissionState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -26,6 +27,7 @@ fun EditLocationDestination(
         }
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val showUnsavedChangesDialog by viewModel.showUnsavedChangesDialog.collectAsStateWithLifecycle()
 
     val currentLocationPermissionState = rememberPermissionState(
         permission = Manifest.permission.ACCESS_FINE_LOCATION,
@@ -42,13 +44,22 @@ fun EditLocationDestination(
         viewModel.event.collect { event ->
             when (event) {
                 EditLocationEvent.SaveSuccess -> onBack()
+                EditLocationEvent.NavigateBack -> onBack()
             }
         }
     }
 
+    if (showUnsavedChangesDialog) {
+        UnsavedChangesDialog(
+            onSave = viewModel::onUnsavedChangesSaveClicked,
+            onDiscard = viewModel::onUnsavedChangesDiscardClicked,
+            onDismissRequest = viewModel::onUnsavedChangesDismissed,
+        )
+    }
+
     EditLocationScreen(
         model = state,
-        onBack = onBack,
+        onBack = viewModel::onBackClick,
         onSaveClick = viewModel::onSaveClick,
         onCurrentLocationClick = currentLocationPermissionState::launchPermissionRequest,
     )

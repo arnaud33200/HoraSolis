@@ -37,6 +37,11 @@
     <string name="time_item_night_label">Nuit %1$s</string>
     <string name="settings_saved_message">Horaire enregistré !</string>
     <string name="location_permission_required_toast_message">La permission de localisation is requis pour recuper votre position</string>
+    <string name="edit_alarm_screen_title">Modifier l\'alarme</string>
+    <string name="unsaved_changes_dialog_title">Enregistrer les modifications ?</string>
+    <string name="unsaved_changes_dialog_message">Voulez-vous enregistrer vos modifications ou abandonner vos changements ?</string>
+    <string name="unsaved_changes_dialog_save_button">Enregistrer</string>
+    <string name="unsaved_changes_dialog_discard_button">Abandonner</string>
     <string name="edit_location_screen_title">Modifier l\'adresse</string>
     <string name="location_name_label">Nom</string>
     <string name="latitude_label">Latitude</string>

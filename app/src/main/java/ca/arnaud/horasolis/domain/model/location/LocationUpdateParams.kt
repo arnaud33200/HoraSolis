@@ -9,7 +9,15 @@ data class LocationUpdateParams(
     val lat: UpdateParam<Double> = UpdateParam.Unchanged,
     val lng: UpdateParam<Double> = UpdateParam.Unchanged,
     val timZoneId: UpdateParam<String> = UpdateParam.Unchanged,
-)
+) {
+
+    fun hasChanged(): Boolean {
+        return name is UpdateParam.Update ||
+                lat is UpdateParam.Update ||
+                lng is UpdateParam.Update ||
+                timZoneId is UpdateParam.Update
+    }
+}
 
 fun SavedLocation.applyUpdates(updateParams: LocationUpdateParams): SavedLocation {
     return SavedLocation(

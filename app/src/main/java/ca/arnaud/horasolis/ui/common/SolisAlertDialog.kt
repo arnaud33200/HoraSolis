@@ -11,6 +11,7 @@ fun SolisAlertDialog(
     modifier: Modifier = Modifier,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    onDismissRequest: () -> Unit = onDismiss,
     title: String? = null,
     message: String,
     confirmLabel: String,
@@ -18,7 +19,7 @@ fun SolisAlertDialog(
 ) {
     AlertDialog(
         modifier = modifier,
-        onDismissRequest = onDismiss,
+        onDismissRequest = onDismissRequest,
         title = title?.let { { Text(text = it) } },
         text = { Text(text = message) },
         confirmButton = {

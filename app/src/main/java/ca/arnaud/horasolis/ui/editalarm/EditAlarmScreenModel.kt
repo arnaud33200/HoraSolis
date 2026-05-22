@@ -13,6 +13,7 @@ sealed interface EditAlarmScreenModel {
         val isDay: Boolean,
         val civilTime: String,
         val scheduleContent: ScheduleContent,
+        val saveEnabled: Boolean = false,
     ) : EditAlarmScreenModel
 }
 

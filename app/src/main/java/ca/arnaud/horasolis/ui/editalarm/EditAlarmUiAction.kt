@@ -24,4 +24,10 @@ sealed interface EditAlarmUiAction {
     data class DateSelected(val date: LocalDate) : EditAlarmUiAction
 
     data object SaveClicked : EditAlarmUiAction
+
+    data object BackClicked : EditAlarmUiAction
+
+    data object UnsavedChangesSaveClicked : EditAlarmUiAction
+    data object UnsavedChangesDiscardClicked : EditAlarmUiAction
+    data object UnsavedChangesDismissed : EditAlarmUiAction
 }

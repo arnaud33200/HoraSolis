@@ -44,6 +44,11 @@
     <string name="location_permission_required_toast_message">Location permission required to get accurate sun times</string>
 
 
+    <string name="edit_alarm_screen_title">Edit Alarm</string>
+    <string name="unsaved_changes_dialog_title">Save changes?</string>
+    <string name="unsaved_changes_dialog_message">Do you want to save your changes or discard your progress?</string>
+    <string name="unsaved_changes_dialog_save_button">Save</string>
+    <string name="unsaved_changes_dialog_discard_button">Discard</string>
     <string name="edit_location_screen_title">Edit Location</string>
     <string name="location_name_label">Name</string>
     <string name="latitude_label">Latitude</string>

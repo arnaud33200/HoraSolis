@@ -37,6 +37,7 @@ sealed interface EditLocationViewModelParams {
 
 sealed interface EditLocationEvent {
     data object SaveSuccess : EditLocationEvent
+    data object NavigateBack : EditLocationEvent
 }
 
 class EditLocationViewModel(
@@ -52,6 +53,9 @@ class EditLocationViewModel(
 
     private val _event = MutableSharedFlow<EditLocationEvent>(extraBufferCapacity = 1)
     val event: SharedFlow<EditLocationEvent> = _event
+
+    private val _showUnsavedChangesDialog = MutableStateFlow(false)
+    val showUnsavedChangesDialog: StateFlow<Boolean> = _showUnsavedChangesDialog
 
     private var locationUpdateParams = LocationUpdateParams()
     private var initialLocation: SavedLocation = SavedLocation.empty
@@ -70,11 +74,34 @@ class EditLocationViewModel(
         }
     }
 
+    fun onBackClick() {
+        if (locationUpdateParams.hasChanged()) {
+            _showUnsavedChangesDialog.value = true
+        } else {
+            viewModelScope.launch { _event.emit(EditLocationEvent.NavigateBack) }
+        }
+    }
+
+    fun onUnsavedChangesSaveClicked() {
+        _showUnsavedChangesDialog.value = true
+        saveLocation
+    }
+
+    fun onUnsavedChangesDiscardClicked() {
+        _showUnsavedChangesDialog.value = false
+        viewModelScope.launch { _event.emit(EditLocationEvent.NavigateBack) }
+    }
+
+    fun onUnsavedChangesDismissed() {
+        _showUnsavedChangesDialog.value = false
+    }
+
     fun onCurrentLocationClick(permissionResult: PermissionResult) {
         when (permissionResult) {
             PermissionResult.Granted -> viewModelScope.launch {
                 updateCurrentLocation()
             }
+
             PermissionResult.Denied,
             PermissionResult.PermanentlyDenied -> {
                 // TODO - show toast
@@ -86,7 +113,10 @@ class EditLocationViewModel(
         viewModelScope.launch {
             val saveParams = when (params) {
                 is EditLocationViewModelParams.New -> SaveLocationParams.New(locationUpdateParams)
-                is EditLocationViewModelParams.Edit -> SaveLocationParams.Edit(params.locationId, locationUpdateParams)
+                is EditLocationViewModelParams.Edit -> SaveLocationParams.Edit(
+                    params.locationId,
+                    locationUpdateParams
+                )
             }
             saveLocation(saveParams)
             _event.emit(EditLocationEvent.SaveSuccess)
@@ -102,6 +132,7 @@ class EditLocationViewModel(
                 state.value.fieldStates.latitude.setText(response.data.latitude.toString())
                 state.value.fieldStates.longitude.setText(response.data.longitude.toString())
             }
+
             is Response.Failure -> {
                 // TODO - show error
             }

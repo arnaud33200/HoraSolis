@@ -2,18 +2,15 @@ package ca.arnaud.horasolis.ui.editalarm
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -44,6 +41,7 @@ import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.EditDayOfWeeks
 import ca.arnaud.horasolis.ui.common.HoraTextField
+import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.persistentListOf
@@ -60,20 +58,21 @@ fun EditAlarmScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            Row(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .height(60.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        contentDescription = stringResource(R.string.back_content_description)
-                    )
-                }
-            }
+            HoraTopBar(
+                onBack = onBackClick,
+                title = stringResource(R.string.edit_alarm_screen_title),
+                actions = {
+                    IconButton(
+                        enabled = (model as? EditAlarmScreenModel.Content)?.saveEnabled == true,
+                        onClick = { onAction(EditAlarmUiAction.SaveClicked) },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                        )
+                    }
+                },
+            )
         },
     ) { innerPadding ->
         when (model) {
@@ -136,17 +135,7 @@ private fun EditAlarmContent(
             onAction = onAction,
         )
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(bottom = 8.dp),
-            onClick = { onAction(EditAlarmUiAction.SaveClicked) },
-        ) {
-            Text(stringResource(R.string.ok_button))
-        }
+        Spacer(modifier = Modifier.navigationBarsPadding())
     }
 }
 
@@ -296,6 +285,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             isDay = true,
             civilTime = "07:45",
             scheduleContent = ScheduleContent.Repeating(sampleDayOfWeeks),
+            saveEnabled = true,
         ),
         EditAlarmScreenModel.Content(
             hour = 9,

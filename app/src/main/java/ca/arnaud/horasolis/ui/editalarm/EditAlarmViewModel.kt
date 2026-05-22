@@ -38,6 +38,8 @@ internal sealed interface EditAlarmViewModelParams {
 sealed interface EditAlarmViewModelEvent {
 
     data object SaveSuccess : EditAlarmViewModelEvent
+
+    data object NavigateBack : EditAlarmViewModelEvent
 }
 
 internal class EditAlarmViewModel(
@@ -56,6 +58,9 @@ internal class EditAlarmViewModel(
 
     private val _datePickerModel = MutableStateFlow<DatePickerModel?>(null)
     val datePickerModel: StateFlow<DatePickerModel?> = _datePickerModel
+
+    private val _showUnsavedChangesDialog = MutableStateFlow(false)
+    val showUnsavedChangesDialog: StateFlow<Boolean> = _showUnsavedChangesDialog
 
     /**
      * text field state for the alarm label.
@@ -108,6 +113,13 @@ internal class EditAlarmViewModel(
                 EditAlarmUiAction.DatePickerDismissed -> _datePickerModel.value = null
                 is EditAlarmUiAction.DateSelected -> onDateSelected(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
+                EditAlarmUiAction.BackClicked -> onBackClicked()
+                EditAlarmUiAction.UnsavedChangesDiscardClicked -> onUnsavedChangesDiscardClicked()
+                EditAlarmUiAction.UnsavedChangesDismissed -> _showUnsavedChangesDialog.value = false
+                EditAlarmUiAction.UnsavedChangesSaveClicked -> {
+                    _showUnsavedChangesDialog.value = false
+                    saveAlarm()
+                }
             }
         }
     }
@@ -171,6 +183,19 @@ internal class EditAlarmViewModel(
 
     private suspend fun rebuildState() {
         _state.value = screenModelFactory.create(initialAlarm, updateParams)
+    }
+
+    private suspend fun onBackClicked() {
+        if (updateParams.hasChanged()) {
+            _showUnsavedChangesDialog.value = true
+        } else {
+            _event.emit(EditAlarmViewModelEvent.NavigateBack)
+        }
+    }
+
+    private suspend fun onUnsavedChangesDiscardClicked() {
+        _showUnsavedChangesDialog.value = false
+        _event.emit(EditAlarmViewModelEvent.NavigateBack)
     }
 
     private suspend fun saveAlarm() {

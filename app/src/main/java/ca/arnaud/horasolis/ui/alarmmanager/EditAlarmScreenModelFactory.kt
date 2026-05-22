@@ -52,6 +52,7 @@ class EditAlarmScreenModelFactory(
             isDay = updatedAlarm.solisTime.type == SolisTime.Type.Day,
             civilTime = civilTime.orEmpty(),
             scheduleContent = scheduleContent,
+            saveEnabled = true,
         )
     }
 

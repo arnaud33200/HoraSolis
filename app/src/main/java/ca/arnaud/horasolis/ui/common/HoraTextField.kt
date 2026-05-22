@@ -17,6 +17,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
@@ -49,7 +50,12 @@ fun HoraTextField(
         BasicTextField(
             state = state,
             modifier = modifier,
+            enabled = enabled,
             textStyle = mergedTextStyle,
+            cursorBrush = SolidColor(
+                if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            ),
+            interactionSource = interactionSource,
             decorator = @Composable { innerTextField ->
                 OutlinedTextFieldDefaults.DecorationBox(
                     value = state.text.toString(),

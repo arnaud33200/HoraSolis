@@ -9,7 +9,15 @@ data class AlarmUpdateParams(
     val solisTime: UpdateParam<SolisTime> = UpdateParam.Unchanged,
     val enabled: UpdateParam<Boolean> = UpdateParam.Unchanged,
     val schedule: UpdateParam<Alarm.Schedule> = UpdateParam.Unchanged,
-)
+) {
+
+    fun hasChanged(): Boolean {
+        return label is UpdateParam.Update ||
+                solisTime is UpdateParam.Update ||
+                enabled is UpdateParam.Update ||
+                schedule is UpdateParam.Update
+    }
+}
 
 fun Alarm.applyUpdates(
     updateParams: AlarmUpdateParams
