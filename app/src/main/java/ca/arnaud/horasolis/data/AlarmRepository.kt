@@ -50,6 +50,10 @@ class AlarmRepository(
         }
     }
 
+    suspend fun getAllAlarms(): List<SavedAlarm> {
+        return alarmDao.getAllAlarms().map { it.toSavedAlarm() }
+    }
+
     suspend fun getAlarmOrNull(id: Int): SavedAlarm? {
         return alarmDao.getAlarm(id)?.toSavedAlarm()
     }

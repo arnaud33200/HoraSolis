@@ -2,6 +2,11 @@ package ca.arnaud.horasolis
 
 import android.app.Application
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -15,6 +20,7 @@ import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.CheckAlarmScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
@@ -54,6 +60,7 @@ import ca.arnaud.horasolis.ui.onboarding.OnboardingViewModel
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerScreenModelFactory
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
+import kotlinx.coroutines.GlobalScope
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.bind
@@ -63,7 +70,9 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-class HoraSolisApplication : Application() {
+class HoraSolisApplication : Application(), KoinComponent {
+
+    private val checkAlarmSchedule: CheckAlarmScheduleUseCase by inject()
 
     val networkModule = module {
         singleOf(::KtorClient)
@@ -131,6 +140,7 @@ class HoraSolisApplication : Application() {
         factoryOf(::GetSolisDayUseCase)
         factoryOf(::GetSolisCivilTimeUseCase)
         factoryOf(::ScheduleNextAlarmUseCase)
+        factoryOf(::CheckAlarmScheduleUseCase)
         factoryOf(::SetAlarmRingingUseCase)
         factoryOf(::ClearAlarmRingingUseCase)
         factoryOf(::ObserveAlarmRingingUseCase)
@@ -170,6 +180,10 @@ class HoraSolisApplication : Application() {
 
         startKoin {
             modules(networkModule, appModule, localModule, domainModule, dataModule)
+        }
+
+        GlobalScope.launch {
+            checkAlarmSchedule()
         }
     }
 }

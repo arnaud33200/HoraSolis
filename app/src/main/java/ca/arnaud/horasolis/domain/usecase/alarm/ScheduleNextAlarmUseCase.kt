@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.domain.usecase.alarm
 
 import ca.arnaud.horasolis.data.AlarmRepository
+import ca.arnaud.horasolis.data.ScheduleRepository
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.flatMap
 import ca.arnaud.horasolis.domain.map
@@ -9,7 +10,6 @@ import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.service.SolisTimeAlarmScheduleParam
-import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -53,7 +53,7 @@ enum class ScheduleSolisAlarmError {
  */
 class ScheduleNextAlarmUseCase(
     private val alarmRepository: AlarmRepository,
-    private val alarmService: SolisTimeAlarmService,
+    private val scheduleRepository: ScheduleRepository,
     private val timeProvider: TimeProvider,
     private val getSolisDay: GetSolisDayUseCase,
 ) {
@@ -108,15 +108,15 @@ class ScheduleNextAlarmUseCase(
             alarmId = savedAlarm.id,
             dateTime = atDate.atTime(alarmTime),
         )
-        alarmService.scheduleAlarm(alarmParams)
+        scheduleRepository.scheduleAlarm(alarmParams)
         return Response.Success(Unit)
     }
 
-    private fun cancelAlarmWithError(
+    private suspend fun cancelAlarmWithError(
         savedAlarm: SavedAlarm,
         error: ScheduleSolisAlarmError,
     ): Response.Failure<ScheduleSolisAlarmError> {
-        alarmService.cancelAlarm(savedAlarm.id)
+        scheduleRepository.cancelAlarm(savedAlarm.id)
         return Response.Failure(error)
     }
 

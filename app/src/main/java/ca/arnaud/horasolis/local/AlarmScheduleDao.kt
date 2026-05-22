@@ -17,6 +17,9 @@ interface AlarmScheduleDao {
     @Query("DELETE FROM alarm_schedule")
     suspend fun deleteAllSchedules()
 
+    @Query("SELECT * FROM alarm_schedule WHERE alarmId = :alarmId LIMIT 1")
+    suspend fun getSchedule(alarmId: Int): AlarmScheduleEntity?
+
     @Query("SELECT * FROM alarm_schedule ORDER BY scheduledDateTime ASC")
     fun observeSchedules(): Flow<List<AlarmScheduleEntity>>
 }
