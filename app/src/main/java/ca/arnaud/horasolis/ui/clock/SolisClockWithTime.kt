@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.ui.clock
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.CircularProgressIndicator
@@ -126,16 +128,24 @@ private fun LocationDropdown(
 
     Box(modifier = modifier) {
         Row(
-            modifier = Modifier.clickable(enabled = locations.isNotEmpty()) { expanded = true },
+            modifier = Modifier
+                .padding(start = if (locations.isNotEmpty()) 12.dp else 0.dp)
+                .background(
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                )
+                .clickable(enabled = locations.isNotEmpty()) { expanded = true }
+                .padding(start = 8.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = location,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             if (locations.isNotEmpty()) {
+                Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     modifier = Modifier.size(16.dp),
                     imageVector = Icons.Default.ArrowDropDown,
@@ -165,9 +175,9 @@ class SolisClockDialogModelPreviewProvider : PreviewParameterProvider<SolisClock
     override val values = sequenceOf(
         SolisClockWithTimeModel.Content(
             time = SolisTimeModel(hours = "12 🌞 00", seconds = "30"),
-            location = "Toronto, Canada",
+            location = "ABBA - BAAB",
             locations = persistentListOf(
-                LocationDropdownItem(id = "1", name = "Toronto, Canada"),
+                LocationDropdownItem(id = "1", name = "ABBA - BAAB"),
                 LocationDropdownItem(id = "2", name = "Montreal"),
             ),
             clock = SolisClockModel(

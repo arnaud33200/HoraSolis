@@ -86,36 +86,28 @@ private fun AlarmListItem(
     ) {
         Column(
             modifier = Modifier.padding(
-                horizontal = 16.dp, vertical = 4.dp,
+                horizontal = 16.dp, vertical = 8.dp,
             ),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(
+
+                Text(
                     modifier = Modifier
                         .alpha(alpha)
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = item.title,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    item.label?.let {
-                        Text(
-                            text = it,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = LocalContentColor.current.copy(alpha = 0.6f),
-                        )
-                    }
-                }
+                        .weight(1f),
+                    text = item.title,
+                    style = MaterialTheme.typography.titleLarge,
+                )
+
                 Text(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .alpha(alpha),
                     text = item.civilTime,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                 )
                 IconButton(onClick = { onDelete(item) }) {
                     Icon(
@@ -132,11 +124,16 @@ private fun AlarmListItem(
                 )
             }
 
+            item.label?.let { label ->
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+
             item.schedule?.let { schedule ->
                 Text(
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .alpha(alpha),
+                    modifier = Modifier.alpha(alpha),
                     text = schedule,
                     style = MaterialTheme.typography.bodySmall,
                 )
@@ -167,6 +164,14 @@ private fun AlarmListPreview() {
                         civilTime = "11:00 PM",
                         isEnabled = false,
                         schedule = "Week-end"
+                    ),
+                    AlarmItemModel(
+                        id = 2,
+                        title = "10 \uD83C\uDF1A 54",
+                        label = null,
+                        civilTime = "11:00 PM",
+                        isEnabled = true,
+                        schedule = null,
                     ),
                     AlarmItemModel(
                         id = 3,
