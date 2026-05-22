@@ -5,6 +5,7 @@ import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.SolisTime.Type
 import io.ktor.util.date.WeekDay
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 class Converters {
@@ -20,6 +21,12 @@ class Converters {
 
     @TypeConverter
     fun toLocalTime(value: String?): LocalTime? = value?.let { LocalTime.parse(it) }
+
+    @TypeConverter
+    fun fromLocalDateTime(value: LocalDateTime?): String? = value?.toString()
+
+    @TypeConverter
+    fun toLocalDateTime(value: String?): LocalDateTime? = value?.let { LocalDateTime.parse(it) }
 
     @TypeConverter
     fun fromSolisTime(value: SolisTime?): String? = value?.let { time ->

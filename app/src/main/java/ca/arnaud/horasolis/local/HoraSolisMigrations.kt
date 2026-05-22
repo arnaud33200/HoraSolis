@@ -102,3 +102,24 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
         )
     }
 }
+
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `alarm_schedule` (
+                `alarmId` INTEGER NOT NULL,
+                `scheduledDateTime` TEXT NOT NULL,
+                PRIMARY KEY(`alarmId`)
+            )
+            """.trimIndent()
+        )
+    }
+}
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("DROP TABLE IF EXISTS `selected_times`")
+        db.execSQL("DROP TABLE IF EXISTS `schedule_settings`")
+    }
+}

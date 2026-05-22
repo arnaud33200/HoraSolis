@@ -8,15 +8,14 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [
-        SelectedTimeEntity::class,
-        ScheduleSettingsEntity::class,
         AlarmRingingEntity::class,
         LocationEntity::class,
         AlarmEntity::class,
         CurrentLocationEntity::class,
         SolisDayEntity::class,
+        AlarmScheduleEntity::class,
     ],
-    version = 7, // solis_day cache table
+    version = 9, // drop schedule_settings and selected_times tables
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
@@ -35,12 +34,14 @@ abstract class HoraSolisDatabase : RoomDatabase() {
                 MIGRATION_4_5,
                 MIGRATION_5_6,
                 MIGRATION_6_7,
+                MIGRATION_7_8,
+                MIGRATION_8_9,
             ).build()
         }
     }
 
-    abstract fun settingsWithTimesDao(): SettingsWithTimesDao
     abstract fun alarmDao(): AlarmDao
+    abstract fun alarmScheduleDao(): AlarmScheduleDao
     abstract fun locationDao(): LocationDao
     abstract fun solisDayDao(): SolisDayDao
 }
