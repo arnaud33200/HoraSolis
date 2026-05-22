@@ -25,8 +25,9 @@ class GetSolisDayUseCase(
 
     suspend operator fun invoke(
         atDate: LocalDate,
+        atLocation: SavedLocation? = null,
     ): Response<SolisDay, GetSolisDayError> {
-        val location = locationRepository.getCurrentLocationOrNull()
+        val location = atLocation ?: locationRepository.getCurrentLocationOrNull()
             ?: return Response.Failure(GetSolisDayError.NoLocation)
         val params = GetSolisDayParams(
             location = location,

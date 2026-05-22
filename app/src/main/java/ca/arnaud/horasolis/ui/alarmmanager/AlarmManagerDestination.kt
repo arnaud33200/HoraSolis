@@ -11,10 +11,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
+import ca.arnaud.horasolis.ui.clock.SolisClockViewModelParams
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AlarmManagerDestination(
@@ -27,7 +29,9 @@ fun AlarmManagerDestination(
     val viewModel: AlarmManagerViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val clockViewModel = koinViewModel<SolisClockViewModel>()
+    val clockViewModel = koinViewModel<SolisClockViewModel>(parameters = {
+        parametersOf(SolisClockViewModelParams.Default)
+    })
     val clockModel by clockViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {

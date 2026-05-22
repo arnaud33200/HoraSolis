@@ -1,9 +1,7 @@
 package ca.arnaud.horasolis.ui.clock
 
 import ca.arnaud.horasolis.domain.Response
-import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisDay
-import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
 import ca.arnaud.horasolis.extension.format
@@ -16,14 +14,20 @@ class SolisClockWithTimeModelFactory(
 
     fun create(
         response: Response<SolisDay, GetSolisDayError>,
-        allLocations: List<SavedLocation> = emptyList(),
-        alarms: List<SavedAlarm> = emptyList(),
+        solisClockData: SolisClockData,
+        params: SolisClockViewModelParams,
     ): SolisClockWithTimeModel {
         return when (response) {
             is Response.Success -> {
                 val solisDay = response.data
                 val solisTime = timeProvider.getNowSolisTime(solisDay)
-                val clockModel = clockModelFactory.create(solisDay, solisTime, alarms)
+                val alarms = when (params) {
+                    SolisClockViewModelParams.Default -> solisClockData.alarms
+                    SolisClockViewModelParams.ViewOnly -> emptyList()
+                }
+                val clockModel = clockModelFactory.create(
+                    solisDay, solisTime, alarms,
+                )
                 val location = solisDay.location.name.ifBlank { solisDay.location.timZoneId }
                 SolisClockWithTimeModel.Content(
                     time = SolisTimeModel(
@@ -32,7 +36,7 @@ class SolisClockWithTimeModelFactory(
                     ),
                     clock = clockModel,
                     location = location,
-                    locations = allLocations.map {
+                    locations = solisClockData.locations.map {
                         LocationDropdownItem(id = it.id, name = it.name.ifBlank { it.id })
                     }.toImmutableList(),
                 )
