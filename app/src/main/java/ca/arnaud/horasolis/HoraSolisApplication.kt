@@ -7,8 +7,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.data.LocationRepository
-import ca.arnaud.horasolis.data.ScheduleSettingsRepository
+import ca.arnaud.horasolis.data.ScheduleRepository
 import ca.arnaud.horasolis.data.SolisRepository
+import ca.arnaud.horasolis.domain.model.location.LocationValidator
 import ca.arnaud.horasolis.domain.provider.LocaleProvider
 import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
 import ca.arnaud.horasolis.domain.provider.TimeProvider
@@ -29,8 +30,6 @@ import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SaveLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
-import ca.arnaud.horasolis.domain.usecase.schedule.ObserveSelectedTimesUseCase
-import ca.arnaud.horasolis.domain.usecase.schedule.SavedTimeScheduleUseCase
 import ca.arnaud.horasolis.local.HoraSolisDatabase
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.service.LocationService
@@ -38,16 +37,15 @@ import ca.arnaud.horasolis.service.SolisTimeAlarmService
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmListModelFactory
 import ca.arnaud.horasolis.ui.alarmmanager.AlarmManagerViewModel
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
-import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
-import ca.arnaud.horasolis.domain.model.location.LocationValidator
-import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModel
-import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModelParams
-import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockModelFactory
 import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
+import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModelFactory
 import ca.arnaud.horasolis.ui.common.DateFormatter
+import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
+import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModel
+import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModelParams
 import ca.arnaud.horasolis.ui.locationmanager.LocationManagerScreenModelFactory
 import ca.arnaud.horasolis.ui.locationmanager.LocationManagerViewModel
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
@@ -55,8 +53,6 @@ import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.onboarding.OnboardingViewModel
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerScreenModelFactory
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerViewModel
-import ca.arnaud.horasolis.ui.timelist.TimeListScreenModelFactory
-import ca.arnaud.horasolis.ui.timelist.TimeListViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.context.startKoin
@@ -91,10 +87,6 @@ class HoraSolisApplication : Application() {
 
         // Onboarding
         viewModelOf(::OnboardingViewModel)
-
-        // Time List
-        viewModelOf(::TimeListViewModel)
-        factoryOf(::TimeListScreenModelFactory)
 
         // Location Manager
         viewModelOf(::LocationManagerViewModel)
@@ -138,9 +130,7 @@ class HoraSolisApplication : Application() {
     val domainModule = module {
         factoryOf(::GetSolisDayUseCase)
         factoryOf(::GetSolisCivilTimeUseCase)
-        factoryOf(::SavedTimeScheduleUseCase)
         factoryOf(::ScheduleNextAlarmUseCase)
-        factoryOf(::ObserveSelectedTimesUseCase)
         factoryOf(::SetAlarmRingingUseCase)
         factoryOf(::ClearAlarmRingingUseCase)
         factoryOf(::ObserveAlarmRingingUseCase)
@@ -166,7 +156,7 @@ class HoraSolisApplication : Application() {
     val dataModule = module {
         singleOf(::SolisRepository)
         singleOf(::AlarmRepository)
-        singleOf(::ScheduleSettingsRepository)
+        singleOf(::ScheduleRepository)
         singleOf(::LocationRepository)
         single { get<Context>().userDataStore }
     }
