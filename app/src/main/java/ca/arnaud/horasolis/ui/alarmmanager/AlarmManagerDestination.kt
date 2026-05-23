@@ -23,6 +23,7 @@ fun AlarmManagerDestination(
     onNavigateToEditAlarm: (alarmId: Int?) -> Unit,
     onNavigateToLocationManager: () -> Unit,
     onNavigateToSolisViewer: () -> Unit,
+    onNavigateToScheduleViewer: () -> Unit,
 ) {
     NotificationPermissionRequest()
 
@@ -46,6 +47,7 @@ fun AlarmManagerDestination(
         model = state,
         onSnackbarDismissed = {},
         onSolisViewerClick = onNavigateToSolisViewer,
+        onScheduleViewerClick = onNavigateToScheduleViewer,
         onLocationClick = onNavigateToLocationManager,
         onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
         onAddClick = viewModel::onAddClick,

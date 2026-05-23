@@ -102,6 +102,13 @@ data class SavedAlarm(
     override val schedule: Alarm.Schedule,
 ) : Alarm {
 
+    fun isActive(
+        solisDay: SolisDay,
+        nowDateTime: LocalDateTime,
+    ): Boolean {
+        return enabled && isExpired(solisDay, nowDateTime).not()
+    }
+
     /**
      * Returns true if the alarm has no remaining occurrences to schedule.
      * - [Alarm.Schedule.Repeating]: no week days selected.
@@ -109,7 +116,7 @@ data class SavedAlarm(
      *   If the solis day cannot be resolved, returns false (conservative — let
      *   [ScheduleNextAlarmUseCase] handle the exact expiry check).
      */
-    fun SavedAlarm.isExpired(
+    fun isExpired(
         solisDay: SolisDay,
         nowDateTime: LocalDateTime,
     ): Boolean {

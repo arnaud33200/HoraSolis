@@ -22,4 +22,7 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object SolisViewer : AppRoute
+
+    @Serializable
+    data object ScheduleViewer : AppRoute
 }

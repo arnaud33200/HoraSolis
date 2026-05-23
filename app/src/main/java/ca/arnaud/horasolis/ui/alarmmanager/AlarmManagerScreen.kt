@@ -36,6 +36,7 @@ import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModel
 import ca.arnaud.horasolis.ui.clock.SolisClockModel
 import ca.arnaud.horasolis.ui.clock.SolisTimeModel
 import ca.arnaud.horasolis.ui.common.HoraTopBar
+import ca.arnaud.horasolis.ui.common.onQuickClicks
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import ca.arnaud.horasolis.ui.theme.Typography
 import kotlinx.collections.immutable.persistentListOf
@@ -63,6 +64,7 @@ fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
     onSnackbarDismissed: () -> Unit,
     onSolisViewerClick: () -> Unit,
+    onScheduleViewerClick: () -> Unit,
     onLocationClick: () -> Unit,
     onAddClick: () -> Unit,
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
@@ -124,6 +126,7 @@ fun AlarmManagerScreen(
                 onAlarmToggleClick = onAlarmToggleClick,
                 clockModel = clockModel,
                 onLocationSelected = onLocationSelected,
+                onScheduleViewerClick = onScheduleViewerClick,
             )
 
             is AlarmManagerScreenModel.MissingLocation -> MissingLocation(
@@ -183,6 +186,7 @@ private fun Content(
     onAlarmDeleteClick: (AlarmItemModel) -> Unit,
     onAlarmItemClick: (AlarmItemModel) -> Unit,
     onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
+    onScheduleViewerClick: () -> Unit,
     model: AlarmManagerScreenModel.Content,
     clockModel: SolisClockWithTimeModel,
     onLocationSelected: (String) -> Unit,
@@ -192,7 +196,9 @@ private fun Content(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         SolisClockWithTime(
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier
+                .width(200.dp)
+                .onQuickClicks(count = 5, onQuickClicks = onScheduleViewerClick),
             model = clockModel,
             onLocationSelected = onLocationSelected,
         )
@@ -282,6 +288,7 @@ private fun AlarmManagerScreenPreview() {
             ),
             onSnackbarDismissed = {},
             onSolisViewerClick = {},
+            onScheduleViewerClick = {},
             onLocationClick = {},
             onAlarmDeleteClick = {},
             onAddClick = {},

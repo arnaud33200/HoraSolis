@@ -94,4 +94,10 @@
 
     <string name="solis_viewer_screen_title">Solis Viewer</string>
     <string name="generic_now">Now Date</string>
+
+    <string name="schedule_viewer_screen_title">Schedules</string>
+    <string name="schedule_viewer_empty_message">No schedules saved.</string>
+    <string name="schedule_viewer_alarm_id_label">Alarm #%1$d</string>
+    <string name="schedule_viewer_date_today">Today</string>
+    <string name="schedule_viewer_date_tomorrow">Tomorrow</string>
 </resources>

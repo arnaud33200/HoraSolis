@@ -87,4 +87,10 @@
 
     <string name="solis_viewer_screen_title">Explorateur Solis</string>
     <string name="generic_now">Maintenant</string>
+
+    <string name="schedule_viewer_screen_title">Horaires</string>
+    <string name="schedule_viewer_empty_message">Aucun horaire enregistré.</string>
+    <string name="schedule_viewer_alarm_id_label">Alarme #%1$d</string>
+    <string name="schedule_viewer_date_today">Aujourd\'hui</string>
+    <string name="schedule_viewer_date_tomorrow">Demain</string>
 </resources>

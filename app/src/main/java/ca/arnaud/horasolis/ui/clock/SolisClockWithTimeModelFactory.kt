@@ -24,6 +24,8 @@ class SolisClockWithTimeModelFactory(
                 val alarms = when (params) {
                     SolisClockViewModelParams.Default -> solisClockData.alarms
                     SolisClockViewModelParams.ViewOnly -> emptyList()
+                }.filter { savedAlarm ->
+                    savedAlarm.isActive(solisDay, timeProvider.getNowDateTime())
                 }
                 val clockModel = clockModelFactory.create(
                     solisDay, solisTime, alarms,
