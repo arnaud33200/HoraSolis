@@ -123,3 +123,9 @@ val MIGRATION_8_9 = object : Migration(8, 9) {
         db.execSQL("DROP TABLE IF EXISTS `schedule_settings`")
     }
 }
+
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `alarm` ADD COLUMN `soundUri` TEXT DEFAULT NULL")
+    }
+}

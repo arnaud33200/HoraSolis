@@ -17,6 +17,7 @@ data class AlarmEntity(
     val enabled: Boolean = true,
     val onForWeekDays: Set<WeekDay>? = null,
     val onTimeDate: LocalDate? = null,
+    val soundUri: String? = null,
 ) {
 
     fun toSavedAlarm(
@@ -32,6 +33,7 @@ data class AlarmEntity(
             solisTime = time,
             enabled = enabled,
             schedule = schedule,
+            soundUri = soundUri,
         )
     }
 }
@@ -47,6 +49,7 @@ fun Alarm.toEntity(): AlarmEntity {
             enabled = enabled,
             onForWeekDays = weekDays,
             onTimeDate = oneTimeDate,
+            soundUri = soundUri,
         )
 
         is NewAlarm -> AlarmEntity(
@@ -55,6 +58,7 @@ fun Alarm.toEntity(): AlarmEntity {
             enabled = enabled,
             onForWeekDays = weekDays,
             onTimeDate = oneTimeDate,
+            soundUri = soundUri,
         )
     }
 }

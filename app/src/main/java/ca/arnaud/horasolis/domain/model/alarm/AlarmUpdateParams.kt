@@ -9,13 +9,15 @@ data class AlarmUpdateParams(
     val solisTime: UpdateParam<SolisTime> = UpdateParam.Unchanged,
     val enabled: UpdateParam<Boolean> = UpdateParam.Unchanged,
     val schedule: UpdateParam<Alarm.Schedule> = UpdateParam.Unchanged,
+    val soundUri: UpdateParam<String?> = UpdateParam.Unchanged,
 ) {
 
     fun hasChanged(): Boolean {
         return label is UpdateParam.Update ||
                 solisTime is UpdateParam.Update ||
                 enabled is UpdateParam.Update ||
-                schedule is UpdateParam.Update
+                schedule is UpdateParam.Update ||
+                soundUri is UpdateParam.Update
     }
 }
 
@@ -28,6 +30,7 @@ fun Alarm.applyUpdates(
             solisTime = updateParams.solisTime.getUpdateDataOrDefault(this.solisTime),
             enabled = updateParams.enabled.getUpdateDataOrDefault(this.enabled),
             schedule = updateParams.schedule.getUpdateDataOrDefault(this.schedule),
+            soundUri = updateParams.soundUri.getUpdateDataOrDefault(this.soundUri),
         )
 
         is SavedAlarm -> SavedAlarm(
@@ -36,6 +39,7 @@ fun Alarm.applyUpdates(
             solisTime = updateParams.solisTime.getUpdateDataOrDefault(this.solisTime),
             enabled = updateParams.enabled.getUpdateDataOrDefault(this.enabled),
             schedule = updateParams.schedule.getUpdateDataOrDefault(this.schedule),
+            soundUri = updateParams.soundUri.getUpdateDataOrDefault(this.soundUri),
         )
     }
 }

@@ -28,11 +28,18 @@ fun EditAlarmDestination(
     val datePickerParams by viewModel.datePickerModel.collectAsStateWithLifecycle()
     val showUnsavedChangesDialog by viewModel.showUnsavedChangesDialog.collectAsStateWithLifecycle()
 
+    val ringtoneLauncher = rememberRingtonePickerLauncher { result ->
+        viewModel.onAction(EditAlarmUiAction.SoundResult(result))
+    }
+
     LaunchedEffect(viewModel) {
         viewModel.event.collect { event ->
             when (event) {
                 EditAlarmViewModelEvent.SaveSuccess -> onBack()
                 EditAlarmViewModelEvent.NavigateBack -> onBack()
+                is EditAlarmViewModelEvent.LaunchRingtonePicker -> {
+                    ringtoneLauncher.launch(event.currentUri)
+                }
             }
         }
     }

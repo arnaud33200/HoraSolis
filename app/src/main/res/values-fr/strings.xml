@@ -68,6 +68,9 @@
     <string name="clock_content_description">Heure Solis</string>
 
     <string name="alarm_label">Nom</string>
+    <string name="alarm_sound_label">Son</string>
+    <string name="alarm_sound_default">Défaut</string>
+    <string name="alarm_sound_change">Modifier</string>
 
     <string name="alarm_schedule_every_day">Tous les jours</string>
     <string name="alarm_schedule_weekend">Week-end</string>

@@ -48,6 +48,7 @@ import ca.arnaud.horasolis.ui.clock.SolisClockViewModel
 import ca.arnaud.horasolis.ui.clock.SolisClockWithTimeModelFactory
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
+import ca.arnaud.horasolis.ui.common.RingtoneProvider
 import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmViewModel
 import ca.arnaud.horasolis.ui.editlocation.EditLocationViewModel
@@ -84,6 +85,7 @@ class HoraSolisApplication : Application(), KoinComponent {
 
         // General
         singleOf(::StringProvider)
+        singleOf(::RingtoneProvider)
         singleOf(::DateFormatter)
 
         // Service & Worker

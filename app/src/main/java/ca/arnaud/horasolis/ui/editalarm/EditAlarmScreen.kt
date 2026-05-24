@@ -1,7 +1,9 @@
 package ca.arnaud.horasolis.ui.editalarm
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -133,6 +135,15 @@ private fun EditAlarmContent(
             modifier = Modifier.fillMaxWidth(),
             scheduleContent = model.scheduleContent,
             onAction = onAction,
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+        SoundSection(
+            soundName = model.soundName,
+            onPickerClicked = { onAction(EditAlarmUiAction.SoundPickerClicked) },
         )
 
         Spacer(modifier = Modifier.navigationBarsPadding())
@@ -268,6 +279,36 @@ fun CustomTimePicker(
     }
 }
 
+@Composable
+private fun SoundSection(
+    modifier: Modifier = Modifier,
+    soundName: String,
+    onPickerClicked: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column {
+            Text(
+                text = stringResource(R.string.alarm_sound_label),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = soundName,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+        TextButton(onClick = onPickerClicked) {
+            Text(stringResource(R.string.alarm_sound_change))
+        }
+    }
+}
+
 private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlarmScreenModel> {
 
     private val sampleDayOfWeeks = WeekDay.entries.map { weekDay ->
@@ -285,6 +326,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             isDay = true,
             civilTime = "07:45",
             scheduleContent = ScheduleContent.Repeating(sampleDayOfWeeks),
+            soundName = "Cesium",
             saveEnabled = true,
         ),
         EditAlarmScreenModel.Content(
@@ -293,6 +335,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             isDay = false,
             civilTime = "21:12",
             scheduleContent = ScheduleContent.OneTime(selectedDate = "May 20"),
+            soundName = "Default",
         ),
         EditAlarmScreenModel.Content(
             hour = 3,
@@ -300,6 +343,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             isDay = true,
             civilTime = "06:00",
             scheduleContent = ScheduleContent.Repeating(persistentListOf()),
+            soundName = "Default",
         ),
         EditAlarmScreenModel.Loading,
     )

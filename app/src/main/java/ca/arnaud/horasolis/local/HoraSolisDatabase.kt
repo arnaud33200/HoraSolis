@@ -15,7 +15,7 @@ import androidx.room.TypeConverters
         SolisDayEntity::class,
         AlarmScheduleEntity::class,
     ],
-    version = 9, // drop schedule_settings and selected_times tables
+    version = 10, // add soundUri column to alarm table
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
@@ -36,6 +36,7 @@ abstract class HoraSolisDatabase : RoomDatabase() {
                 MIGRATION_6_7,
                 MIGRATION_7_8,
                 MIGRATION_8_9,
+                MIGRATION_9_10,
             ).build()
         }
     }

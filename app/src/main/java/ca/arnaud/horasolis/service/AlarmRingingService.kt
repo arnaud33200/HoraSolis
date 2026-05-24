@@ -12,14 +12,18 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
-import android.os.Build
+import android.net.Uri
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import ca.arnaud.horasolis.R
+import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
+import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
+import ca.arnaud.horasolis.extension.format
 import ca.arnaud.horasolis.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,15 +36,15 @@ class AlarmRingingService : Service() {
     companion object {
         private const val NOTIFICATION_ID = 1001
         private const val NOTIFICATION_CHANNEL_ID = "alarm_ringing_channel"
-        private const val EXTRA_PARAMS = "alarm_ringing_params"
+        private const val EXTRA_ALARM_ID = "alarm_ringing_alarm_id"
         private const val ACTION_STOP_ALARM = "STOP_ALARM"
 
         fun startService(
             context: Context,
-            params: SolisTimeAlarmScheduleParam,
+            alarmId: Int,
         ) {
             val serviceIntent = Intent(context, AlarmRingingService::class.java)
-            serviceIntent.putExtra(EXTRA_PARAMS, params)
+            serviceIntent.putExtra(EXTRA_ALARM_ID, alarmId)
             context.startForegroundService(serviceIntent)
         }
 
@@ -48,6 +52,10 @@ class AlarmRingingService : Service() {
             val serviceIntent = Intent(context, AlarmRingingService::class.java)
             return context.stopService(serviceIntent)
         }
+    }
+
+    private val getAlarm: GetAlarmUseCase by lazy {
+        KoinJavaComponent.get(GetAlarmUseCase::class.java)
     }
 
     private val setAlarmRinging: SetAlarmRingingUseCase by lazy {
@@ -68,21 +76,18 @@ class AlarmRingingService : Service() {
             return START_NOT_STICKY
         }
 
-        val params = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.getParcelableExtra(EXTRA_PARAMS, SolisTimeAlarmScheduleParam::class.java)
-        } else {
-            intent?.getParcelableExtra(EXTRA_PARAMS)
-        }
-
-        if (params == null) {
+        val alarmId = intent?.getIntExtra(EXTRA_ALARM_ID, -1)?.takeIf { it != -1 }
+        if (alarmId == null) {
             stopSelf()
             return START_NOT_STICKY
         }
 
-        startForeground(NOTIFICATION_ID, createNotification())
-
         if (mediaPlayer?.isPlaying != true) {
-            playAlarmSound(params)
+            scope.launch {
+                val alarm = getAlarm(GetAlarmParams.Existing(alarmId)).getDataOrNull()
+                startForeground(NOTIFICATION_ID, createNotification(alarm))
+                playAlarmSound(alarmId, alarm)
+            }
         }
         return START_STICKY
     }
@@ -97,7 +102,10 @@ class AlarmRingingService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    private fun playAlarmSound(params: SolisTimeAlarmScheduleParam) {
+    private suspend fun playAlarmSound(
+        alarmId: Int,
+        alarm: Alarm?,
+    ) {
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setLegacyStreamType(AudioManager.STREAM_ALARM)
@@ -105,18 +113,16 @@ class AlarmRingingService : Service() {
             .build()
 
         requestAudioFocus(audioAttributes)
-        playAlarmRingtone(audioAttributes)
-        scope.launch {
-            val alarmId = params.alarmId
-            val setAlarmRingingParams = SetAlarmRingingParams(alarmId = alarmId)
-            setAlarmRinging(setAlarmRingingParams).onFailure { error ->
-                stopSelf()
-            }
+        playAlarmRingtone(audioAttributes, alarm?.soundUri)
+
+        setAlarmRinging(SetAlarmRingingParams(alarmId = alarmId)).onFailure {
+            stopSelf()
         }
     }
 
-    private fun playAlarmRingtone(audioAttributes: AudioAttributes) {
-        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+    private fun playAlarmRingtone(audioAttributes: AudioAttributes, soundUriString: String?) {
+        val alarmUri = soundUriString?.let { Uri.parse(it) }
+            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(audioAttributes)
@@ -135,7 +141,7 @@ class AlarmRingingService : Service() {
         audioManager.requestAudioFocus(request)
     }
 
-    private fun createNotification(): Notification {
+    private fun createNotification(alarm: Alarm?): Notification {
         val channelId = NOTIFICATION_CHANNEL_ID
         val channel = NotificationChannel(
             channelId,
@@ -145,8 +151,12 @@ class AlarmRingingService : Service() {
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         manager.createNotificationChannel(channel)
 
+        val title = alarm?.let {
+            getString(R.string.ringing_alarm_dialog_title, it.solisTime.format())
+        } ?: getString(R.string.alarm_ringing_notification_title)
+
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle(getString(R.string.alarm_ringing_notification_title))
+            .setContentTitle(title)
             .setContentText(getString(R.string.alarm_ringing_notification_text))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -1,24 +1,29 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
+import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
+import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
 import ca.arnaud.horasolis.domain.model.alarm.AlarmUpdateParams
 import ca.arnaud.horasolis.domain.model.alarm.applyUpdates
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
+import ca.arnaud.horasolis.ui.common.RingtoneProvider
+import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmScreenModel
 import ca.arnaud.horasolis.ui.editalarm.ScheduleContent
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.toImmutableList
-import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
 
 class EditAlarmScreenModelFactory(
     private val getSolisDay: GetSolisDayUseCase,
+    private val stringProvider: StringProvider,
     private val timeProvider: TimeProvider,
     private val dateFormatter: DateFormatter,
+    private val ringtoneProvider: RingtoneProvider,
 ) {
 
     private var solisDay: SolisDay? = null
@@ -46,12 +51,16 @@ class EditAlarmScreenModelFactory(
                 selectedDate = dateFormatter.formatDate(schedule.date),
             )
         }
+        val soundName = ringtoneProvider.getNameOrNull(updatedAlarm.soundUri)
+            ?: stringProvider.getString(R.string.alarm_sound_default)
+
         return EditAlarmScreenModel.Content(
             hour = updatedAlarm.solisTime.hour,
             minute = updatedAlarm.solisTime.minute,
             isDay = updatedAlarm.solisTime.type == SolisTime.Type.Day,
             civilTime = civilTime.orEmpty(),
             scheduleContent = scheduleContent,
+            soundName = soundName,
             saveEnabled = true,
         )
     }

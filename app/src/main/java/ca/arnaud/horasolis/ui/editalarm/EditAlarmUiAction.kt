@@ -23,6 +23,10 @@ sealed interface EditAlarmUiAction {
 
     data class DateSelected(val date: LocalDate) : EditAlarmUiAction
 
+    data object SoundPickerClicked : EditAlarmUiAction
+
+    data class SoundResult(val result: RingtonePickerResult) : EditAlarmUiAction
+
     data object SaveClicked : EditAlarmUiAction
 
     data object BackClicked : EditAlarmUiAction

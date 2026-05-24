@@ -17,9 +17,9 @@ class AlarmReceiver : BroadcastReceiver() {
             ROMAN_TIME_ALARM_SERVICE_PARAM_EXTRA_KEY
         ) ?: return
 
-        AlarmRingingService.startService(context, param)
+        AlarmRingingService.startService(context, param.alarmId)
 
-        ScheduleNextAlarmWorker.Companion.enqueue(
+        ScheduleNextAlarmWorker.enqueue(
             context = context,
             param = ScheduleNextAlarmWorkerParam(
                 number = param.alarmId,

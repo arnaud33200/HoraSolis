@@ -19,6 +19,8 @@ import java.time.LocalDateTime
  *  When enabled, it will automatically schedule
  * @property schedule The schedule of the alarm, either a one-time date or repeating week days.
  *  When [Alarm.Schedule.Repeating] with empty week days, the alarm would not ring on any day.
+ * @property soundUri URI string for a custom ringtone.
+ *  When null, the default alarm sound will be used.
  */
 sealed interface Alarm {
 
@@ -26,6 +28,7 @@ sealed interface Alarm {
     val solisTime: SolisTime
     val enabled: Boolean
     val schedule: Schedule
+    val soundUri: String?
 
     sealed interface Schedule {
 
@@ -64,6 +67,7 @@ sealed interface Alarm {
                 solisTime = solisTime,
                 enabled = this.enabled,
                 schedule = schedule,
+                soundUri = this.soundUri,
             )
 
             is SavedAlarm -> SavedAlarm(
@@ -72,6 +76,7 @@ sealed interface Alarm {
                 solisTime = solisTime,
                 enabled = this.enabled,
                 schedule = schedule,
+                soundUri = this.soundUri,
             )
         }
     }
@@ -83,6 +88,7 @@ sealed interface Alarm {
             solisTime = SolisTime(0, 0, 0, SolisTime.Type.Day),
             enabled = false,
             schedule = Schedule.Repeating(emptySet()),
+            soundUri = null,
         )
     }
 }
@@ -92,6 +98,7 @@ data class NewAlarm(
     override val solisTime: SolisTime,
     override val enabled: Boolean,
     override val schedule: Alarm.Schedule,
+    override val soundUri: String? = null,
 ) : Alarm
 
 data class SavedAlarm(
@@ -100,6 +107,7 @@ data class SavedAlarm(
     override val solisTime: SolisTime,
     override val enabled: Boolean,
     override val schedule: Alarm.Schedule,
+    override val soundUri: String? = null,
 ) : Alarm {
 
     fun isActive(

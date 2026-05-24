@@ -40,6 +40,8 @@ sealed interface EditAlarmViewModelEvent {
     data object SaveSuccess : EditAlarmViewModelEvent
 
     data object NavigateBack : EditAlarmViewModelEvent
+
+    data class LaunchRingtonePicker(val currentUri: String?) : EditAlarmViewModelEvent
 }
 
 internal class EditAlarmViewModel(
@@ -112,6 +114,8 @@ internal class EditAlarmViewModel(
                 EditAlarmUiAction.DatePickerClicked -> onDatePickerClicked()
                 EditAlarmUiAction.DatePickerDismissed -> _datePickerModel.value = null
                 is EditAlarmUiAction.DateSelected -> onDateSelected(action)
+                EditAlarmUiAction.SoundPickerClicked -> onSoundPickerClicked()
+                is EditAlarmUiAction.SoundResult -> onSoundResult(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
                 EditAlarmUiAction.BackClicked -> onBackClicked()
                 EditAlarmUiAction.UnsavedChangesDiscardClicked -> onUnsavedChangesDiscardClicked()
@@ -163,6 +167,24 @@ internal class EditAlarmViewModel(
             schedule = UpdateParam.of(initialAlarm.schedule, Schedule.OneTime(action.date))
         )
         rebuildState()
+    }
+
+    private suspend fun onSoundPickerClicked() {
+        val currentUri = initialAlarm.applyUpdates(updateParams).soundUri
+        _event.emit(EditAlarmViewModelEvent.LaunchRingtonePicker(currentUri))
+    }
+
+    private suspend fun onSoundResult(action: EditAlarmUiAction.SoundResult) {
+        when (val result = action.result) {
+            is RingtonePickerResult.Data -> {
+                updateParams = updateParams.copy(
+                    soundUri = UpdateParam.of(initialAlarm.soundUri, result.uri)
+                )
+                rebuildState()
+            }
+            RingtonePickerResult.Cancelled -> Unit
+            RingtonePickerResult.Error -> Unit
+        }
     }
 
     private suspend fun onSolisTimeChanged(action: SolisTimeAction) {
