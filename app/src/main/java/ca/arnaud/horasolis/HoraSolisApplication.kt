@@ -2,17 +2,13 @@ package ca.arnaud.horasolis
 
 import android.app.Application
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.ScheduleRepository
+import ca.arnaud.horasolis.data.SettingsRepository
 import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.model.location.LocationValidator
 import ca.arnaud.horasolis.domain.provider.LocaleProvider
@@ -23,10 +19,11 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CheckAlarmScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
-import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.SaveSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
@@ -60,11 +57,15 @@ import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.onboarding.OnboardingViewModel
 import ca.arnaud.horasolis.ui.scheduleviewer.ScheduleViewerViewModel
+import ca.arnaud.horasolis.ui.settings.SettingsViewModel
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerScreenModelFactory
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerViewModel
 import ca.arnaud.horasolis.worker.ScheduleNextAlarmWorker
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.koin.androidx.workmanager.dsl.workerOf
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -141,6 +142,9 @@ class HoraSolisApplication : Application(), KoinComponent {
 
         // Schedule Viewer
         viewModelOf(::ScheduleViewerViewModel)
+
+        // Settings
+        viewModelOf(::SettingsViewModel)
     }
 
     val domainModule = module {
@@ -156,7 +160,8 @@ class HoraSolisApplication : Application(), KoinComponent {
         factoryOf(::DeleteAlarmUseCase)
 
         factoryOf(::GetAlarmUseCase)
-        factoryOf(::GetAlarmSettingsUseCase)
+        factoryOf(::GetSettingsUseCase)
+        factoryOf(::SaveSettingsUseCase)
 
         // location
         factoryOf(::DeleteLocationUseCase)
@@ -174,6 +179,7 @@ class HoraSolisApplication : Application(), KoinComponent {
     val dataModule = module {
         singleOf(::SolisRepository)
         singleOf(::AlarmRepository)
+        singleOf(::SettingsRepository)
         singleOf(::ScheduleRepository)
         singleOf(::LocationRepository)
         single { get<Context>().userDataStore }

@@ -14,8 +14,9 @@ import androidx.room.TypeConverters
         CurrentLocationEntity::class,
         SolisDayEntity::class,
         AlarmScheduleEntity::class,
+        SettingsEntity::class,
     ],
-    version = 11, // add vibrate column to alarm table
+    version = 12, // add settings table
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
@@ -38,6 +39,7 @@ abstract class HoraSolisDatabase : RoomDatabase() {
                 MIGRATION_8_9,
                 MIGRATION_9_10,
                 MIGRATION_10_11,
+                MIGRATION_11_12,
             ).build()
         }
     }
@@ -46,4 +48,5 @@ abstract class HoraSolisDatabase : RoomDatabase() {
     abstract fun alarmScheduleDao(): AlarmScheduleDao
     abstract fun locationDao(): LocationDao
     abstract fun solisDayDao(): SolisDayDao
+    abstract fun settingsDao(): SettingsDao
 }

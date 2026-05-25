@@ -6,6 +6,7 @@
     <string name="close_button">Close</string>
 
     <string name="location_content_description">Location</string>
+    <string name="settings_content_description">Settings</string>
     <string name="back_content_description">Back</string>
     <string name="clock_content_description">Solis Clock</string>
     <string name="solis_clock_error_message">Failed to load Solis clock data</string>
@@ -104,4 +105,6 @@
     <string name="schedule_viewer_alarm_id_label">Alarm #%1$d</string>
     <string name="schedule_viewer_date_today">Today</string>
     <string name="schedule_viewer_date_tomorrow">Tomorrow</string>
+
+    <string name="settings_screen_title">Alarm Settings</string>
 </resources>

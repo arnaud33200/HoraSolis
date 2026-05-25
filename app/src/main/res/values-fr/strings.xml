@@ -5,6 +5,7 @@
     <string name="cancel_button">Annuler</string>
     <string name="close_button">Fermer</string>
     <string name="location_content_description">Localisation</string>
+    <string name="settings_content_description">Réglages</string>
 
     <string name="solis_clock_error_message">Charger l\'heure solis a échoué</string>
     <string name="city_toronto">Toronto</string>
@@ -97,4 +98,6 @@
     <string name="schedule_viewer_alarm_id_label">Alarme #%1$d</string>
     <string name="schedule_viewer_date_today">Aujourd\'hui</string>
     <string name="schedule_viewer_date_tomorrow">Demain</string>
+
+    <string name="settings_screen_title">Réglages alarmes</string>
 </resources>

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -62,23 +63,15 @@ sealed interface AlarmManagerScreenModel {
 @Composable
 fun AlarmManagerScreen(
     modifier: Modifier = Modifier,
-    onSnackbarDismissed: () -> Unit,
-    onSolisViewerClick: () -> Unit,
-    onScheduleViewerClick: () -> Unit,
-    onLocationClick: () -> Unit,
-    onAddClick: () -> Unit,
-    onAlarmDeleteClick: (AlarmItemModel) -> Unit,
-    onAlarmItemClick: (AlarmItemModel) -> Unit,
-    onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
-    model: AlarmManagerScreenModel,
+    onAction: (AlarmManagerUiAction) -> Unit,
     clockModel: SolisClockWithTimeModel = SolisClockWithTimeModel.Loading,
-    onLocationSelected: (String) -> Unit = {},
+    model: AlarmManagerScreenModel,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(model.snackMessage) {
         model.snackMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
-            onSnackbarDismissed()
+            onAction(AlarmManagerUiAction.SnackbarDismissed)
         }
     }
     Scaffold(
@@ -87,7 +80,7 @@ fun AlarmManagerScreen(
         topBar = {
             HoraTopBar(
                 navigationIcon = {
-                    IconButton(onClick = onSolisViewerClick) {
+                    IconButton(onClick = { onAction(AlarmManagerUiAction.SolisViewerClicked) }) {
                         Icon(
                             imageVector = Icons.Default.AccessTime,
                             contentDescription = null,
@@ -95,10 +88,16 @@ fun AlarmManagerScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onLocationClick) {
+                    IconButton(onClick = { onAction(AlarmManagerUiAction.LocationClicked) }) {
                         Icon(
                             imageVector = Icons.Default.LocationOn,
                             contentDescription = stringResource(R.string.location_content_description),
+                        )
+                    }
+                    IconButton(onClick = { onAction(AlarmManagerUiAction.SettingsClicked) }) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings_content_description),
                         )
                     }
                 }
@@ -111,7 +110,7 @@ fun AlarmManagerScreen(
                         .fillMaxWidth()
                         .padding(8.dp)
                         .navigationBarsPadding(),
-                    onAddClick = onAddClick,
+                    onAddClick = { onAction(AlarmManagerUiAction.AddClicked) },
                 )
             }
         }
@@ -121,12 +120,8 @@ fun AlarmManagerScreen(
                 modifier = Modifier
                     .padding(innerPadding),
                 model = model,
-                onAlarmDeleteClick = onAlarmDeleteClick,
-                onAlarmItemClick = onAlarmItemClick,
-                onAlarmToggleClick = onAlarmToggleClick,
                 clockModel = clockModel,
-                onLocationSelected = onLocationSelected,
-                onScheduleViewerClick = onScheduleViewerClick,
+                onAction = onAction,
             )
 
             is AlarmManagerScreenModel.MissingLocation -> MissingLocation(
@@ -134,7 +129,7 @@ fun AlarmManagerScreen(
                     .padding(innerPadding)
                     .padding(16.dp)
                     .fillMaxSize(),
-                onLocationClick = onLocationClick,
+                onLocationClick = { onAction(AlarmManagerUiAction.LocationClicked) },
             )
 
             is AlarmManagerScreenModel.Loading -> {
@@ -179,17 +174,12 @@ private fun MissingLocation(
     }
 }
 
-
 @Composable
 private fun Content(
     modifier: Modifier = Modifier,
-    onAlarmDeleteClick: (AlarmItemModel) -> Unit,
-    onAlarmItemClick: (AlarmItemModel) -> Unit,
-    onAlarmToggleClick: (AlarmItemModel, Boolean) -> Unit,
-    onScheduleViewerClick: () -> Unit,
+    onAction: (AlarmManagerUiAction) -> Unit,
     model: AlarmManagerScreenModel.Content,
     clockModel: SolisClockWithTimeModel,
-    onLocationSelected: (String) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -198,9 +188,9 @@ private fun Content(
         SolisClockWithTime(
             modifier = Modifier
                 .width(200.dp)
-                .onQuickClicks(count = 5, onQuickClicks = onScheduleViewerClick),
+                .onQuickClicks(count = 5, onQuickClicks = { onAction(AlarmManagerUiAction.ScheduleViewerClicked) }),
             model = clockModel,
-            onLocationSelected = onLocationSelected,
+            onLocationSelected = { onAction(AlarmManagerUiAction.LocationSelected(it)) },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -209,13 +199,12 @@ private fun Content(
             modifier = Modifier
                 .fillMaxWidth(),
             model = model.list,
-            onDelete = onAlarmDeleteClick,
-            onEdit = onAlarmItemClick,
-            onToggle = onAlarmToggleClick,
+            onDelete = { onAction(AlarmManagerUiAction.AlarmDeleteClicked(it)) },
+            onEdit = { onAction(AlarmManagerUiAction.AlarmItemClicked(it)) },
+            onToggle = { item, enabled -> onAction(AlarmManagerUiAction.AlarmToggleClicked(item, enabled)) },
         )
     }
 }
-
 
 @Composable
 private fun BottomBar(
@@ -225,8 +214,7 @@ private fun BottomBar(
     Button(
         modifier = modifier,
         onClick = onAddClick,
-
-        ) {
+    ) {
         Text(
             text = stringResource(R.string.alarm_manager_screen_add_button),
             style = Typography.bodyLarge
@@ -242,7 +230,7 @@ private fun AlarmManagerScreenPreview() {
             items = persistentListOf(
                 AlarmItemModel(
                     id = 1,
-                    title = "5 \u2600\uFE0F 06",
+                    title = "5 ☀️ 06",
                     label = "Morning",
                     civilTime = "6:30 AM",
                     isEnabled = true,
@@ -250,7 +238,7 @@ private fun AlarmManagerScreenPreview() {
                 ),
                 AlarmItemModel(
                     id = 2,
-                    title = "10 \uD83C\uDF1A 54",
+                    title = "10 🌚 54",
                     label = null,
                     civilTime = "11:00 PM",
                     isEnabled = false,
@@ -258,7 +246,7 @@ private fun AlarmManagerScreenPreview() {
                 ),
                 AlarmItemModel(
                     id = 3,
-                    title = "12 \u2600\uFE0F 00",
+                    title = "12 ☀️ 00",
                     label = null,
                     civilTime = "12:00 PM",
                     isEnabled = true,
@@ -272,7 +260,7 @@ private fun AlarmManagerScreenPreview() {
             ),
             clockModel = SolisClockWithTimeModel.Content(
                 time = SolisTimeModel(
-                    hours = "05 \u2600\uFE0F 06",
+                    hours = "05 ☀️ 06",
                     seconds = "35",
                 ),
                 location = "Toronto, Canada",
@@ -286,14 +274,7 @@ private fun AlarmManagerScreenPreview() {
                     needleAngle = 30f,
                 ),
             ),
-            onSnackbarDismissed = {},
-            onSolisViewerClick = {},
-            onScheduleViewerClick = {},
-            onLocationClick = {},
-            onAlarmDeleteClick = {},
-            onAddClick = {},
-            onAlarmItemClick = {},
-            onAlarmToggleClick = { _, _ -> },
+            onAction = {},
         )
     }
 }

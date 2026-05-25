@@ -24,6 +24,7 @@ fun AlarmManagerDestination(
     onNavigateToLocationManager: () -> Unit,
     onNavigateToSolisViewer: () -> Unit,
     onNavigateToScheduleViewer: () -> Unit,
+    onNavigateToSettings: () -> Unit,
 ) {
     NotificationPermissionRequest()
 
@@ -45,16 +46,21 @@ fun AlarmManagerDestination(
 
     AlarmManagerScreen(
         model = state,
-        onSnackbarDismissed = {},
-        onSolisViewerClick = onNavigateToSolisViewer,
-        onScheduleViewerClick = onNavigateToScheduleViewer,
-        onLocationClick = onNavigateToLocationManager,
-        onAlarmDeleteClick = viewModel::onAlarmDeleteClick,
-        onAddClick = viewModel::onAddClick,
-        onAlarmItemClick = viewModel::onAlarmItemClick,
-        onAlarmToggleClick = viewModel::onAlarmToggleClick,
         clockModel = clockModel,
-        onLocationSelected = clockViewModel::onLocationSelected,
+        onAction = { action ->
+            when (action) {
+                AlarmManagerUiAction.SolisViewerClicked -> onNavigateToSolisViewer()
+                AlarmManagerUiAction.ScheduleViewerClicked -> onNavigateToScheduleViewer()
+                AlarmManagerUiAction.LocationClicked -> onNavigateToLocationManager()
+                AlarmManagerUiAction.SettingsClicked -> onNavigateToSettings()
+                AlarmManagerUiAction.AddClicked -> viewModel.onAddClick()
+                AlarmManagerUiAction.SnackbarDismissed -> Unit
+                is AlarmManagerUiAction.AlarmDeleteClicked -> viewModel.onAlarmDeleteClick(action.item)
+                is AlarmManagerUiAction.AlarmItemClicked -> viewModel.onAlarmItemClick(action.item)
+                is AlarmManagerUiAction.AlarmToggleClicked -> viewModel.onAlarmToggleClick(action.item, action.enabled)
+                is AlarmManagerUiAction.LocationSelected -> clockViewModel.onLocationSelected(action.id)
+            }
+        },
     )
 }
 

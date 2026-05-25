@@ -24,7 +24,7 @@ import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
-import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmSettingsUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
@@ -72,8 +72,8 @@ class AlarmRingingService : Service() {
         KoinJavaComponent.get(ClearAlarmRingingUseCase::class.java)
     }
 
-    private val getAlarmSettings: GetAlarmSettingsUseCase by lazy {
-        KoinJavaComponent.get(GetAlarmSettingsUseCase::class.java)
+    private val getSettings: GetSettingsUseCase by lazy {
+        KoinJavaComponent.get(GetSettingsUseCase::class.java)
     }
 
     private var mediaPlayer: MediaPlayer? = null
@@ -119,7 +119,7 @@ class AlarmRingingService : Service() {
         alarmId: Int,
         alarm: Alarm?,
     ) {
-        val alarmSettings = getAlarmSettings()
+        val alarmSettings = getSettings()
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setLegacyStreamType(AudioManager.STREAM_ALARM)

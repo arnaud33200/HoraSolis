@@ -135,3 +135,18 @@ val MIGRATION_10_11 = object : Migration(10, 11) {
         db.execSQL("ALTER TABLE `alarm` ADD COLUMN `vibrate` INTEGER DEFAULT NULL")
     }
 }
+
+val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `settings` (
+                `id` INTEGER NOT NULL,
+                `ringtoneUrl` TEXT,
+                `vibrate` INTEGER NOT NULL DEFAULT 1,
+                PRIMARY KEY(`id`)
+            )
+            """.trimIndent()
+        )
+    }
+}

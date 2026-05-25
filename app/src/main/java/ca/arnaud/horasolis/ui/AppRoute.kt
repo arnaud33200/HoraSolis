@@ -25,4 +25,7 @@ sealed interface AppRoute : NavKey {
 
     @Serializable
     data object ScheduleViewer : AppRoute
+
+    @Serializable
+    data object Settings : AppRoute
 }
