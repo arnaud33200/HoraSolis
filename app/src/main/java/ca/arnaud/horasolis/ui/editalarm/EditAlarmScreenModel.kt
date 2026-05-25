@@ -14,6 +14,7 @@ sealed interface EditAlarmScreenModel {
         val civilTime: String,
         val scheduleContent: ScheduleContent,
         val soundName: String,
+        val vibrationEnabled: Boolean = true,
         val saveEnabled: Boolean = false,
     ) : EditAlarmScreenModel
 }

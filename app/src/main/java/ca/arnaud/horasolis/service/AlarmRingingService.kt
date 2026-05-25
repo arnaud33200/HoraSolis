@@ -13,13 +13,18 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
+import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
@@ -38,6 +43,7 @@ class AlarmRingingService : Service() {
         private const val NOTIFICATION_CHANNEL_ID = "alarm_ringing_channel"
         private const val EXTRA_ALARM_ID = "alarm_ringing_alarm_id"
         private const val ACTION_STOP_ALARM = "STOP_ALARM"
+        private val VIBRATION_PATTERN = longArrayOf(0, 500, 500)
 
         fun startService(
             context: Context,
@@ -66,7 +72,12 @@ class AlarmRingingService : Service() {
         KoinJavaComponent.get(ClearAlarmRingingUseCase::class.java)
     }
 
+    private val getAlarmSettings: GetAlarmSettingsUseCase by lazy {
+        KoinJavaComponent.get(GetAlarmSettingsUseCase::class.java)
+    }
+
     private var mediaPlayer: MediaPlayer? = null
+    private var vibrator: Vibrator? = null
 
     private val scope = CoroutineScope(context = Dispatchers.Default + SupervisorJob())
 
@@ -97,6 +108,8 @@ class AlarmRingingService : Service() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = null
+        vibrator?.cancel()
+        vibrator = null
         scope.launch { clearAlarmRinging() }
     }
 
@@ -106,14 +119,18 @@ class AlarmRingingService : Service() {
         alarmId: Int,
         alarm: Alarm?,
     ) {
+        val alarmSettings = getAlarmSettings()
         val audioAttributes = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ALARM)
             .setLegacyStreamType(AudioManager.STREAM_ALARM)
             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
             .build()
 
+        val alarmUri = alarm?.soundUri ?: alarmSettings.ringtoneUrl
         requestAudioFocus(audioAttributes)
-        playAlarmRingtone(audioAttributes, alarm?.soundUri)
+        playAlarmRingtone(audioAttributes, alarmUri)
+
+        if (alarm?.vibrate ?: alarmSettings.vibrate) startVibration()
 
         setAlarmRinging(SetAlarmRingingParams(alarmId = alarmId)).onFailure {
             stopSelf()
@@ -131,6 +148,16 @@ class AlarmRingingService : Service() {
             setOnPreparedListener { start() }
             prepareAsync()
         }
+    }
+
+    private fun startVibration() {
+        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            (getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+        vibrator?.vibrate(VibrationEffect.createWaveform(VIBRATION_PATTERN, 0))
     }
 
     private fun requestAudioFocus(audioAttributes: AudioAttributes) {

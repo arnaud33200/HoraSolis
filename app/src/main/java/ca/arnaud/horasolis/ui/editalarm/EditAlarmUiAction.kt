@@ -25,6 +25,8 @@ sealed interface EditAlarmUiAction {
 
     data object SoundPickerClicked : EditAlarmUiAction
 
+    data class VibrationToggled(val enabled: Boolean) : EditAlarmUiAction
+
     data class SoundResult(val result: RingtonePickerResult) : EditAlarmUiAction
 
     data object SaveClicked : EditAlarmUiAction

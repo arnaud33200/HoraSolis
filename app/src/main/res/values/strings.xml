@@ -78,6 +78,7 @@
     <string name="alarm_sound_label">Sound</string>
     <string name="alarm_sound_default">Default</string>
     <string name="alarm_sound_change">Change</string>
+    <string name="alarm_vibration_label">Vibration</string>
 
     <string name="alarm_schedule_every_day">Every day</string>
     <string name="alarm_schedule_weekend">Week-end</string>

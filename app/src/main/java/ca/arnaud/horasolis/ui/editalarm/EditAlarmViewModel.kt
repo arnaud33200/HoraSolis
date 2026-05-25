@@ -116,6 +116,7 @@ internal class EditAlarmViewModel(
                 is EditAlarmUiAction.DateSelected -> onDateSelected(action)
                 EditAlarmUiAction.SoundPickerClicked -> onSoundPickerClicked()
                 is EditAlarmUiAction.SoundResult -> onSoundResult(action)
+                is EditAlarmUiAction.VibrationToggled -> onVibrationToggled(action)
                 EditAlarmUiAction.SaveClicked -> saveAlarm()
                 EditAlarmUiAction.BackClicked -> onBackClicked()
                 EditAlarmUiAction.UnsavedChangesDiscardClicked -> onUnsavedChangesDiscardClicked()
@@ -185,6 +186,13 @@ internal class EditAlarmViewModel(
             RingtonePickerResult.Cancelled -> Unit
             RingtonePickerResult.Error -> Unit
         }
+    }
+
+    private suspend fun onVibrationToggled(action: EditAlarmUiAction.VibrationToggled) {
+        updateParams = updateParams.copy(
+            vibrate = UpdateParam.of(initialAlarm.vibrate, action.enabled)
+        )
+        rebuildState()
     }
 
     private suspend fun onSolisTimeChanged(action: SolisTimeAction) {

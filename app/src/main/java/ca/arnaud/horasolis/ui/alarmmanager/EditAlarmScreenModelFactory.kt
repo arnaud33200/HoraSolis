@@ -9,6 +9,7 @@ import ca.arnaud.horasolis.domain.model.alarm.AlarmUpdateParams
 import ca.arnaud.horasolis.domain.model.alarm.applyUpdates
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmSettingsUseCase
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.RingtoneProvider
@@ -24,6 +25,7 @@ class EditAlarmScreenModelFactory(
     private val timeProvider: TimeProvider,
     private val dateFormatter: DateFormatter,
     private val ringtoneProvider: RingtoneProvider,
+    private val getAlarmSettings: GetAlarmSettingsUseCase,
 ) {
 
     private var solisDay: SolisDay? = null
@@ -61,6 +63,7 @@ class EditAlarmScreenModelFactory(
             civilTime = civilTime.orEmpty(),
             scheduleContent = scheduleContent,
             soundName = soundName,
+            vibrationEnabled = updatedAlarm.vibrate ?: getAlarmSettings().vibrate,
             saveEnabled = true,
         )
     }

@@ -141,9 +141,23 @@ private fun EditAlarmContent(
 
         HorizontalDivider(modifier = Modifier.fillMaxWidth())
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         SoundSection(
+            modifier = Modifier.fillMaxWidth(),
             soundName = model.soundName,
             onPickerClicked = { onAction(EditAlarmUiAction.SoundPickerClicked) },
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        HorizontalDivider(modifier = Modifier.fillMaxWidth())
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        VibrationSection(
+            vibrationEnabled = model.vibrationEnabled,
+            onToggle = { onAction(EditAlarmUiAction.VibrationToggled(it)) },
         )
 
         Spacer(modifier = Modifier.navigationBarsPadding())
@@ -286,9 +300,7 @@ private fun SoundSection(
     onPickerClicked: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -306,6 +318,30 @@ private fun SoundSection(
         TextButton(onClick = onPickerClicked) {
             Text(stringResource(R.string.alarm_sound_change))
         }
+    }
+}
+
+@Composable
+private fun VibrationSection(
+    modifier: Modifier = Modifier,
+    onToggle: (Boolean) -> Unit,
+    vibrationEnabled: Boolean,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(R.string.alarm_vibration_label),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Switch(
+            checked = vibrationEnabled,
+            onCheckedChange = onToggle,
+        )
     }
 }
 
@@ -327,6 +363,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             civilTime = "07:45",
             scheduleContent = ScheduleContent.Repeating(sampleDayOfWeeks),
             soundName = "Cesium",
+            vibrationEnabled = true,
             saveEnabled = true,
         ),
         EditAlarmScreenModel.Content(
@@ -336,6 +373,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             civilTime = "21:12",
             scheduleContent = ScheduleContent.OneTime(selectedDate = "May 20"),
             soundName = "Default",
+            vibrationEnabled = false,
         ),
         EditAlarmScreenModel.Content(
             hour = 3,
@@ -344,6 +382,7 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             civilTime = "06:00",
             scheduleContent = ScheduleContent.Repeating(persistentListOf()),
             soundName = "Default",
+            vibrationEnabled = true,
         ),
         EditAlarmScreenModel.Loading,
     )
