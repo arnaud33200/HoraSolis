@@ -46,8 +46,9 @@ class SolisClockModelFactory {
             if (sunsetSeconds >= sunriseSeconds) sunsetSeconds - sunriseSeconds else SECONDS_IN_DAY - sunriseSeconds + sunsetSeconds
         val daySweepAngle = (dayDuration / SECONDS_IN_DAY.toFloat()) * 360f
         val nightSweepAngle = 360f - daySweepAngle
-        val nightStartAngleClock = -90f
-        val dayStartAngle = nightStartAngleClock + nightSweepAngle
+        // noon time (day) at the top
+        val dayStartAngle = -90f - 6f * (daySweepAngle / 12f)
+        val nightStartAngle = dayStartAngle + daySweepAngle
 
         val needleAngle = when (atTime.type) {
             SolisTime.Type.Day -> {
@@ -57,7 +58,7 @@ class SolisClockModelFactory {
 
             SolisTime.Type.Night -> {
                 // Place needle within night arc
-                nightStartAngleClock + ((atTime.hour - 1) + atTime.minute / 60f) * (nightSweepAngle / 12f)
+                nightStartAngle + ((atTime.hour - 1) + atTime.minute / 60f) * (nightSweepAngle / 12f)
             }
         }
         val alarmAngles = alarms.filter { it.enabled }.map { alarm ->
@@ -65,7 +66,7 @@ class SolisClockModelFactory {
                 SolisTime.Type.Day ->
                     dayStartAngle + ((alarm.solisTime.hour - 1) + alarm.solisTime.minute / 60f) * (daySweepAngle / 12f)
                 SolisTime.Type.Night ->
-                    nightStartAngleClock + ((alarm.solisTime.hour - 1) + alarm.solisTime.minute / 60f) * (nightSweepAngle / 12f)
+                    nightStartAngle + ((alarm.solisTime.hour - 1) + alarm.solisTime.minute / 60f) * (nightSweepAngle / 12f)
             }
         }.toImmutableList()
 
