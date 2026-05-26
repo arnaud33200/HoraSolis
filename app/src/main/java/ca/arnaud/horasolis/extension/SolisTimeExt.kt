@@ -7,7 +7,7 @@ fun SolisTime.format(): String {
         SolisTime.Type.Day -> "\uD83C\uDF1E"
         SolisTime.Type.Night -> "\uD83C\uDF1A"
     }
-    return "%02d %s %02d".format(hour, emoji, minute)
+    return "%02d %s %02d".format(hour-1, emoji, minute)
 }
 
 fun SolisTime.formatWithSeconds(): String {
@@ -15,5 +15,5 @@ fun SolisTime.formatWithSeconds(): String {
         SolisTime.Type.Day -> "\uD83C\uDF1E"
         SolisTime.Type.Night -> "\uD83C\uDF1A"
     }
-    return "%02d %s %02d : %02d".format(hour, emoji, minute, seconds)
+    return "%02d %s %02d : %02d".format(hour-1, emoji, minute, seconds)
 }

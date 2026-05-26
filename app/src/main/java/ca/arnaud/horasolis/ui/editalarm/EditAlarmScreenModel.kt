@@ -8,7 +8,9 @@ sealed interface EditAlarmScreenModel {
     data object Loading : EditAlarmScreenModel
 
     data class Content(
+        val hourTitle: String,
         val hour: Int,
+        val minuteTitle: String,
         val minute: Int,
         val isDay: Boolean,
         val civilTime: String,

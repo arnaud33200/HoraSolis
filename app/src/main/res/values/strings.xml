@@ -72,8 +72,8 @@
     <string name="alarm_manager_screen_add_button">Add Alarm</string>
 
     <string name="select_time_title">Select Time</string>
-    <string name="hour_label">Hour: %1$d</string>
-    <string name="minute_label">Minute: %1$d</string>
+    <string name="hour_label">Hour: %1$s</string> <!-- %1$s the hour from 0 to 11 -->
+    <string name="minute_label">Minute: %1$s</string> <!-- %1$s the minute from 0 to 59 -->
 
     <string name="alarm_label">Name</string>
     <string name="alarm_sound_label">Sound</string>

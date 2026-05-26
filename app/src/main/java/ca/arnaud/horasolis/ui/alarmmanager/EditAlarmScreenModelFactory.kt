@@ -49,6 +49,7 @@ class EditAlarmScreenModelFactory(
                 }.toImmutableList()
                 ScheduleContent.Repeating(dayOfWeeks)
             }
+
             is Schedule.OneTime -> ScheduleContent.OneTime(
                 selectedDate = dateFormatter.formatDate(schedule.date),
             )
@@ -58,9 +59,17 @@ class EditAlarmScreenModelFactory(
         val soundName = ringtoneProvider.getNameOrNull(effectiveSoundUri)
             ?: stringProvider.getString(R.string.alarm_sound_default)
 
+        val hour = updatedAlarm.solisTime.hour
+        val minute = updatedAlarm.solisTime.minute
         return EditAlarmScreenModel.Content(
-            hour = updatedAlarm.solisTime.hour,
-            minute = updatedAlarm.solisTime.minute,
+            hour = hour,
+            hourTitle = stringProvider.getString(
+                R.string.hour_label, "${hour - 1}",
+            ),
+            minute = minute,
+            minuteTitle = stringProvider.getString(
+                R.string.minute_label, "$minute",
+            ),
             isDay = updatedAlarm.solisTime.type == SolisTime.Type.Day,
             civilTime = civilTime.orEmpty(),
             scheduleContent = scheduleContent,

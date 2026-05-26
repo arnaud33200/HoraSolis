@@ -116,9 +116,7 @@ private fun EditAlarmContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTimePicker(
-            hour = model.hour,
-            minute = model.minute,
-            isDay = model.isDay,
+            model = model,
             toCivilTime = { _, _, _ -> model.civilTime },
             onHourChange = { onAction(EditAlarmUiAction.HourChanged(it)) },
             onMinuteChange = { onAction(EditAlarmUiAction.MinuteChanged(it)) },
@@ -251,42 +249,40 @@ fun CustomTimePicker(
     onMinuteChange: (Int) -> Unit,
     onDayNightToggle: (Boolean) -> Unit,
     toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
-    hour: Int,
-    minute: Int,
-    isDay: Boolean,
+    model: EditAlarmScreenModel.Content,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Switch(
-            checked = isDay,
+            checked = model.isDay,
             onCheckedChange = onDayNightToggle,
             thumbContent = {
-                val text = if (isDay) "☀️" else "🌚"
+                val text = if (model.isDay) "☀️" else "🌚"
                 Text(text = text)
             }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(stringResource(id = R.string.hour_label, hour))
+        Text(model.hourTitle)
         Slider(
-            value = hour.toFloat(),
+            value = model.hour.toFloat(),
             onValueChange = { onHourChange(it.toInt()) },
             valueRange = 1f..12f,
             steps = 10
         )
-        Text(stringResource(id = R.string.minute_label, minute))
+        Text(model.minuteTitle)
         Slider(
-            value = minute.toFloat(),
+            value = model.minute.toFloat(),
             onValueChange = { onMinuteChange(it.toInt()) },
             valueRange = 0f..59f,
-            steps = 58
+            steps = 60,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = toCivilTime(hour, minute, isDay),
+            text = toCivilTime(model.hour, model.minute, model.isDay),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -358,7 +354,9 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
     override val values = sequenceOf(
         EditAlarmScreenModel.Content(
             hour = 6,
+            hourTitle = "Hour: 6",
             minute = 30,
+            minuteTitle = "Minute: 30",
             isDay = true,
             civilTime = "07:45",
             scheduleContent = ScheduleContent.Repeating(sampleDayOfWeeks),
@@ -368,7 +366,9 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
         ),
         EditAlarmScreenModel.Content(
             hour = 9,
+            hourTitle = "Hour: 9",
             minute = 0,
+            minuteTitle = "Minute: 0",
             isDay = false,
             civilTime = "21:12",
             scheduleContent = ScheduleContent.OneTime(selectedDate = "May 20"),
@@ -377,7 +377,9 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
         ),
         EditAlarmScreenModel.Content(
             hour = 3,
+            hourTitle = "Hour: 3",
             minute = 0,
+            minuteTitle = "Minute: 0",
             isDay = true,
             civilTime = "06:00",
             scheduleContent = ScheduleContent.Repeating(persistentListOf()),
