@@ -1,6 +1,7 @@
 package ca.arnaud.horasolis.ui.alarmmanager
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.LocationOn
@@ -28,7 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.ui.clock.LocationDropdownItem
@@ -110,6 +116,9 @@ fun AlarmManagerScreen(
                         .fillMaxWidth()
                         .padding(8.dp)
                         .navigationBarsPadding(),
+                    buttonModifier = Modifier
+                        .widthIn(max = 600.dp)
+                        .fillMaxWidth(),
                     onAddClick = { onAction(AlarmManagerUiAction.AddClicked) },
                 )
             }
@@ -209,71 +218,103 @@ private fun Content(
 @Composable
 private fun BottomBar(
     modifier: Modifier = Modifier,
+    buttonModifier: Modifier = Modifier,
     onAddClick: () -> Unit
 ) {
-    Button(
+    Box(
         modifier = modifier,
-        onClick = onAddClick,
+        contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = stringResource(R.string.alarm_manager_screen_add_button),
-            style = Typography.bodyLarge
-        )
+        Button(
+            modifier = buttonModifier,
+            onClick = onAddClick,
+        ) {
+            Text(
+                text = stringResource(R.string.alarm_manager_screen_add_button),
+                style = Typography.bodyLarge
+            )
+        }
     }
+}
+
+private val sampleClockModel = SolisClockWithTimeModel.Content(
+    time = SolisTimeModel(
+        hours = "05 ☀️ 06",
+        seconds = "35",
+    ),
+    location = "Toronto, Canada",
+    locations = persistentListOf(
+        LocationDropdownItem(id = "1", name = "Toronto, Canada"),
+        LocationDropdownItem(id = "2", name = "Montreal"),
+    ),
+    clock = SolisClockModel(
+        dayStartAngle = 170f,
+        dayEndAngle = 200f,
+        needleAngle = 30f,
+    ),
+)
+
+private val sampleAlarmList = AlarmListModel(
+    items = persistentListOf(
+        AlarmItemModel(
+            id = 1,
+            title = "5 ☀️ 06",
+            label = "Morning",
+            civilTime = "6:30 AM",
+            isEnabled = true,
+            schedule = "Monday to Friday"
+        ),
+        AlarmItemModel(
+            id = 2,
+            title = "10 🌚 54",
+            label = null,
+            civilTime = "11:00 PM",
+            isEnabled = false,
+            schedule = "Week-end"
+        ),
+        AlarmItemModel(
+            id = 3,
+            title = "12 ☀️ 00",
+            label = null,
+            civilTime = "12:00 PM",
+            isEnabled = true,
+            schedule = "Every day"
+        ),
+    )
+)
+
+private class AlarmManagerScreenPreviewProvider : PreviewParameterProvider<AlarmManagerScreenModel> {
+    override val values = sequenceOf(
+        AlarmManagerScreenModel.Content(list = sampleAlarmList),
+        AlarmManagerScreenModel.MissingLocation(),
+        AlarmManagerScreenModel.Loading(),
+    )
 }
 
 @PreviewLightDark
 @Composable
-private fun AlarmManagerScreenPreview() {
+private fun AlarmManagerScreenPreview(
+    @PreviewParameter(AlarmManagerScreenPreviewProvider::class) model: AlarmManagerScreenModel,
+) {
     HoraSolisTheme {
-        val sampleList = AlarmListModel(
-            items = persistentListOf(
-                AlarmItemModel(
-                    id = 1,
-                    title = "5 ☀️ 06",
-                    label = "Morning",
-                    civilTime = "6:30 AM",
-                    isEnabled = true,
-                    schedule = "Monday to Friday"
-                ),
-                AlarmItemModel(
-                    id = 2,
-                    title = "10 🌚 54",
-                    label = null,
-                    civilTime = "11:00 PM",
-                    isEnabled = false,
-                    schedule = "Week-end"
-                ),
-                AlarmItemModel(
-                    id = 3,
-                    title = "12 ☀️ 00",
-                    label = null,
-                    civilTime = "12:00 PM",
-                    isEnabled = true,
-                    schedule = "Every day"
-                ),
-            )
-        )
         AlarmManagerScreen(
-            model = AlarmManagerScreenModel.Content(
-                list = sampleList
-            ),
-            clockModel = SolisClockWithTimeModel.Content(
-                time = SolisTimeModel(
-                    hours = "05 ☀️ 06",
-                    seconds = "35",
-                ),
-                location = "Toronto, Canada",
-                locations = persistentListOf(
-                    LocationDropdownItem(id = "1", name = "Toronto, Canada"),
-                    LocationDropdownItem(id = "2", name = "Montreal"),
-                ),
-                clock = SolisClockModel(
-                    dayStartAngle = -90f,
-                    dayEndAngle = 200f,
-                    needleAngle = 30f,
-                ),
-            ),
+            model = model,
+            clockModel = sampleClockModel,
+            onAction = {},
+        )
+    }
+}
+
+@Preview(device = Devices.TABLET)
+@Preview(device = Devices.TABLET, uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AlarmManagerScreenTabletPreview(
+    @PreviewParameter(AlarmManagerScreenPreviewProvider::class) model: AlarmManagerScreenModel,
+) {
+    HoraSolisTheme {
+        AlarmManagerScreen(
+            model = model,
+            clockModel = sampleClockModel,
             onAction = {},
         )
     }

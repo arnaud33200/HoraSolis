@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -54,10 +55,11 @@ fun AlarmList(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         items(model.items, key = { it.id }) { item ->
             AlarmListItem(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth(),
                 item = item,
                 onEdit = onEdit,
                 onDelete = onDelete,
