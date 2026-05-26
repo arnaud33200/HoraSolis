@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.accompanist.placeholder)
 
     implementation(libs.play.services.location)
+    implementation(libs.timber)
 
     // Test
     testImplementation(libs.junit.jupiter.api)

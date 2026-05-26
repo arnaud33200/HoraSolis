@@ -24,8 +24,8 @@ import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.onFailure
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
-import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingParams
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
 import ca.arnaud.horasolis.extension.format
@@ -35,6 +35,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent
+import timber.log.Timber
+import java.io.IOException
+
+class MediaPlayerError(
+    message: String,
+    cause: Throwable? = null,
+) : Throwable(message, cause)
 
 class AlarmRingingService : Service() {
 
@@ -137,16 +144,42 @@ class AlarmRingingService : Service() {
         }
     }
 
-    private fun playAlarmRingtone(audioAttributes: AudioAttributes, soundUriString: String?) {
-        val alarmUri = soundUriString?.let { Uri.parse(it) }
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(audioAttributes)
-            setDataSource(applicationContext, alarmUri)
-            isLooping = true
-            setOnPreparedListener { start() }
-            prepareAsync()
+    private fun playAlarmRingtone(
+        audioAttributes: AudioAttributes,
+        soundUriString: String?,
+    ) {
+        listOfNotNull(
+            soundUriString?.let { Uri.parse(it) },
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+        ).forEach { uri ->
+            getMediaPlayerOrNull(audioAttributes, uri)?.let { player ->
+                mediaPlayer = player.apply {
+                    isLooping = true
+                    setOnPreparedListener { start() }
+                    prepareAsync()
+                }
+                return
+            }
+        }
+    }
+
+    private fun getMediaPlayerOrNull(
+        audioAttributes: AudioAttributes,
+        uri: Uri,
+    ): MediaPlayer? {
+        return try {
+            MediaPlayer().apply {
+                setAudioAttributes(audioAttributes)
+                setDataSource(applicationContext, uri)
+            }
+        } catch (e: IOException) {
+            Timber.e(
+                MediaPlayerError(
+                    "Failed to create MediaPlayer for URI: $uri", e
+                )
+            )
+            null
         }
     }
 
