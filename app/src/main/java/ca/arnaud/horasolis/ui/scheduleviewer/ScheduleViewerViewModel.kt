@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.data.ScheduleRepository
+import ca.arnaud.horasolis.domain.usecase.alarm.RefreshAllAlarmScheduleUseCase
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.StringProvider
 import kotlinx.collections.immutable.toImmutableList
@@ -17,17 +18,27 @@ class ScheduleViewerViewModel(
     private val scheduleRepository: ScheduleRepository,
     private val dateFormatter: DateFormatter,
     private val stringProvider: StringProvider,
+    private val refreshAllAlarmSchedule: RefreshAllAlarmScheduleUseCase,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<ScheduleViewerScreenModel>(ScheduleViewerScreenModel.Empty)
+    private val _state = MutableStateFlow<ScheduleViewerScreenModel>(ScheduleViewerScreenModel.Empty())
     val state: StateFlow<ScheduleViewerScreenModel> = _state
+
+    fun onRefreshClick() {
+        viewModelScope.launch {
+            _state.value = _state.value.withRefreshing(true)
+            refreshAllAlarmSchedule()
+            _state.value = _state.value.withRefreshing(false)
+        }
+    }
 
     init {
         viewModelScope.launch {
             scheduleRepository.getScheduledAlarmsFlow().collectLatest { schedules ->
                 val sorted = schedules.sortedBy { it.scheduledDateTime }
+                val isRefreshing = _state.value.isRefreshing
                 if (sorted.isEmpty()) {
-                    _state.value = ScheduleViewerScreenModel.Empty
+                    _state.value = ScheduleViewerScreenModel.Empty(isRefreshing = isRefreshing)
                 } else {
                     val today = LocalDate.now()
                     val items = sorted.map { alarm ->
@@ -43,9 +54,14 @@ class ScheduleViewerViewModel(
                             timeLabel = dateFormatter.formatCivilTime(alarm.scheduledDateTime.toLocalTime()),
                         )
                     }.toImmutableList()
-                    _state.value = ScheduleViewerScreenModel.Content(items = items)
+                    _state.value = ScheduleViewerScreenModel.Content(items = items, isRefreshing = isRefreshing)
                 }
             }
         }
+    }
+
+    private fun ScheduleViewerScreenModel.withRefreshing(isRefreshing: Boolean) = when (this) {
+        is ScheduleViewerScreenModel.Empty -> copy(isRefreshing = isRefreshing)
+        is ScheduleViewerScreenModel.Content -> copy(isRefreshing = isRefreshing)
     }
 }

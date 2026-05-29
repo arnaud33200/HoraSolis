@@ -15,5 +15,6 @@ fun ScheduleViewerDestination(
     ScheduleViewerScreen(
         model = state,
         onBackClick = onBack,
+        onRefreshClick = viewModel::onRefreshClick,
     )
 }

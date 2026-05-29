@@ -1,5 +1,6 @@
 package ca.arnaud.horasolis.ui.scheduleviewer
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +9,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,10 +34,15 @@ import kotlinx.collections.immutable.persistentListOf
 
 sealed interface ScheduleViewerScreenModel {
 
-    data object Empty : ScheduleViewerScreenModel
+    val isRefreshing: Boolean
+
+    data class Empty(
+        override val isRefreshing: Boolean = false,
+    ) : ScheduleViewerScreenModel
 
     data class Content(
         val items: ImmutableList<ScheduleItemModel>,
+        override val isRefreshing: Boolean = false,
     ) : ScheduleViewerScreenModel
 }
 
@@ -45,6 +56,7 @@ data class ScheduleItemModel(
 fun ScheduleViewerScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    onRefreshClick: () -> Unit,
     model: ScheduleViewerScreenModel,
 ) {
     Scaffold(
@@ -53,23 +65,39 @@ fun ScheduleViewerScreen(
             HoraTopBar(
                 onBack = onBackClick,
                 title = stringResource(R.string.schedule_viewer_screen_title),
+                actions = {
+                    IconButton(onClick = onRefreshClick) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                        )
+                    }
+                },
             )
         },
     ) { innerPadding ->
-        when (model) {
-            is ScheduleViewerScreenModel.Empty -> EmptyState(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .padding(24.dp),
-            )
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+        ) {
+            when (model) {
+                is ScheduleViewerScreenModel.Empty -> EmptyState(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                )
 
-            is ScheduleViewerScreenModel.Content -> ScheduleList(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .navigationBarsPadding(),
-                items = model.items,
-            )
+                is ScheduleViewerScreenModel.Content -> ScheduleList(
+                    modifier = Modifier.navigationBarsPadding(),
+                    items = model.items,
+                )
+            }
+            if (model.isRefreshing) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            }
         }
     }
 }
@@ -159,7 +187,7 @@ private class ScheduleViewerScreenPreviewProvider :
                 ),
             ),
         ),
-        ScheduleViewerScreenModel.Empty,
+        ScheduleViewerScreenModel.Empty(),
     )
 }
 
@@ -172,6 +200,7 @@ private fun ScheduleViewerScreenPreview(
         ScheduleViewerScreen(
             model = model,
             onBackClick = {},
+            onRefreshClick = {},
         )
     }
 }

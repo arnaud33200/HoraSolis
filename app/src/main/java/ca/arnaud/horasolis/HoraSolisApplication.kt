@@ -23,6 +23,7 @@ import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.RefreshAllAlarmScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SaveSettingsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.SetAlarmRingingUseCase
@@ -154,6 +155,7 @@ class HoraSolisApplication : Application(), KoinComponent {
         factoryOf(::GetSolisCivilTimeUseCase)
         factoryOf(::ScheduleNextAlarmUseCase)
         factoryOf(::CheckAlarmScheduleUseCase)
+        factoryOf(::RefreshAllAlarmScheduleUseCase)
         factoryOf(::SetAlarmRingingUseCase)
         factoryOf(::ClearAlarmRingingUseCase)
         factoryOf(::ObserveAlarmRingingUseCase)
