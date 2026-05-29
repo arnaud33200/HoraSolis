@@ -19,8 +19,8 @@ android {
         applicationId = "ca.arnaud.horasolis"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "2.6"
+        versionCode = 3
+        versionName = "2.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
