@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import ca.arnaud.horasolis.data.AlarmRepository
+import ca.arnaud.horasolis.data.LogRepository
 import ca.arnaud.horasolis.data.LocationRepository
 import ca.arnaud.horasolis.data.ScheduleRepository
 import ca.arnaud.horasolis.data.SettingsRepository
@@ -16,6 +17,8 @@ import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.CancelAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.CancelAllAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CheckAlarmScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
@@ -153,6 +156,8 @@ class HoraSolisApplication : Application(), KoinComponent {
     val domainModule = module {
         factoryOf(::GetSolisDayUseCase)
         factoryOf(::GetSolisCivilTimeUseCase)
+        factoryOf(::CancelAlarmUseCase)
+        factoryOf(::CancelAllAlarmUseCase)
         factoryOf(::ScheduleNextAlarmUseCase)
         factoryOf(::CheckAlarmScheduleUseCase)
         factoryOf(::RefreshAllAlarmScheduleUseCase)
@@ -182,6 +187,7 @@ class HoraSolisApplication : Application(), KoinComponent {
 
     val dataModule = module {
         singleOf(::SolisRepository)
+        singleOf(::LogRepository)
         singleOf(::AlarmRepository)
         singleOf(::SettingsRepository)
         singleOf(::ScheduleRepository)

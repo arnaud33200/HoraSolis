@@ -1,14 +1,12 @@
 package ca.arnaud.horasolis.domain.usecase.alarm
 
-import ca.arnaud.horasolis.data.ScheduleRepository
-
 class RefreshAllAlarmScheduleUseCase(
     private val checkAlarmSchedule: CheckAlarmScheduleUseCase,
-    private val scheduleRepository: ScheduleRepository,
+    private val cancelAllAlarm: CancelAllAlarmUseCase,
 ) {
 
     suspend operator fun invoke() {
-        scheduleRepository.cancelAll()
+        cancelAllAlarm()
         checkAlarmSchedule()
     }
 }

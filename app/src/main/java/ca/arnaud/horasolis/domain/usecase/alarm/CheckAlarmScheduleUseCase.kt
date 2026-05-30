@@ -19,6 +19,7 @@ import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 class CheckAlarmScheduleUseCase(
     private val alarmRepository: AlarmRepository,
     private val scheduleRepository: ScheduleRepository,
+    private val cancelAlarm: CancelAlarmUseCase,
     private val scheduleNextAlarm: ScheduleNextAlarmUseCase,
     private val timeProvider: TimeProvider,
     private val getSolisDay: GetSolisDayUseCase,
@@ -32,7 +33,7 @@ class CheckAlarmScheduleUseCase(
 
     private suspend fun check(alarm: SavedAlarm) {
         if (!alarm.enabled || alarm.isExpired()) {
-            scheduleRepository.cancelAlarm(alarm.id)
+            cancelAlarm(alarm.id)
             return
         }
 

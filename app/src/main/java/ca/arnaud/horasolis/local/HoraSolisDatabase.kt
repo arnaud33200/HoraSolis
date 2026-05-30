@@ -15,8 +15,9 @@ import androidx.room.TypeConverters
         SolisDayEntity::class,
         AlarmScheduleEntity::class,
         SettingsEntity::class,
+        AlarmLogEntity::class,
     ],
-    version = 12, // add settings table
+    version = 13, // add alarm_log table
 )
 @TypeConverters(Converters::class)
 abstract class HoraSolisDatabase : RoomDatabase() {
@@ -40,12 +41,14 @@ abstract class HoraSolisDatabase : RoomDatabase() {
                 MIGRATION_9_10,
                 MIGRATION_10_11,
                 MIGRATION_11_12,
+                MIGRATION_12_13,
             ).build()
         }
     }
 
     abstract fun alarmDao(): AlarmDao
     abstract fun alarmScheduleDao(): AlarmScheduleDao
+    abstract fun alarmLogDao(): AlarmLogDao
     abstract fun locationDao(): LocationDao
     abstract fun solisDayDao(): SolisDayDao
     abstract fun settingsDao(): SettingsDao

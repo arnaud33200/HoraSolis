@@ -150,3 +150,19 @@ val MIGRATION_11_12 = object : Migration(11, 12) {
         )
     }
 }
+
+val MIGRATION_12_13 = object : Migration(12, 13) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS `alarm_log` (
+                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `alarmId` INTEGER NOT NULL,
+                `action` TEXT NOT NULL,
+                `dateTime` TEXT NOT NULL,
+                `scheduledDateTime` TEXT
+            )
+            """.trimIndent()
+        )
+    }
+}

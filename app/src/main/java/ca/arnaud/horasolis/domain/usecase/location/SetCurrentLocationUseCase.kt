@@ -1,12 +1,12 @@
 package ca.arnaud.horasolis.domain.usecase.location
 
 import ca.arnaud.horasolis.data.LocationRepository
-import ca.arnaud.horasolis.data.ScheduleRepository
+import ca.arnaud.horasolis.domain.usecase.alarm.CancelAllAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CheckAlarmScheduleUseCase
 
 class SetCurrentLocationUseCase(
     private val locationRepository: LocationRepository,
-    private val scheduleRepository: ScheduleRepository,
+    private val cancelAllAlarm: CancelAllAlarmUseCase,
     private val checkAlarmScheduleUseCase: CheckAlarmScheduleUseCase,
 ) {
 
@@ -22,7 +22,7 @@ class SetCurrentLocationUseCase(
          * the scheduled alarm date & time won't match anymore.
          * Cancel all alarm and reschedule them properly.
          */
-        scheduleRepository.cancelAll()
+        cancelAllAlarm()
         checkAlarmScheduleUseCase()
     }
 }

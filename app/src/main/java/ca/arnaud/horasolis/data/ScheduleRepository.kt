@@ -18,6 +18,9 @@ class ScheduleRepository(
     suspend fun getScheduledAlarmOrNull(alarmId: Int): ScheduledAlarm? =
         alarmScheduleDao.getSchedule(alarmId)?.toScheduledAlarm()
 
+    suspend fun getAllScheduledAlarms(): List<ScheduledAlarm> =
+        alarmScheduleDao.getAllSchedules().map { it.toScheduledAlarm() }
+
     fun getScheduledAlarmsFlow(): Flow<List<ScheduledAlarm>> =
         alarmScheduleDao.observeSchedules().map { entities ->
             entities.map { it.toScheduledAlarm() }
