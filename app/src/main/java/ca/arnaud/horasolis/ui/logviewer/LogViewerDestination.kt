@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.ui.scheduleviewer
+package ca.arnaud.horasolis.ui.logviewer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -6,17 +6,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ScheduleViewerDestination(
+fun LogViewerDestination(
     onBack: () -> Unit,
-    onNavigateToLogViewer: () -> Unit,
 ) {
-    val viewModel: ScheduleViewerViewModel = koinViewModel()
+    val viewModel: LogViewerViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    ScheduleViewerScreen(
+    LogViewerScreen(
         model = state,
         onBackClick = onBack,
-        onRefreshClick = viewModel::onRefreshClick,
-        onLogsClick = onNavigateToLogViewer,
+        onClearClick = viewModel::onClearClick,
     )
 }

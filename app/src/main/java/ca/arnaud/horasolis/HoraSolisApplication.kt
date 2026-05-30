@@ -18,12 +18,14 @@ import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CancelAlarmUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmLogsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CancelAllAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CheckAlarmScheduleUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
+import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmLogsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.RefreshAllAlarmScheduleUseCase
@@ -60,6 +62,7 @@ import ca.arnaud.horasolis.ui.locationmanager.LocationManagerViewModel
 import ca.arnaud.horasolis.ui.main.HoraAlertDialogModelFactory
 import ca.arnaud.horasolis.ui.main.MainViewModel
 import ca.arnaud.horasolis.ui.onboarding.OnboardingViewModel
+import ca.arnaud.horasolis.ui.logviewer.LogViewerViewModel
 import ca.arnaud.horasolis.ui.scheduleviewer.ScheduleViewerViewModel
 import ca.arnaud.horasolis.ui.settings.SettingsViewModel
 import ca.arnaud.horasolis.ui.solisviewer.SolisViewerScreenModelFactory
@@ -149,6 +152,9 @@ class HoraSolisApplication : Application(), KoinComponent {
         // Schedule Viewer
         viewModelOf(::ScheduleViewerViewModel)
 
+        // Log Viewer
+        viewModelOf(::LogViewerViewModel)
+
         // Settings
         viewModelOf(::SettingsViewModel)
     }
@@ -163,6 +169,8 @@ class HoraSolisApplication : Application(), KoinComponent {
         factoryOf(::RefreshAllAlarmScheduleUseCase)
         factoryOf(::SetAlarmRingingUseCase)
         factoryOf(::ClearAlarmRingingUseCase)
+        factoryOf(::ObserveAlarmLogsUseCase)
+        factoryOf(::ClearAlarmLogsUseCase)
         factoryOf(::ObserveAlarmRingingUseCase)
         factoryOf(::ObserveSavedAlarmsUseCase)
         factoryOf(::UpsertAlarmUseCase)

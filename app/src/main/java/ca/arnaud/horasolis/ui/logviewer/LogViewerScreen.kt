@@ -1,4 +1,4 @@
-package ca.arnaud.horasolis.ui.scheduleviewer
+package ca.arnaud.horasolis.ui.logviewer
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,54 +31,46 @@ import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-sealed interface ScheduleViewerScreenModel {
+sealed interface LogViewerScreenModel {
 
-    val isRefreshing: Boolean
-
-    data class Empty(
-        override val isRefreshing: Boolean = false,
-    ) : ScheduleViewerScreenModel
+    data object Empty : LogViewerScreenModel
 
     data class Content(
-        val items: ImmutableList<ScheduleItemModel>,
-        override val isRefreshing: Boolean = false,
-    ) : ScheduleViewerScreenModel
+        val items: ImmutableList<LogItemModel>,
+    ) : LogViewerScreenModel
 }
 
-data class ScheduleItemModel(
+data class LogItemModel(
+    val id: Long,
     val alarmId: Int,
-    val dateLabel: String,
-    val timeLabel: String,
+    val typeLabel: String,
+    val timestampLabel: String,
+    val detailLabel: String?,
 )
 
 @Composable
-fun ScheduleViewerScreen(
+fun LogViewerScreen(
     modifier: Modifier = Modifier,
+    model: LogViewerScreenModel,
     onBackClick: () -> Unit,
-    onRefreshClick: () -> Unit,
-    onLogsClick: () -> Unit,
-    model: ScheduleViewerScreenModel,
+    onClearClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             HoraTopBar(
                 onBack = onBackClick,
-                title = stringResource(R.string.schedule_viewer_screen_title),
-                actions = {
-                    IconButton(onClick = onLogsClick) {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = stringResource(R.string.schedule_viewer_logs_button),
-                        )
+                title = stringResource(R.string.log_viewer_screen_title),
+                actions = if (model is LogViewerScreenModel.Content) {
+                    {
+                        IconButton(onClick = onClearClick) {
+                            Icon(
+                                imageVector = Icons.Default.DeleteSweep,
+                                contentDescription = stringResource(R.string.log_viewer_clear_button),
+                            )
+                        }
                     }
-                    IconButton(onClick = onRefreshClick) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = null,
-                        )
-                    }
-                },
+                } else null,
             )
         },
     ) { innerPadding ->
@@ -90,20 +80,14 @@ fun ScheduleViewerScreen(
                 .fillMaxSize(),
         ) {
             when (model) {
-                is ScheduleViewerScreenModel.Empty -> EmptyState(
+                is LogViewerScreenModel.Empty -> EmptyState(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(24.dp),
                 )
-
-                is ScheduleViewerScreenModel.Content -> ScheduleList(
+                is LogViewerScreenModel.Content -> LogList(
                     modifier = Modifier.navigationBarsPadding(),
                     items = model.items,
-                )
-            }
-            if (model.isRefreshing) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
                 )
             }
         }
@@ -116,20 +100,20 @@ private fun EmptyState(
 ) {
     Text(
         modifier = modifier,
-        text = stringResource(R.string.schedule_viewer_empty_message),
+        text = stringResource(R.string.log_viewer_empty_message),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
     )
 }
 
 @Composable
-private fun ScheduleList(
+private fun LogList(
     modifier: Modifier = Modifier,
-    items: ImmutableList<ScheduleItemModel>,
+    items: ImmutableList<LogItemModel>,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = items, key = { it.alarmId }) { item ->
-            ScheduleItem(
+        items(items = items, key = { it.id }) { item ->
+            LogItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
@@ -140,76 +124,87 @@ private fun ScheduleList(
 }
 
 @Composable
-private fun ScheduleItem(
+private fun LogItem(
     modifier: Modifier = Modifier,
-    item: ScheduleItemModel,
+    item: LogItemModel,
 ) {
     Card(modifier = modifier) {
         Row(
-            modifier = Modifier
-                .padding(12.dp),
+            modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = stringResource(R.string.schedule_viewer_alarm_id_label, item.alarmId),
+                    text = stringResource(R.string.log_viewer_alarm_id_label, item.alarmId),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = item.dateLabel,
+                    text = item.typeLabel,
                     style = MaterialTheme.typography.bodyLarge,
                 )
+                item.detailLabel?.let { detail ->
+                    Text(
+                        text = detail,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             Text(
-                text = item.timeLabel,
-                style = MaterialTheme.typography.bodyMedium,
+                text = item.timestampLabel,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
 
-// endregion
-
 // region Preview
 
-private class ScheduleViewerScreenPreviewProvider :
-    PreviewParameterProvider<ScheduleViewerScreenModel> {
-
+private class LogViewerScreenPreviewProvider : PreviewParameterProvider<LogViewerScreenModel> {
     override val values = sequenceOf(
-        ScheduleViewerScreenModel.Content(
+        LogViewerScreenModel.Content(
             items = persistentListOf(
-                ScheduleItemModel(alarmId = 1, dateLabel = "Monday May 26", timeLabel = "6:30 AM"),
-                ScheduleItemModel(
-                    alarmId = 2,
-                    dateLabel = "Tuesday May 27",
-                    timeLabel = "11:00 PM"
+                LogItemModel(
+                    id = 1,
+                    alarmId = 1,
+                    typeLabel = "Ringing",
+                    timestampLabel = "May 26, 6:30 AM",
+                    detailLabel = null,
                 ),
-                ScheduleItemModel(
-                    alarmId = 3,
-                    dateLabel = "Wednesday May 28",
-                    timeLabel = "12:00 PM"
+                LogItemModel(
+                    id = 2,
+                    alarmId = 1,
+                    typeLabel = "Scheduled",
+                    timestampLabel = "May 25, 11:00 PM",
+                    detailLabel = "May 26 6:30 AM",
+                ),
+                LogItemModel(
+                    id = 3,
+                    alarmId = 2,
+                    typeLabel = "Cancelled",
+                    timestampLabel = "May 25, 10:00 AM",
+                    detailLabel = null,
                 ),
             ),
         ),
-        ScheduleViewerScreenModel.Empty(),
+        LogViewerScreenModel.Empty,
     )
 }
 
 @PreviewLightDark
 @Composable
-private fun ScheduleViewerScreenPreview(
-    @PreviewParameter(ScheduleViewerScreenPreviewProvider::class) model: ScheduleViewerScreenModel,
+private fun LogViewerScreenPreview(
+    @PreviewParameter(LogViewerScreenPreviewProvider::class) model: LogViewerScreenModel,
 ) {
     HoraSolisTheme {
-        ScheduleViewerScreen(
+        LogViewerScreen(
             model = model,
             onBackClick = {},
-            onRefreshClick = {},
-            onLogsClick = {},
+            onClearClick = {},
         )
     }
 }
+
+// endregion

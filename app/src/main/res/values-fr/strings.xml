@@ -98,6 +98,15 @@
     <string name="schedule_viewer_alarm_id_label">Alarme #%1$d</string>
     <string name="schedule_viewer_date_today">Aujourd\'hui</string>
     <string name="schedule_viewer_date_tomorrow">Demain</string>
+    <string name="schedule_viewer_logs_button">Voir les journaux</string>
+
+    <string name="log_viewer_screen_title">Journaux d\'alarmes</string>
+    <string name="log_viewer_empty_message">Aucun journal enregistré.</string>
+    <string name="log_viewer_alarm_id_label">Alarme #%1$d</string>
+    <string name="log_viewer_type_scheduled">Programmée</string>
+    <string name="log_viewer_type_cancelled">Annulée</string>
+    <string name="log_viewer_type_ringing">En sonnerie</string>
+    <string name="log_viewer_clear_button">Effacer les journaux</string>
 
     <string name="settings_screen_title">Réglages alarmes</string>
 </resources>

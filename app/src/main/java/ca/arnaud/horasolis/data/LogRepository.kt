@@ -23,4 +23,8 @@ class LogRepository(
         alarmLogDao.observeLogs().map { entities ->
             entities.mapNotNull { it.toAlarmLogOrNull() }
         }
+
+    suspend fun clearLogs() {
+        alarmLogDao.deleteAllLogs()
+    }
 }

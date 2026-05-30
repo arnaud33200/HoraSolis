@@ -105,6 +105,15 @@
     <string name="schedule_viewer_alarm_id_label">Alarm #%1$d</string>
     <string name="schedule_viewer_date_today">Today</string>
     <string name="schedule_viewer_date_tomorrow">Tomorrow</string>
+    <string name="schedule_viewer_logs_button">View logs</string>
+
+    <string name="log_viewer_screen_title">Alarm Logs</string>
+    <string name="log_viewer_empty_message">No logs saved.</string>
+    <string name="log_viewer_alarm_id_label">Alarm #%1$d</string>
+    <string name="log_viewer_type_scheduled">Scheduled</string>
+    <string name="log_viewer_type_cancelled">Cancelled</string>
+    <string name="log_viewer_type_ringing">Ringing</string>
+    <string name="log_viewer_clear_button">Clear logs</string>
 
     <string name="settings_screen_title">Alarm Settings</string>
 </resources>

@@ -16,4 +16,7 @@ interface AlarmLogDao {
 
     @Query("SELECT * FROM alarm_log WHERE alarmId = :alarmId ORDER BY dateTime DESC")
     fun observeLogsByAlarmId(alarmId: Int): Flow<List<AlarmLogEntity>>
+
+    @Query("DELETE FROM alarm_log")
+    suspend fun deleteAllLogs()
 }
