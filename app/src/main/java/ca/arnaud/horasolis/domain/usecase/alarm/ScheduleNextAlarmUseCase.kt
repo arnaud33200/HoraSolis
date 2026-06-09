@@ -69,14 +69,16 @@ class ScheduleNextAlarmUseCase(
 
     suspend operator fun invoke(
         alarmId: Int,
+        skipToday: Boolean = false,
     ): Response<Unit, ScheduleSolisAlarmError> {
         val alarm = alarmRepository.getAlarmOrNull(alarmId)
             ?: return Response.Failure(ScheduleSolisAlarmError.SavedAlarmNotFound)
-        return invoke(alarm)
+        return invoke(alarm, skipToday)
     }
 
     suspend operator fun invoke(
         savedAlarm: SavedAlarm,
+        skipToday: Boolean = false,
     ): Response<Unit, ScheduleSolisAlarmError> {
         if (!savedAlarm.enabled) {
             return cancelAlarmWithError(
@@ -85,11 +87,7 @@ class ScheduleNextAlarmUseCase(
             )
         }
 
-        /**
-         * Add extra minutes to makes sure we don't schedule too early.
-         * Fix for double schedule when alarm is ringing
-         */
-        val nowDateTime = timeProvider.getNowDateTime().plusMinutes(1)
+        val nowDateTime = timeProvider.getNowDateTime().plusSeconds(30)
         val alarmNowTime = savedAlarm.toCivilTime(timeProvider.getNowDate()).flatMap(
             transform = { it },
             transformError = { return Response.Failure(it) },
@@ -97,7 +95,12 @@ class ScheduleNextAlarmUseCase(
 
         val atDate = when (val schedule = savedAlarm.schedule) {
             is Alarm.Schedule.OneTime -> resolveOneTimeDate(savedAlarm, schedule, nowDateTime)
-            is Alarm.Schedule.Repeating -> resolveRepeatingDate(schedule, nowDateTime, alarmNowTime)
+            is Alarm.Schedule.Repeating -> resolveRepeatingDate(
+                schedule,
+                nowDateTime,
+                alarmNowTime,
+                skipToday = skipToday
+            )
         }.flatMap(
             transform = { it },
             transformError = { return cancelAlarmWithError(savedAlarm, it) },
@@ -113,7 +116,12 @@ class ScheduleNextAlarmUseCase(
             dateTime = atDate.atTime(alarmTime),
         )
         scheduleRepository.scheduleAlarm(alarmParams)
-        logRepository.saveAlarmLog(SaveAlarmLogParam.Scheduled(alarmId = savedAlarm.id, scheduledDateTime = alarmParams.dateTime))
+        logRepository.saveAlarmLog(
+            SaveAlarmLogParam.Scheduled(
+                alarmId = savedAlarm.id,
+                scheduledDateTime = alarmParams.dateTime
+            )
+        )
         return Response.Success(Unit)
     }
 
@@ -145,10 +153,11 @@ class ScheduleNextAlarmUseCase(
         schedule: Alarm.Schedule.Repeating,
         nowDateTime: LocalDateTime,
         alarmNowTime: LocalTime,
+        skipToday: Boolean = false,
     ): Response<LocalDate, ScheduleSolisAlarmError> {
         val nowDayOfWeek = nowDateTime.dayOfWeek
         val nextAlarmDayOfWeek = schedule.weekDays.firstOrNull {
-            if (alarmNowTime.isBefore(nowDateTime.toLocalTime())) {
+            if (skipToday || alarmNowTime.isBefore(nowDateTime.toLocalTime())) {
                 it.ordinal > nowDayOfWeek.ordinal
             } else {
                 it.ordinal >= nowDayOfWeek.ordinal
@@ -162,6 +171,7 @@ class ScheduleNextAlarmUseCase(
                 val daysUntilNextAlarm = daysCount % (NUMBER_OF_DAYS_IN_WEEK + 1)
                 Response.Success(nowDateTime.plusDays(daysUntilNextAlarm.toLong()).toLocalDate())
             }
+
             else -> {
                 val numberOfDays = nextAlarmDayOfWeek.ordinal - nowDayOfWeek.ordinal
                 Response.Success(nowDateTime.plusDays(numberOfDays.toLong()).toLocalDate())

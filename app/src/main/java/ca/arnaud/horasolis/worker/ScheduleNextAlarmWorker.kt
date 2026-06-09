@@ -71,7 +71,7 @@ class ScheduleNextAlarmWorker(
         val param = ScheduleNextAlarmWorkerParam.fromDataOrNull(inputData)
             ?: return Result.failure()
 
-        return scheduleNextAlarm(alarmId = param.number).flatMap(
+        return scheduleNextAlarm(alarmId = param.number, skipToday = true).flatMap(
             transform = { Result.success() },
             transformError = { Result.failure() },
         )
