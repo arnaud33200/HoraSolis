@@ -28,15 +28,23 @@ import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.filter
 
+data class WheelPickerItem(
+    val text: String,
+    val data: Int,
+)
+
 @Composable
 fun WheelPicker(
     modifier: Modifier = Modifier,
-    items: ImmutableList<String>,
-    selectedIndex: Int,
-    onSelectedIndexChange: (Int) -> Unit,
+    onValueChange: (Int) -> Unit,
+    items: ImmutableList<WheelPickerItem>,
+    selectedItem: WheelPickerItem,
     visibleItemCount: Int = 5,
     itemHeight: Dp = 48.dp,
 ) {
+    val selectedIndex = remember(selectedItem, items) {
+        items.indexOfFirst { it == selectedItem }.coerceAtLeast(0)
+    }
     val paddingCount = visibleItemCount / 2
     val totalHeight = itemHeight * visibleItemCount
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = selectedIndex)
@@ -54,8 +62,9 @@ fun WheelPicker(
             .filter { !it }
             .collect {
                 val snapped = listState.firstVisibleItemIndex
-                if (snapped != selectedIndex) {
-                    onSelectedIndexChange(snapped)
+                val snappedItem = items.getOrNull(snapped) ?: return@collect
+                if (snappedItem != selectedItem) {
+                    onValueChange(snappedItem.data)
                 }
             }
     }
@@ -89,7 +98,7 @@ fun WheelPicker(
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = item,
+                        text = item.text,
                         style = if (distance == 0) MaterialTheme.typography.headlineSmall
                         else MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.alpha(alpha),

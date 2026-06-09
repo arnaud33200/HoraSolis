@@ -14,6 +14,7 @@ import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.RingtoneProvider
 import ca.arnaud.horasolis.ui.common.StringProvider
+import ca.arnaud.horasolis.ui.common.WheelPickerItem
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmScreenModel
 import ca.arnaud.horasolis.ui.editalarm.ScheduleContent
 import io.ktor.util.date.WeekDay
@@ -61,15 +62,23 @@ class EditAlarmScreenModelFactory(
 
         val hour = updatedAlarm.solisTime.hour
         val minute = updatedAlarm.solisTime.minute
+        val hourItems = (0..11).map { WheelPickerItem(text = it.toString(), data = it + 1) }.toImmutableList()
+        val minuteItems = (0..59).map { WheelPickerItem(text = it.toString().padStart(2, '0'), data = it) }.toImmutableList()
+        val selectedHourItem = hourItems.firstOrNull { it.data == hour } ?: hourItems[0]
+        val selectedMinuteItem = minuteItems.firstOrNull { it.data == minute } ?: minuteItems[0]
         return EditAlarmScreenModel.Content(
             hour = hour,
             hourTitle = stringProvider.getString(
                 R.string.hour_label, "${hour - 1}",
             ),
+            hourItems = hourItems,
+            selectedHourItem = selectedHourItem,
             minute = minute,
             minuteTitle = stringProvider.getString(
                 R.string.minute_label, "$minute",
             ),
+            minuteItems = minuteItems,
+            selectedMinuteItem = selectedMinuteItem,
             isDay = updatedAlarm.solisTime.type == SolisTime.Type.Day,
             civilTime = civilTime.orEmpty(),
             scheduleContent = scheduleContent,

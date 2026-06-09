@@ -45,6 +45,7 @@ import ca.arnaud.horasolis.ui.EditDayOfWeeks
 import ca.arnaud.horasolis.ui.common.HoraTextField
 import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.common.WheelPicker
+import ca.arnaud.horasolis.ui.common.WheelPickerItem
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.persistentListOf
@@ -252,9 +253,6 @@ fun CustomTimePicker(
     toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
     model: EditAlarmScreenModel.Content,
 ) {
-    val hourItems = remember { (1..12).map { it.toString() }.toImmutableList() }
-    val minuteItems = remember { (0..59).map { it.toString().padStart(2, '0') }.toImmutableList() }
-
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -265,10 +263,10 @@ fun CustomTimePicker(
         ) {
             WheelPicker(
                 modifier = Modifier.weight(1f),
-                items = hourItems,
-                selectedIndex = model.hour - 1,
-                onSelectedIndexChange = { onHourChange(it + 1) },
-                visibleItemCount = 3,
+                items = model.hourItems,
+                selectedItem = model.selectedHourItem,
+                onValueChange = { onHourChange(it) },
+                itemHeight = 30.dp,
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -286,10 +284,10 @@ fun CustomTimePicker(
 
             WheelPicker(
                 modifier = Modifier.weight(1f),
-                items = minuteItems,
-                selectedIndex = model.minute,
-                onSelectedIndexChange = { onMinuteChange(it) },
-                visibleItemCount = 3,
+                items = model.minuteItems,
+                selectedItem = model.selectedMinuteItem,
+                onValueChange = { onMinuteChange(it) },
+                itemHeight = 30.dp,
             )
         }
 
@@ -364,12 +362,19 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
         )
     }.toImmutableList()
 
+    private val sampleHourItems = (0..11).map { WheelPickerItem(it.toString(), it + 1) }.toImmutableList()
+    private val sampleMinuteItems = (0..59).map { WheelPickerItem(it.toString().padStart(2, '0'), it) }.toImmutableList()
+
     override val values = sequenceOf(
         EditAlarmScreenModel.Content(
             hour = 6,
             hourTitle = "Hour: 6",
+            hourItems = sampleHourItems,
+            selectedHourItem = sampleHourItems[5],
             minute = 30,
             minuteTitle = "Minute: 30",
+            minuteItems = sampleMinuteItems,
+            selectedMinuteItem = sampleMinuteItems[30],
             isDay = true,
             civilTime = "07:45",
             scheduleContent = ScheduleContent.Repeating(sampleDayOfWeeks),
@@ -380,8 +385,12 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
         EditAlarmScreenModel.Content(
             hour = 9,
             hourTitle = "Hour: 9",
+            hourItems = sampleHourItems,
+            selectedHourItem = sampleHourItems[8],
             minute = 0,
             minuteTitle = "Minute: 0",
+            minuteItems = sampleMinuteItems,
+            selectedMinuteItem = sampleMinuteItems[0],
             isDay = false,
             civilTime = "21:12",
             scheduleContent = ScheduleContent.OneTime(selectedDate = "May 20"),
@@ -391,8 +400,12 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
         EditAlarmScreenModel.Content(
             hour = 3,
             hourTitle = "Hour: 3",
+            hourItems = sampleHourItems,
+            selectedHourItem = sampleHourItems[2],
             minute = 0,
             minuteTitle = "Minute: 0",
+            minuteItems = sampleMinuteItems,
+            selectedMinuteItem = sampleMinuteItems[0],
             isDay = true,
             civilTime = "06:00",
             scheduleContent = ScheduleContent.Repeating(persistentListOf()),
