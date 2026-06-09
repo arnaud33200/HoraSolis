@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DropdownMenuItem
@@ -81,7 +83,9 @@ fun EditAlarmScreen(
     ) { innerPadding ->
         when (model) {
             is EditAlarmScreenModel.Content -> EditAlarmContent(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(innerPadding),
                 labelState = labelState,
                 model = model,
                 onAction = onAction,
@@ -104,7 +108,7 @@ private fun EditAlarmContent(
     onAction: (EditAlarmUiAction) -> Unit,
 ) {
     Column(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -222,6 +226,7 @@ private fun ScheduleSection(
                 items = scheduleContent.dayOfWeeks,
                 onItemClick = { onAction(EditAlarmUiAction.DayOfWeekClicked(it)) },
             )
+
             is ScheduleContent.OneTime -> OneTimeDatePicker(
                 selectedDateLabel = scheduleContent.selectedDate,
                 onAction = onAction,
@@ -244,7 +249,7 @@ private fun OneTimeDatePicker(
 }
 
 @Composable
-fun CustomTimePicker(
+private fun CustomTimePicker(
     modifier: Modifier = Modifier,
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit,
@@ -264,7 +269,7 @@ fun CustomTimePicker(
                 items = model.hourItems,
                 selectedItem = model.selectedHourItem,
                 onValueChange = { onHourChange(it) },
-                itemHeight = 30.dp,
+                itemHeight = 40.dp,
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -285,7 +290,7 @@ fun CustomTimePicker(
                 items = model.minuteItems,
                 selectedItem = model.selectedMinuteItem,
                 onValueChange = { onMinuteChange(it) },
-                itemHeight = 30.dp,
+                itemHeight = 40.dp,
             )
         }
 
@@ -367,8 +372,10 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
         )
     }.toImmutableList()
 
-    private val sampleHourItems = (0..11).map { WheelPickerItem(it.toString(), it + 1) }.toImmutableList()
-    private val sampleMinuteItems = (0..59).map { WheelPickerItem(it.toString().padStart(2, '0'), it) }.toImmutableList()
+    private val sampleHourItems =
+        (0..11).map { WheelPickerItem(it.toString(), it + 1) }.toImmutableList()
+    private val sampleMinuteItems =
+        (0..59).map { WheelPickerItem(it.toString().padStart(2, '0'), it) }.toImmutableList()
 
     override val values = sequenceOf(
         EditAlarmScreenModel.Content(
