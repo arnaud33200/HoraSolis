@@ -119,7 +119,6 @@ private fun EditAlarmContent(
 
         CustomTimePicker(
             model = model,
-            toCivilTime = { _, _, _ -> model.civilTime },
             onHourChange = { onAction(EditAlarmUiAction.HourChanged(it)) },
             onMinuteChange = { onAction(EditAlarmUiAction.MinuteChanged(it)) },
             onDayNightToggle = { onAction(EditAlarmUiAction.DayNightToggled(it)) },
@@ -250,7 +249,6 @@ fun CustomTimePicker(
     onHourChange: (Int) -> Unit,
     onMinuteChange: (Int) -> Unit,
     onDayNightToggle: (Boolean) -> Unit,
-    toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
     model: EditAlarmScreenModel.Content,
 ) {
     Column(
@@ -293,8 +291,15 @@ fun CustomTimePicker(
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = toCivilTime(model.hour, model.minute, model.isDay),
-            style = MaterialTheme.typography.bodyMedium,
+            text = model.civilTime,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        )
+        Text(
+            text = stringResource(R.string.civil_time_label),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
     }
@@ -367,11 +372,9 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
 
     override val values = sequenceOf(
         EditAlarmScreenModel.Content(
-            hour = 6,
             hourTitle = "Hour: 6",
             hourItems = sampleHourItems,
             selectedHourItem = sampleHourItems[5],
-            minute = 30,
             minuteTitle = "Minute: 30",
             minuteItems = sampleMinuteItems,
             selectedMinuteItem = sampleMinuteItems[30],
@@ -383,11 +386,9 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             saveEnabled = true,
         ),
         EditAlarmScreenModel.Content(
-            hour = 9,
             hourTitle = "Hour: 9",
             hourItems = sampleHourItems,
             selectedHourItem = sampleHourItems[8],
-            minute = 0,
             minuteTitle = "Minute: 0",
             minuteItems = sampleMinuteItems,
             selectedMinuteItem = sampleMinuteItems[0],
@@ -398,11 +399,9 @@ private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlar
             vibrationEnabled = false,
         ),
         EditAlarmScreenModel.Content(
-            hour = 3,
             hourTitle = "Hour: 3",
             hourItems = sampleHourItems,
             selectedHourItem = sampleHourItems[2],
-            minute = 0,
             minuteTitle = "Minute: 0",
             minuteItems = sampleMinuteItems,
             selectedMinuteItem = sampleMinuteItems[0],

@@ -10,11 +10,9 @@ sealed interface EditAlarmScreenModel {
 
     data class Content(
         val hourTitle: String,
-        val hour: Int,
         val hourItems: ImmutableList<WheelPickerItem>,
         val selectedHourItem: WheelPickerItem,
         val minuteTitle: String,
-        val minute: Int,
         val minuteItems: ImmutableList<WheelPickerItem>,
         val selectedMinuteItem: WheelPickerItem,
         val isDay: Boolean,

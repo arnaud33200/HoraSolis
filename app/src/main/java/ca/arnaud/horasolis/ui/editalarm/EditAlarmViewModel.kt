@@ -11,6 +11,7 @@ import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
 import ca.arnaud.horasolis.domain.model.alarm.AlarmUpdateParams
 import ca.arnaud.horasolis.domain.model.alarm.applyUpdates
 import ca.arnaud.horasolis.domain.model.common.UpdateParam
+import ca.arnaud.horasolis.domain.model.common.UpdateParam.Unchanged.getUpdateDataOrDefault
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
@@ -196,13 +197,16 @@ internal class EditAlarmViewModel(
     }
 
     private suspend fun onSolisTimeChanged(action: SolisTimeAction) {
-        val content = _state.value as? EditAlarmScreenModel.Content ?: return
-        val isDay = (action as? EditAlarmUiAction.DayNightToggled)?.isDay ?: content.isDay
-        val updatedSolisTime = SolisTime(
-            hour = (action as? EditAlarmUiAction.HourChanged)?.hour ?: content.hour,
-            minute = (action as? EditAlarmUiAction.MinuteChanged)?.minute ?: content.minute,
-            type = if (isDay) SolisTime.Type.Day else SolisTime.Type.Night,
+        val solisTime = updateParams.solisTime.getUpdateDataOrDefault(
+            defaultValue = initialAlarm.solisTime,
         )
+       val updatedSolisTime = when (action) {
+            is EditAlarmUiAction.DayNightToggled -> solisTime.copy(
+                type =  if (action.isDay) SolisTime.Type.Day else SolisTime.Type.Night
+            )
+            is EditAlarmUiAction.HourChanged -> solisTime.copy(hour = action.hour)
+            is EditAlarmUiAction.MinuteChanged -> solisTime.copy(minute = action.minute)
+        }
         updateParams = updateParams.copy(
             solisTime = UpdateParam.of(
                 initialAlarm.solisTime, updatedSolisTime

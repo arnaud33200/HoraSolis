@@ -116,4 +116,6 @@
     <string name="log_viewer_clear_button">Clear logs</string>
 
     <string name="settings_screen_title">Alarm Settings</string>
+
+    <string name="civil_time_label">Civil time</string>
 </resources>

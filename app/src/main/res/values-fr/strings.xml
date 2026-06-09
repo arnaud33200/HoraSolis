@@ -109,4 +109,6 @@
     <string name="log_viewer_clear_button">Effacer les journaux</string>
 
     <string name="settings_screen_title">Réglages alarmes</string>
+
+    <string name="civil_time_label">Heure civile</string>
 </resources>

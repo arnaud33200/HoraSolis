@@ -67,13 +67,11 @@ class EditAlarmScreenModelFactory(
         val selectedHourItem = hourItems.firstOrNull { it.data == hour } ?: hourItems[0]
         val selectedMinuteItem = minuteItems.firstOrNull { it.data == minute } ?: minuteItems[0]
         return EditAlarmScreenModel.Content(
-            hour = hour,
             hourTitle = stringProvider.getString(
                 R.string.hour_label, "${hour - 1}",
             ),
             hourItems = hourItems,
             selectedHourItem = selectedHourItem,
-            minute = minute,
             minuteTitle = stringProvider.getString(
                 R.string.minute_label, "$minute",
             ),
