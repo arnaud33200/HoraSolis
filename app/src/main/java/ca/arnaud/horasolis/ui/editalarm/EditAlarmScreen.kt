@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
@@ -23,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -44,6 +44,7 @@ import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.EditDayOfWeeks
 import ca.arnaud.horasolis.ui.common.HoraTextField
 import ca.arnaud.horasolis.ui.common.HoraTopBar
+import ca.arnaud.horasolis.ui.common.WheelPicker
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
 import io.ktor.util.date.WeekDay
 import kotlinx.collections.immutable.persistentListOf
@@ -251,40 +252,52 @@ fun CustomTimePicker(
     toCivilTime: (hour: Int, minute: Int, isDay: Boolean) -> String,
     model: EditAlarmScreenModel.Content,
 ) {
+    val hourItems = remember { (1..12).map { it.toString() }.toImmutableList() }
+    val minuteItems = remember { (0..59).map { it.toString().padStart(2, '0') }.toImmutableList() }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Switch(
-            checked = model.isDay,
-            onCheckedChange = onDayNightToggle,
-            thumbContent = {
-                val text = if (model.isDay) "☀️" else "🌚"
-                Text(text = text)
-            }
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            WheelPicker(
+                modifier = Modifier.weight(1f),
+                items = hourItems,
+                selectedIndex = model.hour - 1,
+                onSelectedIndexChange = { onHourChange(it + 1) },
+                visibleItemCount = 3,
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(model.hourTitle)
-        Slider(
-            value = model.hour.toFloat(),
-            onValueChange = { onHourChange(it.toInt()) },
-            valueRange = 1f..12f,
-            steps = 10
-        )
-        Text(model.minuteTitle)
-        Slider(
-            value = model.minute.toFloat(),
-            onValueChange = { onMinuteChange(it.toInt()) },
-            valueRange = 0f..59f,
-            steps = 60,
-        )
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Switch(
+                checked = model.isDay,
+                onCheckedChange = onDayNightToggle,
+                thumbContent = {
+                    val text = if (model.isDay) "☀️" else "🌚"
+                    Text(text = text)
+                }
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            WheelPicker(
+                modifier = Modifier.weight(1f),
+                items = minuteItems,
+                selectedIndex = model.minute,
+                onSelectedIndexChange = { onMinuteChange(it) },
+                visibleItemCount = 3,
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = toCivilTime(model.hour, model.minute, model.isDay),
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
     }
 }
