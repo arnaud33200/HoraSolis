@@ -14,7 +14,9 @@ import ca.arnaud.horasolis.data.SolisRepository
 import ca.arnaud.horasolis.domain.model.location.LocationValidator
 import ca.arnaud.horasolis.domain.provider.LocaleProvider
 import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
+import ca.arnaud.horasolis.domain.provider.Logger
 import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.provider.LoggerImpl
 import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CancelAlarmUseCase
@@ -190,6 +192,7 @@ class HoraSolisApplication : Application(), KoinComponent {
         factoryOf(::ObserveAllLocationsUseCase)
 
         singleOf(::TimeProvider)
+        singleOf(::LoggerImpl) { bind<Logger>() }
         singleOf(::LocaleProviderImpl) { bind<LocaleProvider>() }
     }
 

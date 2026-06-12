@@ -4,6 +4,8 @@ import ca.arnaud.horasolis.data.AlarmRepository
 import ca.arnaud.horasolis.domain.Response
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
+import ca.arnaud.horasolis.domain.onFailure
+import ca.arnaud.horasolis.domain.provider.Logger
 import io.ktor.util.date.WeekDay
 
 data object GetAlarmError
@@ -17,11 +19,22 @@ sealed interface GetAlarmParams {
     ) : GetAlarmParams
 }
 
+class GetAlarmException : Exception("GetAlarm failed: alarm not found")
+
 class GetAlarmUseCase(
     private val alarmRepository: AlarmRepository,
+    private val logger: Logger,
 ) {
 
     suspend operator fun invoke(
+        params: GetAlarmParams,
+    ): Response<Alarm, GetAlarmError> {
+        return getAlarm(params).onFailure {
+            logger.logNonFatal(GetAlarmException())
+        }
+    }
+
+    private suspend fun getAlarm(
         params: GetAlarmParams,
     ): Response<Alarm, GetAlarmError> {
         return when (params) {

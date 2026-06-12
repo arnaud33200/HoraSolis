@@ -6,11 +6,16 @@ import ca.arnaud.horasolis.domain.map
 import ca.arnaud.horasolis.domain.model.SolisCivilTime
 import ca.arnaud.horasolis.domain.model.SolisCivilTimes
 import ca.arnaud.horasolis.domain.model.SolisDay
+import ca.arnaud.horasolis.domain.onFailure
+import ca.arnaud.horasolis.domain.provider.Logger
 import java.time.Duration
 import java.time.LocalTime
 
+class GetSolisCivilTimeException(cause: Throwable) : Exception("GetSolisCivilTime failed", cause)
+
 class GetSolisCivilTimeUseCase(
     private val solisRepository: SolisRepository,
+    private val logger: Logger,
 ) {
 
     companion object {
@@ -26,7 +31,9 @@ class GetSolisCivilTimeUseCase(
             transform = { solisDay ->
                 calculateSolisCivilTimes(solisDay, params)
             }
-        )
+        ).onFailure { throwable ->
+            logger.logNonFatal(GetSolisCivilTimeException(throwable))
+        }
     }
 
     /**

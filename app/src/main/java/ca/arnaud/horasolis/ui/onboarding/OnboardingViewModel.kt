@@ -116,7 +116,7 @@ class OnboardingViewModel(
             is Response.Success -> OnboardingScreenModel.Ready
             is Response.Failure -> when (response.error) {
                 GetSolisDayError.NoLocation -> OnboardingScreenModel.MissingLocation()
-                GetSolisDayError.Unknown -> OnboardingScreenModel.Error
+                is GetSolisDayError.Unknown -> OnboardingScreenModel.Error
             }
         }
         if (response is Response.Success) {

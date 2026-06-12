@@ -9,12 +9,16 @@ import ca.arnaud.horasolis.domain.map
 import ca.arnaud.horasolis.domain.model.SaveAlarmLogParam
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
+import ca.arnaud.horasolis.domain.onFailure
+import ca.arnaud.horasolis.domain.provider.Logger
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
 import ca.arnaud.horasolis.service.SolisTimeAlarmScheduleParam
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+
+class ScheduleNextAlarmException(message: String) : Exception("ScheduleNextAlarm failed: $message")
 
 enum class ScheduleSolisAlarmError {
 
@@ -60,6 +64,7 @@ class ScheduleNextAlarmUseCase(
     private val logRepository: LogRepository,
     private val timeProvider: TimeProvider,
     private val getSolisDay: GetSolisDayUseCase,
+    private val logger: Logger,
 ) {
 
     companion object {
@@ -72,13 +77,24 @@ class ScheduleNextAlarmUseCase(
         skipToday: Boolean = false,
     ): Response<Unit, ScheduleSolisAlarmError> {
         val alarm = alarmRepository.getAlarmOrNull(alarmId)
-            ?: return Response.Failure(ScheduleSolisAlarmError.SavedAlarmNotFound)
+            ?: return Response.Failure(ScheduleSolisAlarmError.SavedAlarmNotFound).also {
+                logger.logNonFatal(ScheduleNextAlarmException(ScheduleSolisAlarmError.SavedAlarmNotFound.name))
+            }
         return invoke(alarm, skipToday)
     }
 
     suspend operator fun invoke(
         savedAlarm: SavedAlarm,
         skipToday: Boolean = false,
+    ): Response<Unit, ScheduleSolisAlarmError> {
+        return scheduleAlarm(savedAlarm, skipToday).onFailure { error ->
+            logger.logNonFatal(ScheduleNextAlarmException(error.name))
+        }
+    }
+
+    private suspend fun scheduleAlarm(
+        savedAlarm: SavedAlarm,
+        skipToday: Boolean,
     ): Response<Unit, ScheduleSolisAlarmError> {
         if (!savedAlarm.enabled) {
             return cancelAlarmWithError(
