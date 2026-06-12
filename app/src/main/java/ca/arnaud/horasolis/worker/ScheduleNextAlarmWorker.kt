@@ -9,7 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import ca.arnaud.horasolis.domain.flatMap
+import ca.arnaud.horasolis.domain.model.common.flatMap
 import ca.arnaud.horasolis.domain.usecase.alarm.ScheduleNextAlarmUseCase
 import org.koin.java.KoinJavaComponent
 

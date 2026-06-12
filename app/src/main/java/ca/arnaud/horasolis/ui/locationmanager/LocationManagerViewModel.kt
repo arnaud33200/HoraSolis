@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.ui.locationmanager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.common.Response
 import ca.arnaud.horasolis.domain.usecase.location.DeleteLocationError
 import ca.arnaud.horasolis.domain.usecase.location.DeleteLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase

@@ -3,7 +3,7 @@ package ca.arnaud.horasolis.ui.scheduleviewer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.R
-import ca.arnaud.horasolis.data.ScheduleRepository
+import ca.arnaud.horasolis.domain.repository.ScheduleRepository
 import ca.arnaud.horasolis.domain.usecase.alarm.RefreshAllAlarmScheduleUseCase
 import ca.arnaud.horasolis.ui.common.DateFormatter
 import ca.arnaud.horasolis.ui.common.StringProvider

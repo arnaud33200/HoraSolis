@@ -4,7 +4,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.common.Response
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
@@ -18,7 +18,7 @@ import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase
 import ca.arnaud.horasolis.ui.alarmmanager.EditAlarmScreenModelFactory
 import ca.arnaud.horasolis.ui.common.DatePickerModel
 import ca.arnaud.horasolis.ui.common.DatePickerModelFactory
-import io.ktor.util.date.WeekDay
+import java.time.DayOfWeek
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -145,7 +145,7 @@ internal class EditAlarmViewModel(
 
     private suspend fun onScheduleTypeSelected(action: EditAlarmUiAction.ScheduleTypeSelected) {
         val newSchedule = if (action.isRepeating) {
-            Schedule.Repeating(WeekDay.entries.toSet())
+            Schedule.Repeating(DayOfWeek.entries.toSet())
         } else {
             Schedule.OneTime(LocalDate.now())
         }

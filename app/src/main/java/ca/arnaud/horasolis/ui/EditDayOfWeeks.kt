@@ -20,14 +20,14 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
-import io.ktor.util.date.WeekDay
+import java.time.DayOfWeek
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 data class EditDayOfWeekItemModel(
     val text: String,
     val selected: Boolean = false,
-    val data: WeekDay,
+    val data: DayOfWeek,
 )
 
 @Composable
@@ -75,17 +75,17 @@ fun EditDayOfWeeks(
 
 private class EditDayOfWeeksPreviewProvider : PreviewParameterProvider<ImmutableList<EditDayOfWeekItemModel>> {
 
-    private fun items(vararg selected: WeekDay) = WeekDay.entries.map { weekDay ->
+    private fun items(vararg selected: DayOfWeek) = DayOfWeek.entries.map { dayOfWeek ->
         EditDayOfWeekItemModel(
-            text = weekDay.name.substring(0, 3),
-            selected = weekDay in selected,
-            data = weekDay,
+            text = dayOfWeek.name.substring(0, 3),
+            selected = dayOfWeek in selected,
+            data = dayOfWeek,
         )
     }.toImmutableList()
 
     override val values = sequenceOf(
-        items(WeekDay.MONDAY, WeekDay.WEDNESDAY, WeekDay.FRIDAY),
-        items(*WeekDay.entries.toTypedArray()),
+        items(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
+        items(*DayOfWeek.entries.toTypedArray()),
         items(),
     )
 }

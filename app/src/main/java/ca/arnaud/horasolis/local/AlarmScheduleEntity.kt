@@ -2,7 +2,7 @@ package ca.arnaud.horasolis.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ca.arnaud.horasolis.data.model.ScheduledAlarm
+import ca.arnaud.horasolis.domain.model.ScheduledAlarm
 import java.time.LocalDateTime
 
 @Entity(tableName = "alarm_schedule")

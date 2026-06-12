@@ -1,0 +1,202 @@
+package ca.arnaud.horasolis.domain.usecase.alarm
+
+import ca.arnaud.horasolis.domain.model.common.Response
+import ca.arnaud.horasolis.domain.model.common.flatMap
+import ca.arnaud.horasolis.domain.model.common.map
+import ca.arnaud.horasolis.domain.model.SaveAlarmLogParam
+import ca.arnaud.horasolis.domain.model.alarm.Alarm
+import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
+import ca.arnaud.horasolis.domain.model.common.onFailure
+import ca.arnaud.horasolis.domain.provider.Logger
+import ca.arnaud.horasolis.domain.provider.TimeProvider
+import ca.arnaud.horasolis.domain.repository.AlarmRepository
+import ca.arnaud.horasolis.domain.repository.LogRepository
+import ca.arnaud.horasolis.domain.repository.ScheduleRepository
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayUseCase
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+
+class ScheduleNextAlarmException(message: String) : Exception("ScheduleNextAlarm failed: $message")
+
+enum class ScheduleSolisAlarmError {
+
+    /**
+     * Couldn't find the alarm with a specific id.
+     * May happen when alarm is removed after being scheduled.
+     */
+    SavedAlarmNotFound,
+
+    /**
+     * Alarm is not enabled, alarm cannot be scheduled.
+     */
+    NotEnabled,
+
+    /**
+     * Alarm is enabled but there is no day in the week to schedule for.
+     */
+    EmptyWeekDays,
+
+    /**
+     * Couldn't get the solis day for a specific date.
+     * This is required to convert solis time to civil time.
+     */
+    MissingSolisDay,
+
+    /**
+     * One-time alarm date+time is in the past and can no longer be scheduled.
+     */
+    OneTimeDateExpired,
+}
+
+/**
+ * Schedules the next alarm time for a given alarm.
+ * Used when add/edit an alarm, and used after an alarm is ringing to schedule the next one.
+ *
+ * The next alarm can be either this week or next week, depending on the time and schedule.
+ * Alarm is canceled if not enabled or if there is no more day in the week to schedule for.
+ */
+class ScheduleNextAlarmUseCase(
+    private val alarmRepository: AlarmRepository,
+    private val scheduleRepository: ScheduleRepository,
+    private val cancelAlarm: CancelAlarmUseCase,
+    private val logRepository: LogRepository,
+    private val timeProvider: TimeProvider,
+    private val getSolisDay: GetSolisDayUseCase,
+    private val logger: Logger,
+) {
+
+    companion object {
+
+        private const val NUMBER_OF_DAYS_IN_WEEK = 7
+    }
+
+    suspend operator fun invoke(
+        alarmId: Int,
+        skipToday: Boolean = false,
+    ): Response<Unit, ScheduleSolisAlarmError> {
+        val alarm = alarmRepository.getAlarmOrNull(alarmId)
+            ?: return Response.Failure(ScheduleSolisAlarmError.SavedAlarmNotFound).also {
+                logger.logNonFatal(ScheduleNextAlarmException(ScheduleSolisAlarmError.SavedAlarmNotFound.name))
+            }
+        return invoke(alarm, skipToday)
+    }
+
+    suspend operator fun invoke(
+        savedAlarm: SavedAlarm,
+        skipToday: Boolean = false,
+    ): Response<Unit, ScheduleSolisAlarmError> {
+        return scheduleAlarm(savedAlarm, skipToday).onFailure { error ->
+            logger.logNonFatal(ScheduleNextAlarmException(error.name))
+        }
+    }
+
+    private suspend fun scheduleAlarm(
+        savedAlarm: SavedAlarm,
+        skipToday: Boolean,
+    ): Response<Unit, ScheduleSolisAlarmError> {
+        if (!savedAlarm.enabled) {
+            return cancelAlarmWithError(
+                savedAlarm = savedAlarm,
+                error = ScheduleSolisAlarmError.NotEnabled,
+            )
+        }
+
+        val nowDateTime = timeProvider.getNowDateTime().plusSeconds(30)
+        val alarmNowTime = savedAlarm.toCivilTime(timeProvider.getNowDate()).flatMap(
+            transform = { it },
+            transformError = { return Response.Failure(it) },
+        )
+
+        val atDate = when (val schedule = savedAlarm.schedule) {
+            is Alarm.Schedule.OneTime -> resolveOneTimeDate(savedAlarm, schedule, nowDateTime)
+            is Alarm.Schedule.Repeating -> resolveRepeatingDate(
+                schedule,
+                nowDateTime,
+                alarmNowTime,
+                skipToday = skipToday
+            )
+        }.flatMap(
+            transform = { it },
+            transformError = { return cancelAlarmWithError(savedAlarm, it) },
+        )
+
+
+        val alarmTime = savedAlarm.toCivilTime(atDate).flatMap(
+            transform = { it },
+            transformError = { return Response.Failure(it) },
+        )
+        val alarmDateTime = atDate.atTime(alarmTime)
+        scheduleRepository.scheduleAlarm(alarmId = savedAlarm.id, dateTime = alarmDateTime)
+        logRepository.saveAlarmLog(
+            SaveAlarmLogParam.Scheduled(
+                alarmId = savedAlarm.id,
+                scheduledDateTime = alarmDateTime
+            )
+        )
+        return Response.Success(Unit)
+    }
+
+    private suspend fun cancelAlarmWithError(
+        savedAlarm: SavedAlarm,
+        error: ScheduleSolisAlarmError,
+    ): Response.Failure<ScheduleSolisAlarmError> {
+        cancelAlarm(savedAlarm.id)
+        return Response.Failure(error)
+    }
+
+    private suspend fun resolveOneTimeDate(
+        savedAlarm: SavedAlarm,
+        schedule: Alarm.Schedule.OneTime,
+        nowDateTime: LocalDateTime,
+    ): Response<LocalDate, ScheduleSolisAlarmError> {
+        val civilTime = savedAlarm.toCivilTime(schedule.date).flatMap(
+            transform = { it },
+            transformError = { return Response.Failure(it) },
+        )
+        return if (schedule.date.atTime(civilTime).isBefore(nowDateTime)) {
+            cancelAlarmWithError(savedAlarm, ScheduleSolisAlarmError.OneTimeDateExpired)
+        } else {
+            Response.Success(schedule.date)
+        }
+    }
+
+    private fun resolveRepeatingDate(
+        schedule: Alarm.Schedule.Repeating,
+        nowDateTime: LocalDateTime,
+        alarmNowTime: LocalTime,
+        skipToday: Boolean = false,
+    ): Response<LocalDate, ScheduleSolisAlarmError> {
+        val nowDayOfWeek = nowDateTime.dayOfWeek
+        val nextAlarmDayOfWeek = schedule.weekDays.firstOrNull {
+            if (skipToday || alarmNowTime.isBefore(nowDateTime.toLocalTime())) {
+                it.ordinal > nowDayOfWeek.ordinal
+            } else {
+                it.ordinal >= nowDayOfWeek.ordinal
+            }
+        }
+        return when {
+            nextAlarmDayOfWeek == null -> {
+                val nextWeekDay = schedule.weekDays.firstOrNull()
+                    ?: return Response.Failure(ScheduleSolisAlarmError.EmptyWeekDays)
+                val daysCount = NUMBER_OF_DAYS_IN_WEEK - nowDayOfWeek.ordinal + nextWeekDay.ordinal
+                val daysUntilNextAlarm = daysCount % (NUMBER_OF_DAYS_IN_WEEK + 1)
+                Response.Success(nowDateTime.plusDays(daysUntilNextAlarm.toLong()).toLocalDate())
+            }
+
+            else -> {
+                val numberOfDays = nextAlarmDayOfWeek.ordinal - nowDayOfWeek.ordinal
+                Response.Success(nowDateTime.plusDays(numberOfDays.toLong()).toLocalDate())
+            }
+        }
+    }
+
+    private suspend fun SavedAlarm.toCivilTime(
+        atDate: LocalDate,
+    ): Response<LocalTime, ScheduleSolisAlarmError> {
+        return getSolisDay(atDate).map(
+            transform = { solisDay -> solisTime.toCivilTime(solisDay) },
+            transformError = { ScheduleSolisAlarmError.MissingSolisDay },
+        )
+    }
+}

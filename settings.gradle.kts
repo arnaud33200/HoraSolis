@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Hora Solis"
 include(":app")
+include(":domain")

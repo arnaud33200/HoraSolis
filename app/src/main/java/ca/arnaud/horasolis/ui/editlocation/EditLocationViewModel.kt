@@ -4,7 +4,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.common.Response
 import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.common.UpdateParam
 import ca.arnaud.horasolis.domain.model.location.LocationUpdateParams

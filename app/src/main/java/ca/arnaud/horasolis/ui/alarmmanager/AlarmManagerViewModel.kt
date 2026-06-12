@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
-import ca.arnaud.horasolis.domain.onFailure
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.model.common.onFailure
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.DeleteAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.UpsertAlarmUseCase

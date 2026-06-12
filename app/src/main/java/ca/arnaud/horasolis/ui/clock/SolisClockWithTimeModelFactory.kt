@@ -1,9 +1,9 @@
 package ca.arnaud.horasolis.ui.clock
 
-import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.common.Response
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayError
 import ca.arnaud.horasolis.extension.format
 import kotlinx.collections.immutable.toImmutableList
 

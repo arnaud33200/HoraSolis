@@ -8,7 +8,7 @@ import ca.arnaud.horasolis.domain.model.alarm.Alarm.Schedule
 import ca.arnaud.horasolis.domain.model.alarm.AlarmUpdateParams
 import ca.arnaud.horasolis.domain.model.alarm.applyUpdates
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetSettingsUseCase
 import ca.arnaud.horasolis.ui.EditDayOfWeekItemModel
 import ca.arnaud.horasolis.ui.common.DateFormatter
@@ -17,7 +17,7 @@ import ca.arnaud.horasolis.ui.common.StringProvider
 import ca.arnaud.horasolis.ui.common.WheelPickerItem
 import ca.arnaud.horasolis.ui.editalarm.EditAlarmScreenModel
 import ca.arnaud.horasolis.ui.editalarm.ScheduleContent
-import io.ktor.util.date.WeekDay
+import java.time.DayOfWeek
 import kotlinx.collections.immutable.toImmutableList
 
 class EditAlarmScreenModelFactory(
@@ -41,7 +41,7 @@ class EditAlarmScreenModelFactory(
         }
         val scheduleContent = when (val schedule = updatedAlarm.schedule) {
             is Schedule.Repeating -> {
-                val dayOfWeeks = WeekDay.entries.map { dayOfWeek ->
+                val dayOfWeeks = DayOfWeek.entries.map { dayOfWeek ->
                     EditDayOfWeekItemModel(
                         text = dateFormatter.formatWeekDay(dayOfWeek),
                         selected = schedule.weekDays.contains(dayOfWeek),

@@ -21,7 +21,7 @@ import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import ca.arnaud.horasolis.R
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
-import ca.arnaud.horasolis.domain.onFailure
+import ca.arnaud.horasolis.domain.model.common.onFailure
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmRingingUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmParams
 import ca.arnaud.horasolis.domain.usecase.alarm.GetAlarmUseCase

@@ -49,7 +49,7 @@ import ca.arnaud.horasolis.ui.common.HoraTopBar
 import ca.arnaud.horasolis.ui.common.WheelPicker
 import ca.arnaud.horasolis.ui.common.WheelPickerItem
 import ca.arnaud.horasolis.ui.theme.HoraSolisTheme
-import io.ktor.util.date.WeekDay
+import java.time.DayOfWeek
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
@@ -364,10 +364,10 @@ private fun VibrationSection(
 
 private class EditAlarmScreenPreviewProvider : PreviewParameterProvider<EditAlarmScreenModel> {
 
-    private val sampleDayOfWeeks = WeekDay.entries.map { weekDay ->
+    private val sampleDayOfWeeks = DayOfWeek.entries.map { weekDay ->
         EditDayOfWeekItemModel(
             text = weekDay.name.substring(0, 3),
-            selected = weekDay == WeekDay.MONDAY || weekDay == WeekDay.WEDNESDAY || weekDay == WeekDay.FRIDAY,
+            selected = weekDay == DayOfWeek.MONDAY || weekDay == DayOfWeek.WEDNESDAY || weekDay == DayOfWeek.FRIDAY,
             data = weekDay,
         )
     }.toImmutableList()

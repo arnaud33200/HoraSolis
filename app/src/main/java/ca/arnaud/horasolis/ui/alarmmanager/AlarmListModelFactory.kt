@@ -39,7 +39,7 @@ class AlarmListModelFactory(
             label = label,
             civilTime = dateFormatter.formatCivilTime(solisTime.toCivilTime(solisDay)),
             isEnabled = enabled.takeIf { !isExpired },
-            schedule = when (schedule) {
+            schedule = when (val schedule = schedule) {
                 is Schedule.Repeating -> dateFormatter.formatWeekDaysOrNull(schedule.weekDays)
                 is Schedule.OneTime -> stringProvider.getString(
                     R.string.alarm_schedule_one_time_date,

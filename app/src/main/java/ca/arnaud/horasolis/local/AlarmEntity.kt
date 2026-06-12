@@ -6,7 +6,7 @@ import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.alarm.Alarm
 import ca.arnaud.horasolis.domain.model.alarm.NewAlarm
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
-import io.ktor.util.date.WeekDay
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Entity(tableName = "alarm")
@@ -15,7 +15,7 @@ data class AlarmEntity(
     val label: String? = null,
     val time: SolisTime,
     val enabled: Boolean = true,
-    val onForWeekDays: Set<WeekDay>? = null,
+    val onForWeekDays: Set<DayOfWeek>? = null,
     val onTimeDate: LocalDate? = null,
     val soundUri: String? = null,
     val vibrate: Boolean? = null,
@@ -26,7 +26,7 @@ data class AlarmEntity(
     ): SavedAlarm {
         val schedule = when {
             onTimeDate != null -> Alarm.Schedule.OneTime(onTimeDate)
-            else -> Alarm.Schedule.Repeating(onForWeekDays ?: WeekDay.entries.toSet())
+            else -> Alarm.Schedule.Repeating(onForWeekDays ?: DayOfWeek.entries.toSet())
         }
         return SavedAlarm(
             id = id.toInt(),

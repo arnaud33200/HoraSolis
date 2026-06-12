@@ -5,20 +5,26 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import ca.arnaud.horasolis.data.AlarmRepository
-import ca.arnaud.horasolis.data.LogRepository
-import ca.arnaud.horasolis.data.LocationRepository
-import ca.arnaud.horasolis.data.ScheduleRepository
-import ca.arnaud.horasolis.data.SettingsRepository
-import ca.arnaud.horasolis.data.SolisRepository
+import ca.arnaud.horasolis.data.AlarmRepositoryImpl
+import ca.arnaud.horasolis.data.LocationRepositoryImpl
+import ca.arnaud.horasolis.data.LogRepositoryImpl
+import ca.arnaud.horasolis.data.ScheduleRepositoryImpl
+import ca.arnaud.horasolis.data.SettingsRepositoryImpl
+import ca.arnaud.horasolis.data.SolisRepositoryImpl
+import ca.arnaud.horasolis.domain.repository.AlarmRepository
+import ca.arnaud.horasolis.domain.repository.LocationRepository
+import ca.arnaud.horasolis.domain.repository.LogRepository
+import ca.arnaud.horasolis.domain.repository.ScheduleRepository
+import ca.arnaud.horasolis.domain.repository.SettingsRepository
+import ca.arnaud.horasolis.domain.repository.SolisRepository
 import ca.arnaud.horasolis.domain.model.location.LocationValidator
 import ca.arnaud.horasolis.domain.provider.LocaleProvider
 import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
 import ca.arnaud.horasolis.domain.provider.Logger
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.provider.LoggerImpl
-import ca.arnaud.horasolis.domain.usecase.GetSolisCivilTimeUseCase
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisCivilTimeUseCase
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CancelAlarmUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ClearAlarmLogsUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.CancelAllAlarmUseCase
@@ -197,12 +203,12 @@ class HoraSolisApplication : Application(), KoinComponent {
     }
 
     val dataModule = module {
-        singleOf(::SolisRepository)
-        singleOf(::LogRepository)
-        singleOf(::AlarmRepository)
-        singleOf(::SettingsRepository)
-        singleOf(::ScheduleRepository)
-        singleOf(::LocationRepository)
+        singleOf(::SolisRepositoryImpl) { bind<SolisRepository>() }
+        singleOf(::LogRepositoryImpl) { bind<LogRepository>() }
+        singleOf(::AlarmRepositoryImpl) { bind<AlarmRepository>() }
+        singleOf(::SettingsRepositoryImpl) { bind<SettingsRepository>() }
+        singleOf(::ScheduleRepositoryImpl) { bind<ScheduleRepository>() }
+        singleOf(::LocationRepositoryImpl) { bind<LocationRepository>() }
         single { get<Context>().userDataStore }
     }
 

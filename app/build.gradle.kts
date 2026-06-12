@@ -61,6 +61,8 @@ kotlin {
 
 dependencies {
 
+    implementation(project(":domain"))
+
     implementation(libs.kotlin.immutableCollections)
 
     implementation(platform(libs.firebase.bom))

@@ -2,14 +2,14 @@ package ca.arnaud.horasolis.ui.clock
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ca.arnaud.horasolis.domain.Response
+import ca.arnaud.horasolis.domain.model.common.Response
 import ca.arnaud.horasolis.domain.model.SavedLocation
 import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.SolisTime
 import ca.arnaud.horasolis.domain.model.alarm.SavedAlarm
 import ca.arnaud.horasolis.domain.provider.TimeProvider
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayError
-import ca.arnaud.horasolis.domain.usecase.GetSolisDayUseCase
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayError
+import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayUseCase
 import ca.arnaud.horasolis.domain.usecase.alarm.ObserveSavedAlarmsUseCase
 import ca.arnaud.horasolis.domain.usecase.location.GetCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase
