@@ -62,6 +62,9 @@ kotlin {
 dependencies {
 
     implementation(project(":domain"))
+    implementation(project(":local"))
+    implementation(project(":remote"))
+    implementation(project(":data"))
 
     implementation(libs.kotlin.immutableCollections)
 
@@ -74,9 +77,6 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.workmanager)
     implementation(libs.koin.androidx.compose)
-
-    // Ktor
-    implementation(libs.bundles.ktor)
 
     implementation(libs.navigation3.runtime)
     implementation(libs.navigation3.ui)
@@ -94,11 +94,6 @@ dependencies {
     implementation(libs.compose.materialIconsExtended)
     implementation(libs.androidx.work.runtime.ktx)
     debugImplementation(libs.androidx.ui.tooling)
-
-    // Room
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    kapt(libs.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.accompanist.permissions)

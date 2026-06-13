@@ -1,13 +1,13 @@
 package ca.arnaud.horasolis.data
 
+import ca.arnaud.horasolis.data.local.CachedSolisDay
+import ca.arnaud.horasolis.data.local.SolisDayLocalDataSource
+import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.common.Response
 import ca.arnaud.horasolis.domain.model.common.map
-import ca.arnaud.horasolis.domain.model.SolisDay
 import ca.arnaud.horasolis.domain.model.common.onSuccess
 import ca.arnaud.horasolis.domain.repository.SolisRepository
 import ca.arnaud.horasolis.domain.usecase.solis.GetSolisDayParams
-import ca.arnaud.horasolis.local.HoraSolisDatabase
-import ca.arnaud.horasolis.local.SolisDayEntity
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.remote.model.GetSunTime
 import ca.arnaud.horasolis.remote.model.RemoteSunTimeResponse
@@ -15,18 +15,21 @@ import ca.arnaud.horasolis.remote.toIsoString
 
 class SolisRepositoryImpl(
     private val ktorClient: KtorClient,
-    database: HoraSolisDatabase,
+    private val localDataSource: SolisDayLocalDataSource,
 ) : SolisRepository {
 
-    private val solisDayDao = database.solisDayDao()
-
-    override suspend fun getSolisDay(
-        params: GetSolisDayParams,
-    ): Response<SolisDay, Throwable> {
+    override suspend fun getSolisDay(params: GetSolisDayParams): Response<SolisDay, Throwable> {
         val cacheKey = params.toCacheKey()
 
-        solisDayDao.get(cacheKey)?.let { entity ->
-            return Response.Success(entity.toSolisDay(params))
+        localDataSource.getCached(cacheKey)?.let { cached ->
+            return Response.Success(
+                SolisDay(
+                    atDate = params.date,
+                    civilSunriseTime = cached.civilSunriseTime,
+                    civilSunsetTime = cached.civilSunsetTime,
+                    location = params.location,
+                )
+            )
         }
 
         val location = params.location
@@ -46,20 +49,15 @@ class SolisRepositoryImpl(
                 )
             }
         ).onSuccess { solisDay ->
-            solisDayDao.upsert(SolisDayEntity(
-                cacheKey = cacheKey,
-                civilSunriseTime = solisDay.civilSunriseTime,
-                civilSunsetTime = solisDay.civilSunsetTime,
-            ))
+            localDataSource.upsert(
+                cacheKey,
+                CachedSolisDay(
+                    civilSunriseTime = solisDay.civilSunriseTime,
+                    civilSunsetTime = solisDay.civilSunsetTime,
+                )
+            )
         }
     }
-
-    private fun SolisDayEntity.toSolisDay(params: GetSolisDayParams) = SolisDay(
-        atDate = params.date,
-        civilSunriseTime = civilSunriseTime,
-        civilSunsetTime = civilSunsetTime,
-        location = params.location,
-    )
 
     private fun GetSolisDayParams.toCacheKey(): String {
         return "${location.lat},${location.lng},${location.timZoneId},${date.toIsoString()}"

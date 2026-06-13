@@ -18,6 +18,7 @@ import ca.arnaud.horasolis.domain.repository.ScheduleRepository
 import ca.arnaud.horasolis.domain.repository.SettingsRepository
 import ca.arnaud.horasolis.domain.repository.SolisRepository
 import ca.arnaud.horasolis.domain.model.location.LocationValidator
+import ca.arnaud.horasolis.domain.provider.AlarmScheduler
 import ca.arnaud.horasolis.domain.provider.LocaleProvider
 import ca.arnaud.horasolis.domain.provider.LocaleProviderImpl
 import ca.arnaud.horasolis.domain.provider.Logger
@@ -48,7 +49,19 @@ import ca.arnaud.horasolis.domain.usecase.location.ObserveAllLocationsUseCase
 import ca.arnaud.horasolis.domain.usecase.location.ObserveCurrentLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SaveLocationUseCase
 import ca.arnaud.horasolis.domain.usecase.location.SetCurrentLocationUseCase
+import ca.arnaud.horasolis.data.local.AlarmLocalDataSource
+import ca.arnaud.horasolis.data.local.LogLocalDataSource
+import ca.arnaud.horasolis.data.local.ScheduleLocalDataSource
+import ca.arnaud.horasolis.data.local.LocationLocalDataSource
+import ca.arnaud.horasolis.data.local.SettingsLocalDataSource
+import ca.arnaud.horasolis.data.local.SolisDayLocalDataSource
+import ca.arnaud.horasolis.local.AlarmLocalDataSourceImpl
+import ca.arnaud.horasolis.local.LogLocalDataSourceImpl
+import ca.arnaud.horasolis.local.ScheduleLocalDataSourceImpl
 import ca.arnaud.horasolis.local.HoraSolisDatabase
+import ca.arnaud.horasolis.local.LocationLocalDataSourceImpl
+import ca.arnaud.horasolis.local.SettingsLocalDataSourceImpl
+import ca.arnaud.horasolis.local.SolisDayLocalDataSourceImpl
 import ca.arnaud.horasolis.remote.KtorClient
 import ca.arnaud.horasolis.service.LocationService
 import ca.arnaud.horasolis.service.SolisTimeAlarmService
@@ -108,7 +121,7 @@ class HoraSolisApplication : Application(), KoinComponent {
         singleOf(::DateFormatter)
 
         // Service & Worker
-        singleOf(::SolisTimeAlarmService)
+        singleOf(::SolisTimeAlarmService) { bind<AlarmScheduler>() }
         workerOf(::ScheduleNextAlarmWorker)
         factoryOf(::LocationService)
 
@@ -214,6 +227,12 @@ class HoraSolisApplication : Application(), KoinComponent {
 
     val localModule = module {
         single { HoraSolisDatabase.createDatabase(context = get()) }
+        singleOf(::AlarmLocalDataSourceImpl) { bind<AlarmLocalDataSource>() }
+        singleOf(::LogLocalDataSourceImpl) { bind<LogLocalDataSource>() }
+        singleOf(::ScheduleLocalDataSourceImpl) { bind<ScheduleLocalDataSource>() }
+        singleOf(::LocationLocalDataSourceImpl) { bind<LocationLocalDataSource>() }
+        singleOf(::SettingsLocalDataSourceImpl) { bind<SettingsLocalDataSource>() }
+        singleOf(::SolisDayLocalDataSourceImpl) { bind<SolisDayLocalDataSource>() }
     }
 
     override fun onCreate() {

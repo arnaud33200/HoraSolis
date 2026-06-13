@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
+import ca.arnaud.horasolis.domain.provider.AlarmScheduler
 import ca.arnaud.horasolis.domain.provider.TimeProvider
 import ca.arnaud.horasolis.service.AlarmReceiver.Companion.ROMAN_TIME_ALARM_SERVICE_PARAM_EXTRA_KEY
 import kotlinx.parcelize.Parcelize
@@ -22,15 +23,14 @@ data class SolisTimeAlarmScheduleParam(
 class SolisTimeAlarmService(
     private val context: Context,
     private val timeProvider: TimeProvider,
-) {
+) : AlarmScheduler {
 
-    fun scheduleAlarm(
-        param: SolisTimeAlarmScheduleParam,
-    ) {
+    override fun scheduleAlarm(alarmId: Int, dateTime: LocalDateTime) {
+        val param = SolisTimeAlarmScheduleParam(alarmId = alarmId, dateTime = dateTime)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = createPendingIntent(param.requestCode, param)
         val zoneId = timeProvider.getZoneId()
-        val timeInMillis = param.dateTime.atZone(zoneId).toInstant().toEpochMilli()
+        val timeInMillis = dateTime.atZone(zoneId).toInstant().toEpochMilli()
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
@@ -39,15 +39,15 @@ class SolisTimeAlarmService(
         )
     }
 
-    fun cancelAll() {
+    override fun cancelAll() {
         for (requestCode in 1 until 24) {
             cancelAlarm(requestCode)
         }
     }
 
-    fun cancelAlarm(requestCode: Int) {
+    override fun cancelAlarm(alarmId: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = createPendingIntent(requestCode)
+        val pendingIntent = createPendingIntent(alarmId)
         alarmManager.cancel(pendingIntent)
     }
 

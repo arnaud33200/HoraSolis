@@ -1,0 +1,15 @@
+plugins {
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+dependencies {
+    implementation(project(":domain"))
+
+    implementation(libs.bundles.ktor)
+    implementation(libs.kotlinx.coroutines.core)
+}
