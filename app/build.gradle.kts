@@ -18,9 +18,9 @@ android {
     defaultConfig {
         applicationId = "ca.arnaud.horasolis"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 4
-        versionName = "2.9"
+        targetSdk = 36
+        versionCode = 5
+        versionName = "2.9.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
